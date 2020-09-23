@@ -45,7 +45,7 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
         Store.statisticBarHeight = 23;
     }
 
-    $("#" + Store.container).find(".luckysheet-grid-container").css("top", Store.toolbarHeight + Store.infobarHeight + Store.calculatebarHeight);
+    $("#" + Store.container).find(".luckysheet-grid-container").css("top", Store.toolbarHeight + Store.infobarHeight + Store.calculatebarHeight - 26);
 
     gridW = $("#" + Store.container).width(), gridH = $("#" + Store.container).height();
 

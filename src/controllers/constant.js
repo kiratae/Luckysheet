@@ -1222,66 +1222,66 @@ function menuToolBar (){
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.conditionalFormat}"
-        id="luckysheet-icon-conditionformat" role="button" style="user-select: none;">
-            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-            style="user-select: none;">
-                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="user-select: none;">
-                        ${toolbar.conditionalFormat}
-                    </div>
-                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block "
-                    style="user-select: none;">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.postil}"
-        id="luckysheet-icon-postil" role="button" style="user-select: none;">
-            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-            style="user-select: none;">
-                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="user-select: none;">
-                        ${toolbar.postil}
-                    </div>
-                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block "
-                    style="user-select: none;">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-pivot-btn-title">
-            <i aria-hidden="true" class="fa fa-cube">
-            </i>
-            ${toolbar.pivotTable}
-        </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-chart-btn-title">
-            <i class="fa fa-pie-chart">
-            </i>
-            ${toolbar.chart}
-        </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-chart-btn-screenshot">
-            <i class="fa fa-object-group">
-            </i>
-            ${toolbar.screenshot}
-        </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-splitColumn-btn-title">
-            <i class="fa fa-gg">
-            </i>
-            ${toolbar.splitColumn}
-        </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-insertImg-btn-title">
-            ${toolbar.insertImage}
-            <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;">
-        </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-dataVerification-btn-title">
-            ${toolbar.dataVerification}
         </div>`;
+        // <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.conditionalFormat}"
+        // id="luckysheet-icon-conditionformat" role="button" style="user-select: none;">
+        //     <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+        //     style="user-select: none;">
+        //         <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+        //         style="user-select: none;">
+        //             <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+        //             style="user-select: none;">
+        //                 ${toolbar.conditionalFormat}
+        //             </div>
+        //             <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block "
+        //             style="user-select: none;">
+        //             </div>
+        //         </div>
+        //     </div>
+        // </div>
+        // <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.postil}"
+        // id="luckysheet-icon-postil" role="button" style="user-select: none;">
+        //     <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+        //     style="user-select: none;">
+        //         <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+        //         style="user-select: none;">
+        //             <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+        //             style="user-select: none;">
+        //                 ${toolbar.postil}
+        //             </div>
+        //             <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block "
+        //             style="user-select: none;">
+        //             </div>
+        //         </div>
+        //     </div>
+        // </div>
+        // <div class="luckysheetfulltoolbar" id="luckysheet-pivot-btn-title">
+        //     <i aria-hidden="true" class="fa fa-cube">
+        //     </i>
+        //     ${toolbar.pivotTable}
+        // </div>
+        // <div class="luckysheetfulltoolbar" id="luckysheet-chart-btn-title">
+        //     <i class="fa fa-pie-chart">
+        //     </i>
+        //     ${toolbar.chart}
+        // </div>
+        // <div class="luckysheetfulltoolbar" id="luckysheet-chart-btn-screenshot">
+        //     <i class="fa fa-object-group">
+        //     </i>
+        //     ${toolbar.screenshot}
+        // </div>
+        // <div class="luckysheetfulltoolbar" id="luckysheet-splitColumn-btn-title">
+        //     <i class="fa fa-gg">
+        //     </i>
+        //     ${toolbar.splitColumn}
+        // </div>
+        // <div class="luckysheetfulltoolbar" id="luckysheet-insertImg-btn-title">
+        //     ${toolbar.insertImage}
+        //     <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;">
+        // </div>
+        // <div class="luckysheetfulltoolbar" id="luckysheet-dataVerification-btn-title">
+        //     ${toolbar.dataVerification}
+        // </div>`;
 } 
 
 const luckysheetlodingHTML = function(){ 
