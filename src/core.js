@@ -71,6 +71,7 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.allowCopy = extendsetting.allowCopy;
     luckysheetConfigsetting.showtoolbar = extendsetting.showtoolbar;
     luckysheetConfigsetting.showinfobar = extendsetting.showinfobar;
+    luckysheetConfigsetting.showformulabar = extendsetting.showformulabar;
     luckysheetConfigsetting.showsheetbar = extendsetting.showsheetbar;
     luckysheetConfigsetting.showstatisticBar = extendsetting.showstatisticBar;
     luckysheetConfigsetting.pointEdit = extendsetting.pointEdit;

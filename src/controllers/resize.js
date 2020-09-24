@@ -9,13 +9,19 @@ let gridW = 0,
     gridH = 0;
 
 export default function luckysheetsizeauto(isRefreshCanvas=true) {
-    if (!luckysheetConfigsetting.showinfobar) {
+    // if (!luckysheetConfigsetting.showinfobar) {
         Store.infobarHeight = 0;
         $("#luckysheet_info_detail").hide();
-    }
-    else {
-        Store.infobarHeight = 30;
-        $("#luckysheet_info_detail").show();
+    // }
+    // else {
+    //     Store.infobarHeight = 30;
+    //     $("#luckysheet_info_detail").show();
+    // }
+    if(!luckysheetConfigsetting.showformulabar){
+        $("#" + Store.container).find(".luckysheet-work-area").hide();
+        Store.calculatebarHeight = 0;
+    }else{
+        $("#" + Store.container).find(".luckysheet-work-area").show();
     }
 
     if (!luckysheetConfigsetting.showtoolbar) {
@@ -45,7 +51,7 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
         Store.statisticBarHeight = 23;
     }
 
-    $("#" + Store.container).find(".luckysheet-grid-container").css("top", Store.toolbarHeight + Store.infobarHeight + Store.calculatebarHeight - 26);
+    $("#" + Store.container).find(".luckysheet-grid-container").css("top", Store.toolbarHeight + Store.infobarHeight + Store.calculatebarHeight);
 
     gridW = $("#" + Store.container).width(), gridH = $("#" + Store.container).height();
 

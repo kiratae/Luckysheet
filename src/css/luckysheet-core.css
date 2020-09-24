@@ -34,7 +34,7 @@
 }
 
 .luckysheet-work-area {
-    height: 90px;
+    height: 0;
     width: 100%;
     position: relative;
 }
@@ -917,7 +917,7 @@
 .luckysheet-grid-container {
     width: 100%;
     position: absolute;
-    top: 90px;
+    top: 64px;
     bottom: 0px;
 }
 

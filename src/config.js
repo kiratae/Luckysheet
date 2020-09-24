@@ -8,6 +8,7 @@ export default {
     allowCopy: true, //是否允许拷贝
     showtoolbar: true, //是否第二列显示工具栏
     showinfobar: true, //是否显示顶部名称栏
+    showformulabar: true,
     showsheetbar: true, //是否显示底部表格名称区域
     showstatisticBar: true, //是否显示底部计数栏
     pointEdit: false, //是否是编辑器插入表格模式
@@ -48,7 +49,7 @@ export default {
     },
     editMode: false, //是否为编辑模式
     beforeCreateDom: null,//表格创建之前的方法
-    fireMousedown: null, //单元格数据下钻
+    fireMousedown: null, //Cell data drill down
     lang: 'en', //language
     plugins: [], //plugins, e.g. ['chart']
     forceCalculation:false,//强制刷新公式，公式较多会有性能问题，慎用

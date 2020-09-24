@@ -299,6 +299,9 @@ export default function luckysheetHandler() {
             col_index_ed = margeset.column[3];
         }
 
+        // fire mouse down
+        console.log('mousedown', row_index, col_index, Store.flowdata[row_index][col_index]);
+
         //数据验证 单元格聚焦
         dataVerificationCtrl.cellFocus(row_index, col_index, true);
 
@@ -329,7 +332,7 @@ export default function luckysheetHandler() {
             }
         }
 
-        //单元格数据下钻
+        // Cell data drill down
         if (Store.flowdata[row_index] != null && Store.flowdata[row_index][col_index] != null && Store.flowdata[row_index][col_index].dd != null) {
             if (luckysheetConfigsetting.fireMousedown != null && getObjType(luckysheetConfigsetting.fireMousedown) == "function") {
                 luckysheetConfigsetting.fireMousedown(Store.flowdata[row_index][col_index].dd);
