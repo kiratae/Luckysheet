@@ -57,4 +57,9 @@ export default {
     columeHeaderHeight: 20,
     defaultColWidth:73,
     defaultRowHeight:19,
+
+    // [TK] custom hooks
+    onCellMouseDown: function(row, col, cell){
+        console.log('onCellMouseDown', row, col, cell);
+    }
 }

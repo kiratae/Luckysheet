@@ -30,7 +30,7 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
     }
     else {
         $("#" + Store.container).find(".luckysheet-wa-editor, .luckysheet-share-logo").show();
-        Store.toolbarHeight = 61;
+        Store.toolbarHeight = 35;
     }
 
     if (!luckysheetConfigsetting.showsheetbar) {

@@ -29,7 +29,14 @@ const luckysheetConfigsetting = {
     beforeCreateDom: null,
     fireMousedown: null,
     plugins:[],
-    forceCalculation:false,//强制刷新公式，公式较多会有性能问题，慎用
+    forceCalculation:false, // Forced to refresh the formula, more formulas will cause performance problems, use with caution
+
+    // [TK] custom hooks
+    onCellClick: null,
+    onCellMouseDown: null,
+    onCellMouseOver: null,
+    onCellMouseOut: null,
+    onSheetMouseOut: null,
 
     defaultColWidth:73,
     defaultRowHeight:19,

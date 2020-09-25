@@ -13,7 +13,7 @@ function execScroll(){
     scrollRequestAnimationFrame = window.requestAnimationFrame(execScroll);
 }
 
-//全局滚动事件
+//Overall scroll event
 export default function luckysheetscrollevent(isadjust) {
     let $t = $("#luckysheet-cell-main");
     let scrollLeft = $("#luckysheet-scrollbar-x").scrollLeft(), 
