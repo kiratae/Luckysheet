@@ -15,7 +15,7 @@ import {isInlineStringCell} from './inlineString';
 import Store from '../store';
 
 export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocus) {
-    if(isEditMode() || Store.allowEdit===false){//此模式下禁用单元格编辑
+    if(isEditMode() || Store.allowEdit===false){//Cell editing is disabled in this mode
         return;
     }
 
