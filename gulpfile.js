@@ -75,7 +75,7 @@ const paths = {
     plugins: ['src/plugins/*.css'],
     css:['src/css/*.css'],
     pluginsJs:[
-        'src/plugins/js/jquery.min.js',
+        // 'src/plugins/js/jquery.min.js',
         'src/plugins/js/clipboard.min.js',
         'src/plugins/js/spectrum.min.js',
         'src/plugins/js/jquery-ui.min.js',

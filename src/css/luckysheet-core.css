@@ -2599,7 +2599,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 } */
 
 
-.btn {
+/* #region boostrap style
+ .btn {
     display: inline-block;
     margin-bottom: 0;
     font-weight: normal;
@@ -2881,7 +2882,8 @@ fieldset[disabled] .btn-danger.focus {
 .btn-danger .badge {
     color: #d9534f;
     background-color: #fff;
-}
+} 
+#region */
 
 .luckysheet-cols-change-size,
 .luckysheet-rows-change-size,
