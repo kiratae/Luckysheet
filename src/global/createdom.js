@@ -113,6 +113,13 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     $("body").append(replaceHtml(filtermenuHTML(), { "menuid": "filter" }));
     $("body").append(replaceHtml(filtersubmenuHTML(), { "menuid": "filter" }));
     $("body").append(sheetconfigHTML());
+    // $("#" + Store.container).append(maskHTML);
+    // $("#" + Store.container).append(colsmenuHTML);
+    // $("#" + Store.container).append(rightclickHTML());
+    // $("#" + Store.container).append(inputHTML);
+    // $("#" + Store.container).append(replaceHtml(filtermenuHTML(), { "menuid": "filter" }));
+    // $("#" + Store.container).append(replaceHtml(filtersubmenuHTML(), { "menuid": "filter" }));
+    // $("#" + Store.container).append(sheetconfigHTML());
 
     $("#luckysheet-rows-h").width((Store.rowHeaderWidth-1.5));
     $("#luckysheet-cols-h-c").height((Store.columeHeaderHeight-1.5));

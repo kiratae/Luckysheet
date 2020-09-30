@@ -357,7 +357,8 @@
 .luckysheet-color-menu-button-indicator .text-color-bar{
     position: absolute;
     bottom: 0px;
-    background-color: #0081f9;
+    /* background-color: #0081f9; */
+    border: 1px solid #000000;
     height: 3px;
     width: 55%;
     left: 25%;

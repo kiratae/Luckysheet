@@ -132,11 +132,11 @@ export default function luckysheetsizeauto(isRefreshCanvas = true) {
     // 所有按钮宽度与元素定位
     const toobarWidths = Store.toobarObject.toobarWidths;
     const toobarElements = Store.toobarObject.toobarElements;
-    let moreButtonIndex = 0;
+    let moreButtonIndex = toobarWidths.length;
 
     // 找到应该隐藏的起始元素位置
     for (let index = toobarWidths.length - 1; index >= 0; index--) {
-        if (toobarWidths[index] < gridW - 90) {
+        if (toobarWidths[index] > gridW - 90) {
             moreButtonIndex = index;
             ismore = true;
             break;
@@ -285,71 +285,146 @@ export function changeSheetContainerSize(gridW, gridH) {
  */
 export function menuToolBarWidth() {
     const toobarObject = Store.toobarObject;
-    toobarObject.toobarWidths = [
-        $('#luckysheet-icon-undo').offset().left,
-        $('#luckysheet-icon-redo').offset().left,
-        $('#luckysheet-icon-paintformat').offset().left,
-        $('#luckysheet-icon-currency').offset().left,
-        $('#luckysheet-icon-percent').offset().left,
-        $('#luckysheet-icon-fmt-decimal-decrease').offset().left,
-        $('#luckysheet-icon-fmt-decimal-increase').offset().left,
-        $('#luckysheet-icon-fmt-other').offset().left,
-        $('#luckysheet-icon-font-family').offset().left,
-        $('#luckysheet-icon-font-size').offset().left,
-        $('#luckysheet-icon-bold').offset().left,
-        $('#luckysheet-icon-italic').offset().left,
-        $('#luckysheet-icon-strikethrough').offset().left,
-        $('#luckysheet-icon-text-color').offset().left,
-        $('#luckysheet-icon-cell-color').offset().left,
-        $('#luckysheet-icon-border-all').offset().left,
-        $('#luckysheet-icon-merge-button').offset().left,
-        $('#luckysheet-icon-align').offset().left,
-        $('#luckysheet-icon-valign').offset().left,
-        $('#luckysheet-icon-textwrap').offset().left,
-        $('#luckysheet-icon-rotation').offset().left,
-        $('#luckysheet-insertImg-btn-title').offset().left,
-        $('#luckysheet-chart-btn-title').offset().left,
-        $('#luckysheet-icon-postil').offset().left,
-        $('#luckysheet-pivot-btn-title').offset().left,
-        $('#luckysheet-icon-function').offset().left,
-        $('#luckysheet-freezen-btn-horizontal').offset().left,
-        $('#luckysheet-icon-autofilter').offset().left,
-        $('#luckysheet-icon-conditionformat').offset().left,
-        $('#luckysheet-dataVerification-btn-title').offset().left,
-        $('#luckysheet-splitColumn-btn-title').offset().left,
-        $('#luckysheet-chart-btn-screenshot').offset().left,
-        $('#luckysheet-icon-seachmore').offset().left,
-        $('#luckysheet-icon-seachmore').offset().left + $('#luckysheet-icon-seachmore').outerWidth() + 5,
-    ];
-    toobarObject.toobarElements = [
-        '#luckysheet-icon-undo',
-        '#luckysheet-icon-redo', ['#luckysheet-icon-paintformat', '#toolbar-separator-paint-format'],
-        '#luckysheet-icon-currency',
-        '#luckysheet-icon-percent',
-        '#luckysheet-icon-fmt-decimal-decrease',
-        '#luckysheet-icon-fmt-decimal-increase', ['#luckysheet-icon-fmt-other', '#toolbar-separator-more-format'],
-        ['#luckysheet-icon-font-family', '#toolbar-separator-font-family'],
-        ['#luckysheet-icon-font-size', '#toolbar-separator-font-size'],
-        '#luckysheet-icon-bold',
-        '#luckysheet-icon-italic',
-        '#luckysheet-icon-strikethrough', ['#luckysheet-icon-text-color', '#luckysheet-icon-text-color-menu', '#toolbar-separator-text-color'],
-        ['#luckysheet-icon-cell-color', '#luckysheet-icon-cell-color-menu'],
-        ['#luckysheet-icon-border-all', '#luckysheet-icon-border-menu'],
-        ['#luckysheet-icon-merge-button', '#luckysheet-icon-merge-menu', '#toolbar-separator-merge-cell'],
-        ['#luckysheet-icon-align', '#luckysheet-icon-align-menu'],
-        ['#luckysheet-icon-valign', '#luckysheet-icon-valign-menu'],
-        ['#luckysheet-icon-textwrap', '#luckysheet-icon-textwrap-menu'],
-        ['#luckysheet-icon-rotation', '#luckysheet-icon-rotation-menu', '#toolbar-separator-text-rotate'],
-        '#luckysheet-insertImg-btn-title',
-        '#luckysheet-chart-btn-title',
-        '#luckysheet-icon-postil', ['#luckysheet-pivot-btn-title', '#toolbar-separator-pivot-table'],
-        ['#luckysheet-icon-function', '#luckysheet-icon-function-menu'],
-        ['#luckysheet-freezen-btn-horizontal', '#luckysheet-icon-freezen-menu'],
-        '#luckysheet-icon-autofilter',
-        '#luckysheet-icon-conditionformat',
-        '#luckysheet-dataVerification-btn-title',
-        '#luckysheet-splitColumn-btn-title',
-        '#luckysheet-chart-btn-screenshot',
-        '#luckysheet-icon-seachmore'
-    ]
+    toobarObject.toobarWidths = [];
+    let list = [];
+    let listEl = [];
+    for(let item of luckysheetConfigsetting.toolbars){
+        switch (item) {
+            case 'undo': 
+                list.push($('#luckysheet-icon-undo').offset().left);
+                listEl.push('#luckysheet-icon-undo');
+                break;
+            case 'redo':
+                list.push($('#luckysheet-icon-redo').offset().left);
+                listEl.push('#luckysheet-icon-redo');
+                break;
+            case 'paintformat':
+                list.push($('#luckysheet-icon-paintformat').offset().left);
+                listEl.push(['#luckysheet-icon-paintformat', '#luckysheet-icon-paintformat+.luckysheet-toolbar-separator']);
+                break;
+            case 'currency':
+                list.push($('#luckysheet-icon-currency').offset().left);
+                listEl.push('#luckysheet-icon-currency');
+                break;
+            case 'percent':
+                list.push($('#luckysheet-icon-percent').offset().left);
+                listEl.push('#luckysheet-icon-percent');
+                break;
+            case 'fmt-decimal-decrease':
+                list.push($('#luckysheet-icon-fmt-decimal-decrease').offset().left);
+                listEl.push('#luckysheet-icon-fmt-decimal-decrease');
+                break;
+            case 'fmt-decimal-increase':
+                list.push($('#luckysheet-icon-fmt-decimal-increase').offset().left);
+                listEl.push('#luckysheet-icon-fmt-decimal-increase');
+                break;
+            case 'fmt-other':
+                list.push($('#luckysheet-icon-fmt-other').offset().left);
+                listEl.push(['#luckysheet-icon-fmt-other', '#luckysheet-icon-fmt-other+.luckysheet-toolbar-separator']);
+                break;
+            case 'font-family':
+                list.push($('#luckysheet-icon-font-family').offset().left);
+                listEl.push(['#luckysheet-icon-font-family', '#luckysheet-icon-font-family+.luckysheet-toolbar-separator']);
+                break;
+            case 'font-size':
+                list.push($('#luckysheet-icon-font-size').offset().left);
+                listEl.push(['#luckysheet-icon-font-size', '#luckysheet-icon-font-size+.luckysheet-toolbar-separator']);
+                break;
+            case 'bold':
+                list.push($('#luckysheet-icon-bold').offset().left);
+                listEl.push('#luckysheet-icon-bold');
+                break;
+            case 'italic':
+                list.push($('#luckysheet-icon-italic').offset().left);
+                listEl.push('#luckysheet-icon-italic');
+                break;
+            case 'strikethrough':
+                list.push($('#luckysheet-icon-strikethrough').offset().left);
+                listEl.push('#luckysheet-icon-strikethrough');
+                break;
+            case 'text-color':
+                list.push($('#luckysheet-icon-text-color').offset().left);
+                listEl.push(['#luckysheet-icon-text-color', '#luckysheet-icon-text-color-menu', '#luckysheet-icon-text-color-menu+.luckysheet-toolbar-separator']);
+                break;
+            case 'cell-color':
+                list.push($('#luckysheet-icon-cell-color').offset().left);
+                listEl.push(['#luckysheet-icon-cell-color', '#luckysheet-icon-cell-color-menu']);
+                break;
+            case 'border':
+                list.push($('#luckysheet-icon-border-all').offset().left);
+                listEl.push(['#luckysheet-icon-border-all', '#luckysheet-icon-border-menu']);
+                break;
+            case 'merge':
+                list.push($('#luckysheet-icon-merge-button').offset().left);
+                listEl.push(['#luckysheet-icon-merge-button', '#luckysheet-icon-merge-menu', '#luckysheet-icon-merge-menu+.luckysheet-toolbar-separator']);
+                break;
+            case 'align':
+                list.push($('#luckysheet-icon-align').offset().left);
+                listEl.push(['#luckysheet-icon-align', '#luckysheet-icon-align-menu']);
+                break;
+            case 'valign':
+                list.push($('#luckysheet-icon-valign').offset().left);
+                listEl.push(['#luckysheet-icon-valign', '#luckysheet-icon-valign-menu']);
+                break;
+            case 'textwrap':
+                list.push($('#luckysheet-icon-textwrap').offset().left);
+                listEl.push(['#luckysheet-icon-textwrap', '#luckysheet-icon-textwrap-menu']);
+                break;
+            case 'rotation':
+                list.push($('#luckysheet-icon-rotation').offset().left);
+                listEl.push(['#luckysheet-icon-rotation', '#luckysheet-icon-rotation-menu', '#luckysheet-icon-rotation-menu+.luckysheet-toolbar-separator']);
+                break;
+            case 'insert-img':
+                list.push($('#luckysheet-insertImg-btn-title').offset().left);
+                listEl.push('#luckysheet-insertImg-btn-title');
+                break;
+            case 'chart':
+                list.push($('#luckysheet-chart-btn-title').offset().left);
+                listEl.push('#luckysheet-chart-btn-title',);
+                break;
+            case 'postil':
+                list.push($('#luckysheet-icon-postil').offset().left);
+                listEl.push('#luckysheet-icon-postil');
+                break;
+            case 'pivot':
+                list.push($('#luckysheet-pivot-btn-title').offset().left);
+                listEl.push(['#luckysheet-pivot-btn-title', '#luckysheet-pivot-btn-title+.luckysheet-toolbar-separator']);
+                break;
+            case 'function':
+                list.push($('#luckysheet-icon-function').offset().left);
+                listEl.push(['#luckysheet-icon-function', '#luckysheet-icon-function-menu']);
+                break;
+            case 'freezen':
+                list.push($('#luckysheet-freezen-btn-horizontal').offset().left);
+                listEl.push(['#luckysheet-freezen-btn-horizontal', '#luckysheet-icon-freezen-menu']);
+                break;
+            case 'filter':
+                list.push($('#luckysheet-icon-autofilter').offset().left);
+                listEl.push('#luckysheet-icon-autofilter');
+                break;
+            case 'condition-format':
+                list.push($('#luckysheet-icon-conditionformat').offset().left);
+                listEl.push('#luckysheet-icon-conditionformat');
+                break;
+            case 'data-verification':
+                list.push($('#luckysheet-dataVerification-btn-title').offset().left);
+                listEl.push('#luckysheet-dataVerification-btn-title');
+                break;
+            case 'split-column':
+                list.push($('#luckysheet-splitColumn-btn-title').offset().left);
+                listEl.push('#luckysheet-splitColumn-btn-title');
+                break;
+            case 'screenshot':
+                list.push($('#luckysheet-chart-btn-screenshot').offset().left);
+                listEl.push('#luckysheet-chart-btn-screenshot');
+                break;
+            case 'search-more': 
+                list.push($('#luckysheet-icon-seachmore').offset().left);
+                list.push($('#luckysheet-icon-seachmore').offset().left + $('#luckysheet-icon-seachmore').outerWidth() + 5);
+                listEl.push('#luckysheet-icon-seachmore');
+            break;
+        }
+    }
+    toobarObject.toobarWidths = list;
+    toobarObject.toobarElements = listEl;
 }

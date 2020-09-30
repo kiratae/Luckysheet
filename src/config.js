@@ -58,6 +58,68 @@ export default {
     defaultColWidth:73,
     defaultRowHeight:19,
 
+    // [TK] custom config (prefix is "luckysheet-icon-") '----------' = seperator
+    toolbars: [
+        'undo', // icon-undo
+        'redo', // icon-redo
+        'paintformat', // icon-paintformat
+        '----------',
+        'currency', // icon-currency
+        'percent', // icon-percent
+        'fmt-decimal-decrease', // icon-fmt-decimal-decrease
+        'fmt-decimal-increase', // icon-fmt-decimal-increase
+        'fmt-other', // icon-fmt-other
+        '----------', 
+        'font-family', // icon-font-family
+        '----------', 
+        'font-size', // icon-font-size
+        '----------',
+        'bold', // icon-bold
+        'italic', // icon-italic
+        'strikethrough', // icon-strikethrough
+        'text-color', // icon-text-color && icon-text-color-menu
+        '----------',
+        'cell-color', // icon-cell-color && icon-cell-color-menu
+        'border', // icon-border-all && icon-border-menu
+        'merge', // icon-merge-button && icon-merge-menu
+        '----------',
+        'align', // icon-align && icon-align-menu
+        'valign', // icon-valign && icon-valign-menu
+        'textwrap', // icon-textwrap && icon-textwrap-menu
+        'rotation', // icon-rotation && icon-rotation-menu
+        '----------',
+        // prefix is "luckysheet-"
+        'insert-img', // insertImg-btn-title
+        'chart', // chart-btn-title
+        'postil', // icon-postil
+        'pivot',  // 'pivot-btn-title
+        '----------',
+        'function', // icon-function && icon-function-menu
+        'freezen', // freezen-btn-horizontal && icon-freezen-menu,
+        'auto-filter', // icon-autofilter
+        'condition-format', // icon-conditionformat
+        'data-verification', // dataVerification-btn-title
+        'split-column', // splitColumn-btn-title
+        'chart', // chart-btn-screenshot
+        'search-more' // icon-seachmore
+    ],
+    contextMenus: [
+        'copy',
+        'copy-as',
+        'paste',
+        'insert',
+        'delete',
+        'hide',
+        'delete-cell',
+        '----------',
+        'clear',
+        'matrix',
+        'sort',
+        'filter',
+        'chart',
+        'image',
+        'data-validation'
+    ],
     // [TK] custom hooks
     onCellMouseDown: function(row, col, cell){
         console.log('onCellMouseDown', row, col, cell);

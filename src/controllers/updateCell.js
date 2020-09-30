@@ -19,6 +19,8 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         return;
     }
 
+    console.log('luckysheetupdateCell');
+
     if(dataVerificationCtrl.dataVerification != null && dataVerificationCtrl.dataVerification[row_index1 + '_' + col_index1] != null){
         let dataVerificationItem = dataVerificationCtrl.dataVerification[row_index1 + '_' + col_index1];
         if(dataVerificationItem.type == 'dropdown'){

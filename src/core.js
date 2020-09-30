@@ -32,8 +32,6 @@ import { selectHightlightShow } from './controllers/select';
 import {zoomInitial} from './controllers/zoom';
 import method from './global/method';
 
-import { luckysheetHook } from './hooker'
-
 import * as api from './global/api';
 
 let luckysheet = {};
@@ -98,6 +96,9 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.forceCalculation = extendsetting.forceCalculation;
     luckysheetConfigsetting.plugins = extendsetting.plugins;
 
+    // [TK] custom config
+    luckysheetConfigsetting.toolbars = extendsetting.toolbars;
+    luckysheetConfigsetting.contextMenus = extendsetting.contextMenus;
     // [TK] custom hooks
     luckysheetConfigsetting.onCellClick = extendsetting.onCellClick;
     luckysheetConfigsetting.onCellMouseDown = extendsetting.onCellMouseDown;
