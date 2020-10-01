@@ -107,18 +107,10 @@ export default {
         'copy',
         'copy-as',
         'paste',
-        'insert',
-        'delete',
-        'hide',
-        'delete-cell',
-        '----------',
-        'clear',
-        'matrix',
-        'sort',
-        'filter',
-        'chart',
-        'image',
-        'data-validation'
+        'handle=insert|delete|hide|delete-cell',
+        'insert=above&left|below&right|delete-selected|height&width',
+        'ordering=asc|desc',
+        'data=clear|matrix|sort|filter|chart|image|data-validation',
     ],
     // [TK] custom hooks
     onCellMouseDown: function(row, col, cell){

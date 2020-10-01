@@ -252,20 +252,309 @@ function rightclickHTML() {
     const toolbar = _locale.toolbar;
 
     let html = '<div id="luckysheet-rightclick-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel">';
+    let htmlAppend = '';
     for (let item of luckysheetConfigsetting.contextMenus) {
-        switch(item){
-            case 'copy':
+        let split = item.split('=');
+        if (split.length == 2) {
+            // is section
+            if (split[0] == 'handle') {
+                html += `<div id="luckysheet-cols-rows-handleincell">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
+                for (let subItem of split[1].split('|')) {
+                    switch (subItem) {
+                        case 'insert':
+                            html += `<div id="luckysheetColsRowsHandleAdd" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.insert}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
+                                </div>
+                            </div>`;
+                            htmlAppend += `<div id="luckysheetColsRowsHandleAdd_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.to}${rightclick.top}${rightclick.add}
+                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
+                                        <button id="luckysheet-addTopRows" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.to}${rightclick.bottom}${rightclick.add}
+                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
+                                        <button id="luckysheet-addBottomRows" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.to}${rightclick.left}${rightclick.add}
+                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
+                                        <button id="luckysheet-addLeftCols" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.to}${rightclick.right}${rightclick.add}
+                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
+                                        <button id="luckysheet-addRightCols" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                            break;
+                        case 'delete':
+                            html += `<div id="luckysheetColsRowsHandleDel" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.delete}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
+                                </div>
+                            </div>`;
+                            htmlAppend += `<div id="luckysheetColsRowsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                                <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.deleteSelected}${rightclick.row}
+                                    </div>
+                                </div>
+                                <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.deleteSelected}${rightclick.column}
+                                    </div>
+                                </div>
+                            </div>`;
+                            break;
+                        case 'hide':
+                            html += `<div id="luckysheetColsRowsHandleHid" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.hide}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
+                                </div>
+                            </div>`;
+                            htmlAppend += `<div id="luckysheetColsRowsHandleHid_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                                <div id="luckysheet-hidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.hideSelected}${rightclick.row}
+                                    </div>
+                                </div>
+                                <div id="luckysheet-showHidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.showHide}${rightclick.row}
+                                    </div>
+                                </div>
+                                <div id="luckysheet-hidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.hideSelected}${rightclick.column}
+                                    </div>
+                                </div>
+                                <div id="luckysheet-showHidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.showHide}${rightclick.column}
+                                    </div>
+                                </div>
+                            </div>`;
+                            break;
+                        case 'delete-cell':
+                            html += `<div id="luckysheetCellsHandleDel" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.deleteCell}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
+                                </div>
+                            </div>`;
+                            htmlAppend += `<div id="luckysheetCellsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                                <div id="luckysheet-delCellsMoveLeft" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.moveLeft}
+                                    </div>
+                                </div>
+                                <div id="luckysheet-delCellsMoveUp" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.moveUp}
+                                    </div>
+                                </div>
+                            </div>`;
+                            break;
+                    }
+                }
+                html += `</div>`;
+            } else if (split[0] == 'insert') {
+                html += `<div id="luckysheet-cols-rows-add">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
+                for (let subItem of split[1].split('|')) {
+                    switch (subItem) {
+                        case 'above&left':
+                            html += `<div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.to}
+                                    <span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
+                                    ${rightclick.add}
+                                    <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align:center;margin-left:5px;"/>
+                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                                    <button id="luckysheet-add-lefttop" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="min-width: unset !important;margin-left:5px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                </div>
+                            </div>`;
+                            break;
+                        case 'below&right':
+                            html += `<div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.to}
+                                    <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
+                                    ${rightclick.add}
+                                    <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                                    <button id="luckysheet-add-rightbottom" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="min-width: unset !important;margin-left:5px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                </div>
+                            </div>`;
+                            break;
+                        case 'delete-selected':
+                            html += `<div id="luckysheet-del-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.deleteSelected}
+                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                                </div>
+                            </div>`;
+                            break;
+                        case 'height&width':
+                            html += `<div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                                    <span class="luckysheet-cols-rows-shift-size luckysheet-mousedown-cancel">${rightclick.width}</span>
+                                    <input type="number" class="luckysheet-mousedown-cancel rcsize" min="0" max="255" placeholder="${rightclick.number}" value="" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;">
+                                    px
+                                    <button id="luckysheet-rows-cols-changesize" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="min-width: unset !important;margin-left:5px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                </div>
+                            </div>`;
+                            break;
+                    }
+                }
+                html += `</div>`;
+            } else if (split[0] == 'ordering') {
+                html += `<div id="luckysheet-cols-rows-shift">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
+                for (let subItem of split[1].split('|')) {
+                    switch (subItem) {
+                        case 'asc':
+                            html += `<div id="luckysheetorderbyasc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderAZ}</div>
+                            </div>`;
+                            break;
+                        case 'desc':
+                            html += `<div id="luckysheetorderbydesc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderZA}</div>
+                            </div>`;
+                            break;
+                    }
+                }
+                html += `</div>`;
+            } else if (split[0] == 'data') {
+                html += `<div id="luckysheet-cols-rows-data">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
+                for (let subItem of split[1].split('|')) {
+                    switch (subItem) {
+                        case 'clear':
+                            html += `<div id="luckysheet-delete-text" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.clearContent}</div>
+                            </div>`;
+                            break;
+                        case 'matrix':
+                            html += `<div id="luckysheetmatrix" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                    ${rightclick.matrix}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
+                                </div>
+                            </div>`;
+                            htmlAppend += `<div id="luckysheetmatrix_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.flip}
+                                        <button id="luckysheet-matrix-turn-up" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.upAndDown}</button>
+                                        <button id="luckysheet-matrix-turn-left" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.leftAndRight}</button>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.flip}
+                                        <button id="luckysheet-matrix-turn-cw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.clockwise}</button>
+                                        <button id="luckysheet-matrix-turn-anticw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.counterclockwise}</button>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div id="luckysheet-matrix-turn-trans" class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.transpose}</div>
+                                </div>
+                                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        <div class="luckysheet-mousedown-cancel">${rightclick.matrixCalculation}</div>
+                                        <div class="luckysheet-mousedown-cancel">
+                                            <select id="luckysheet-matrix-cal-type" class="luckysheet-mousedown-cancel" style="height:24px;">
+                                                <option value="plus">${rightclick.plus}</option>
+                                                <option value="minus">${rightclick.minus}</option>
+                                                <option value="multiply">${rightclick.multiply}</option>
+                                                <option value="divided">${rightclick.divided}</option>
+                                                <option value="power">${rightclick.power}</option>
+                                                <option value="root">${rightclick.root}</option>
+                                                <option value="log">${rightclick.log}</option>
+                                            </select>
+                                            <input type="number" id="luckysheet-matrix-cal-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="2" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                                            <button id="luckysheet-matrix-cal-confirm" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.delete0}
+                                        <button id="luckysheet-matrix-delezero-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
+                                        <button id="luckysheet-matrix-delezero-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                        ${rightclick.removeDuplicate}
+                                        <button id="luckysheet-matrix-delerpt-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
+                                        <button id="luckysheet-matrix-delerpt-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
+                                    </div>
+                                </div>
+                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.generateNewMatrix}</div>
+                                </div>
+                            </div>`;
+                            break;
+                        case 'sort':
+                            html += `<div id="luckysheetorderby" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.sortSelection}</div>
+                            </div>`;
+                            break;
+                        case 'filter':
+                            html += `<div id="luckysheetfilter" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.filterSelection}</div>
+                            </div>`;
+                            break;
+                        case 'chart':
+                            html += `<div id="luckysheetdatavisual" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.chartGeneration}</div>
+                            </div>`;
+                            break;
+                        case 'image':
+                            html += `<div id="luckysheetInsertImage" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertImage}</div>
+                            </div>`;
+                            break;
+                        case 'data-validation':
+                            html += `<div id="luckysheetDataVerification" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.dataVerification}</div>
+                            </div>`;
+                            break;
+                    }
+                }
+                html += `</div>`;
+            }
+        } else {
+            if (item == 'copy') {
                 html += `<div id="luckysheet-copy-btn" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel luckysheet-copy-btn" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.copy}</div>
                 </div>`;
-                break;
-            case 'copy-as':
-                html += `<div id="luckysheetcopyfor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+            } else if (item == 'copy-as') {
+                html += ` <div id="luckysheetcopyfor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${rightclick.copyAs}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
                     </div>
-                </div>
-                <div id="luckysheetcopyfor_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                </div>`;
+                htmlAppend += `<div id="luckysheetcopyfor_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             Json
@@ -309,392 +598,17 @@ function rightclickHTML() {
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.boolean}</div>
                     </div>
                 </div>`;
-                break;
-            case 'paste':
+            } else if (item == 'paste') {
                 html += `<div id="luckysheet-copy-paste" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.paste}</div>
                 </div>`;
-                break;
-            case 'insert':
-                html += ``;
-                break;
-            case 'delete':
-                html += ``;
-                break;
-            case 'hide':
-                html += ``;
-                break;
-            case 'delete-cell':
-                html += ``;
-                break;
-            case 'clear':
-                html += ``;
-                break;
-            case 'matrix':
-                html += ``;
-                break;
-            case 'sort':
-                html += ``;
-                break;
-            case 'filter':
-                html += ``;
-                break;
-            case 'chart':
-                html += ``;
-                break;
-            case 'image':
-                html += ``;
-                break;
-            case 'data-validation': 
-                html += ``;
-                break;
-            case '----------':
-                html += ``;
-                break;
+            }
         }
     }
     html += '</div>';
-    for (let item of luckysheetConfigsetting.contextMenus) {
-        switch(item){
-            case 'copy-as':
-                html += `<div id="luckysheetcopyfor_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            Json
-                            <button id="luckysheet-copy-json-head" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.firstLineTitle}</button>
-                            <button id="luckysheet-copy-json-nohead" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.untitled}</button>
-                        </div>
-                    </div>
-                    <div id="luckysheet-copy-array1" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array1}</div>
-                    </div>
-                    <div id="luckysheet-copy-array2" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array2}</div>
-                    </div>
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            <div class="luckysheet-mousedown-cancel">${rightclick.array3}</div>
-                            <div>
-                                <input type="number" id="luckysheet-copy-arraymore-row" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.row}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
-                                ×
-                                <input type="number" id="luckysheet-copy-arraymore-col" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.column}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
-                                <button id="luckysheet-copy-arraymore-confirm" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                    <div id="luckysheet-copy-diagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.diagonal}</div>
-                    </div>
-                    <div id="luckysheet-copy-antidiagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.antiDiagonal}</div>
-                    </div>
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.diagonalOffset}
-                            <input type="number" id="luckysheet-copy-diagonaloffset-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.offset}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                            ${rightclick.column}
-                            <button id="luckysheet-copy-diagonaloffset" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                        </div>
-                    </div>
-                    <div id="luckysheet-copy-boolvalue" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.boolean}</div>
-                    </div>
-                </div>`;
-                break;
-        }
-    }
 
+    html += htmlAppend;
     return html;
-
-    return `<div id="luckysheet-rightclick-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel">
-                <div id="luckysheet-copy-btn" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel luckysheet-copy-btn" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.copy}</div>
-                </div>
-                <div id="luckysheetcopyfor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.copyAs}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                    </div>
-                </div>
-                <div id="luckysheet-copy-paste" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.paste}</div>
-                </div>
-                <div id="luckysheet-cols-rows-handleincell">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                    <div id="luckysheetColsRowsHandleAdd" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.insert}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                        </div>
-                    </div>
-                    <div id="luckysheetColsRowsHandleDel" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.delete}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                        </div>
-                    </div>
-                    <div id="luckysheetColsRowsHandleHid" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.hide}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                        </div>
-                    </div>
-                    <div id="luckysheetCellsHandleDel" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.deleteCell}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                        </div>
-                    </div>
-                </div>
-                <div id="luckysheet-cols-rows-add">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.to}
-                            <span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
-                            ${rightclick.add}
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align:center;margin-left:5px;"/>
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                            <button id="luckysheet-add-lefttop" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                        </div>
-                    </div>
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.to}
-                            <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
-                            ${rightclick.add}
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                            <button id="luckysheet-add-rightbottom" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                        </div>
-                    </div>
-                    <div id="luckysheet-del-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.deleteSelected}
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                        </div>
-                    </div>
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                            <span class="luckysheet-cols-rows-shift-size luckysheet-mousedown-cancel">${rightclick.width}</span>
-                            <input type="number" class="luckysheet-mousedown-cancel rcsize" min="0" max="255" placeholder="${rightclick.number}" value="" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;">
-                            px
-                            <button id="luckysheet-rows-cols-changesize" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="luckysheet-cols-rows-shift">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                    <div id="luckysheetorderbyasc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderAZ}</div>
-                    </div>
-                    <div id="luckysheetorderbydesc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderZA}</div>
-                    </div>
-                </div>
-                <div id="luckysheet-cols-rows-data">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                    <div id="luckysheet-delete-text" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.clearContent}</div>
-                    </div>
-                    <div id="luckysheetmatrix" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.matrix}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                        </div>
-                    </div>
-                    <div id="luckysheetorderby" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.sortSelection}</div>
-                    </div>
-                    <div id="luckysheetfilter" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.filterSelection}</div>
-                    </div>
-                    <div id="luckysheetdatavisual" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.chartGeneration}</div>
-                    </div>
-                    <div id="luckysheetInsertImage" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertImage}</div>
-                    </div>
-                    <div id="luckysheetDataVerification" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.dataVerification}</div>
-                    </div>
-                </div>
-            </div>
-            <div id="luckysheetcopyfor_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        Json
-                        <button id="luckysheet-copy-json-head" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.firstLineTitle}</button>
-                        <button id="luckysheet-copy-json-nohead" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.untitled}</button>
-                    </div>
-                </div>
-                <div id="luckysheet-copy-array1" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array1}</div>
-                </div>
-                <div id="luckysheet-copy-array2" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array2}</div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        <div class="luckysheet-mousedown-cancel">${rightclick.array3}</div>
-                        <div>
-                            <input type="number" id="luckysheet-copy-arraymore-row" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.row}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
-                            ×
-                            <input type="number" id="luckysheet-copy-arraymore-col" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.column}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
-                            <button id="luckysheet-copy-arraymore-confirm" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                <div id="luckysheet-copy-diagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.diagonal}</div>
-                </div>
-                <div id="luckysheet-copy-antidiagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.antiDiagonal}</div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.diagonalOffset}
-                        <input type="number" id="luckysheet-copy-diagonaloffset-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.offset}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        ${rightclick.column}
-                        <button id="luckysheet-copy-diagonaloffset" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                    </div>
-                </div>
-                <div id="luckysheet-copy-boolvalue" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.boolean}</div>
-                </div>
-            </div>
-            <div id="luckysheetColsRowsHandleAdd_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.top}${rightclick.add}
-                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
-                        <button id="luckysheet-addTopRows" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.bottom}${rightclick.add}
-                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
-                        <button id="luckysheet-addBottomRows" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.left}${rightclick.add}
-                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
-                        <button id="luckysheet-addLeftCols" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.right}${rightclick.add}
-                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
-                        <button id="luckysheet-addRightCols" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                    </div>
-                </div>
-            </div>
-            <div id="luckysheetColsRowsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.deleteSelected}${rightclick.row}
-                    </div>
-                </div>
-                <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.deleteSelected}${rightclick.column}
-                    </div>
-                </div>
-            </div>
-            <div id="luckysheetColsRowsHandleHid_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                <div id="luckysheet-hidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.hideSelected}${rightclick.row}
-                    </div>
-                </div>
-                <div id="luckysheet-showHidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.showHide}${rightclick.row}
-                    </div>
-                </div>
-                <div id="luckysheet-hidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.hideSelected}${rightclick.column}
-                    </div>
-                </div>
-                <div id="luckysheet-showHidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.showHide}${rightclick.column}
-                    </div>
-                </div>
-            </div>
-            <div id="luckysheetCellsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                <div id="luckysheet-delCellsMoveLeft" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.moveLeft}
-                    </div>
-                </div>
-                <div id="luckysheet-delCellsMoveUp" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.moveUp}
-                    </div>
-                </div>
-            </div>
-            <div id="luckysheetmatrix_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.flip}
-                        <button id="luckysheet-matrix-turn-up" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.upAndDown}</button>
-                        <button id="luckysheet-matrix-turn-left" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.leftAndRight}</button>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.flip}
-                        <button id="luckysheet-matrix-turn-cw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.clockwise}</button>
-                        <button id="luckysheet-matrix-turn-anticw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.counterclockwise}</button>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div id="luckysheet-matrix-turn-trans" class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.transpose}</div>
-                </div>
-                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        <div class="luckysheet-mousedown-cancel">${rightclick.matrixCalculation}</div>
-                        <div class="luckysheet-mousedown-cancel">
-                            <select id="luckysheet-matrix-cal-type" class="luckysheet-mousedown-cancel" style="height:24px;">
-                                <option value="plus">${rightclick.plus}</option>
-                                <option value="minus">${rightclick.minus}</option>
-                                <option value="multiply">${rightclick.multiply}</option>
-                                <option value="divided">${rightclick.divided}</option>
-                                <option value="power">${rightclick.power}</option>
-                                <option value="root">${rightclick.root}</option>
-                                <option value="log">${rightclick.log}</option>
-                            </select>
-                            <input type="number" id="luckysheet-matrix-cal-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="2" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                            <button id="luckysheet-matrix-cal-confirm" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.delete0}
-                        <button id="luckysheet-matrix-delezero-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
-                        <button id="luckysheet-matrix-delezero-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.removeDuplicate}
-                        <button id="luckysheet-matrix-delerpt-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
-                        <button id="luckysheet-matrix-delerpt-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
-                    </div>
-                </div>
-                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.generateNewMatrix}</div>
-                </div>
-            </div>`;
 }
 
 const pivottableconfigHTML = function () {
@@ -1537,26 +1451,6 @@ function menuToolBar() {
                     </div>
                 </div>`;
                 break;
-            case 'data-verification':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-                data-tips="${toolbar.dataVerification}" id="luckysheet-dataVerification-btn-title" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-shujuyanzheng"
-                                    style="user-select: none;">
-                                        <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
             case 'split-column':
                 html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
                 data-tips="${toolbar.splitColumn}" id="luckysheet-splitColumn-btn-title" role="button" style="user-select: none;">
@@ -1622,6 +1516,31 @@ function menuToolBar() {
                 break;
         }
     }
+
+
+    if (luckysheetConfigsetting.toolbars.findIndex(x => x == 'data-verification') == -1) {
+        html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block d-none"
+            data-tips="${toolbar.dataVerification}" id="luckysheet-dataVerification-btn-title" role="button" style="user-select: none;">`;
+    } else {
+        html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.dataVerification}" id="luckysheet-dataVerification-btn-title" role="button" style="user-select: none;">`;
+    }
+
+    html += `<div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block" style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-shujuyanzheng"
+                            style="user-select: none;">
+                                <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
 
     return html;
 }

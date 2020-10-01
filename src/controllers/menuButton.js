@@ -2911,6 +2911,10 @@ const menuButton = {
 
                     for (let c = col_st; c <= col_ed; c++) {
                         let cell = d[r][c], value = null;
+
+                        // TK custom
+                        if(cell && cell.iv)
+                            continue;
                         
                         if (getObjType(cell) == "object") {
                             value = d[r][c]["v"];
@@ -3012,6 +3016,10 @@ const menuButton = {
 
                     for (let c = col_st; c <= col_ed; c++) {
                         let value = d[r][c];
+
+                        // TK custom
+                        if(d[r][c] && d[r][c].iv)
+                            continue;
                         
                         if (getObjType(value) == "object") {
                             // if(attr in inlineStyleAffectAttribute && isInlineStringCell(value)){

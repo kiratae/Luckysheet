@@ -351,9 +351,10 @@ export default {
     ],
     fontFamily:{
         MicrosoftYaHei:"YaHei",
+        Sarabun: "Sarabun"
     },
-    fontarray: ["Times New Roman","Arial","Tahoma","Verdana"],
-    fontjson: {"times new roman":0,"arial":1,"tahoma":2,"verdana":3},
+    fontarray: ["Sarabun","Times New Roman","Arial","Tahoma","Verdana"],
+    fontjson: {"Sarabun": 0,"times new roman":1,"arial":2,"tahoma":3,"verdana":4},
     border:{
         borderTop:'borderTop',
         borderBottom:'borderBottom',
