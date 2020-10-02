@@ -1548,7 +1548,7 @@ function menuToolBar() {
 const luckysheetlodingHTML = function () {
     const _locale = locale()
     const info = _locale.info;
-    return '<div id="luckysheetloadingdata" style="width:100%;text-align:center;position:absolute;top:0px;height:100%;font-size: 16px;z-index:1000000000;background:#fff;"><div style="position:relative;top:45%;width:100%;"> <div class="luckysheetLoaderGif"></div>  <span>' + info.loading + '...</span></div></div>';
+    return '<div id="luckysheetloadingdata" style="width:100%;text-align:center;position:relative;top:0px;height:100%;font-size: 16px;z-index:1000000000;background:#fff;"><div style="position:relative;top:45%;width:100%;"> <div class="luckysheetLoaderGif"></div>  <span>' + info.loading + '...</span></div></div>';
 }
 // var menusetting = {
 //     menu_selectall: '<div id="luckysheet-selectall-btn-title"><i class="fa fa-i-cursor"></i> 全选</div>',

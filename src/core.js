@@ -222,6 +222,8 @@ luckysheet.setSheetShow = function(index) {
 // Reset parameters after destroying the table
 luckysheet.destroy = method.destroy;
 
+luckysheet.resize = luckysheetsizeauto;
+
 export {
     luckysheet
 }
