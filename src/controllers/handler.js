@@ -25,6 +25,9 @@ import splitColumn from './splitColumn';
 import { hideMenuByCancel } from '../global/cursorPos';
 import { luckysheetdefaultstyle } from './constant';
 
+// [TK] custom
+import cellErrorCtrl from './cellerror';
+
 import {
     replaceHtml,
     getObjType,
@@ -430,6 +433,34 @@ export default function luckysheetHandler() {
                 }
             }
         }
+        // TK custom display error message
+        if(cellErrorCtrl.renderMessage(row_index, col_index, row, col_pre))
+            return;
+
+        // let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
+        // if (cellError != null && cellError[row_index + '_' + col_index] != null) {
+        //     let item = cellError[row_index + '_' + col_index];
+        //     let hintText;
+
+        //     hintText = '<span style="color:#FC6666;">ข้อความแจ้งเตือน</span>';
+
+        //     if(typeof item === 'string'){
+        //         hintText += item;
+        //     }else if(typeof item === 'object' && item.length > 0){
+        //         hintText += '<ul>';
+        //         for(let i = 0; i < item.length; i++){
+        //             hintText += `<li>${item[i]}</li>`;
+        //         }
+        //         hintText += '</ul>';
+        //     }
+
+        //     $("#luckysheet-dataVerification-showHintBox").html(hintText).show().css({
+        //         'left': col_pre,
+        //         'top': row
+        //     });
+
+        //     return;
+        // }
 
         //数据验证 单元格聚焦
         dataVerificationCtrl.cellFocus(row_index, col_index, true);

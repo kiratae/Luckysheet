@@ -222,7 +222,13 @@ luckysheet.setSheetShow = function(index) {
 // Reset parameters after destroying the table
 luckysheet.destroy = method.destroy;
 
+// [TK] custom
 luckysheet.resize = luckysheetsizeauto;
+
+luckysheet.setCellError = function(data){
+    Store.luckysheetfile.cellerror = data;
+} 
+
 
 export {
     luckysheet
