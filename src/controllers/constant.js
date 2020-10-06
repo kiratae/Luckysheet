@@ -568,7 +568,7 @@ function rightclickHTML() {
                     <div id="luckysheet-copy-array2" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array2}</div>
                     </div>
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div id="luckysheet-column-row-width-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             <div class="luckysheet-mousedown-cancel">${rightclick.array3}</div>
                             <div>
