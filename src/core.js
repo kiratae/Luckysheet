@@ -32,6 +32,8 @@ import { selectHightlightShow } from './controllers/select';
 import {zoomInitial} from './controllers/zoom';
 import method from './global/method';
 
+import dataVerificationCtrl from './controllers/dataVerificationCtrl';
+
 import * as api from './global/api';
 
 let luckysheet = {};
@@ -220,8 +222,9 @@ luckysheet.resize = luckysheetsizeauto;
 
 luckysheet.setCellError = function(data){
     Store.luckysheetfile.cellerror = data;
-} 
+}
 
+luckysheet.dataVerificationCtrl = dataVerificationCtrl;
 
 export {
     luckysheet

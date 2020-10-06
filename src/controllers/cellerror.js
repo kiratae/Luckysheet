@@ -2,11 +2,10 @@ import { getSheetIndex } from '../methods/get';
 import Store from '../store';
 
 const cellErrorCtrl = {
-    cellError: Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
     renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent){
-        let _this = this;
+        let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
         // [TK] custom error message render or draw (draw a top left red triangle)
-        if (_this.cellError != null && _this.cellError[r + '_' + c] != null) {
+        if (cellError != null && cellError[r + '_' + c] != null) {
             let dv_w = 5 * Store.zoomRatio, dv_h = 5 * Store.zoomRatio; //红色小三角宽高
 
             luckysheetTableContent.beginPath();
@@ -28,9 +27,9 @@ const cellErrorCtrl = {
         }
     },
     renderMessage: function(r, c, top, left){
-        let _this = this;
-        if (_this.cellError != null && _this.cellError[r + '_' + c] != null) {
-            let item = _this.cellError[r + '_' + c];
+        let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
+        if (cellError != null && cellError[r + '_' + c] != null) {
+            let item = cellError[r + '_' + c];
             let hintText;
 
             hintText = '<span style="color:#FC6666;">ข้อความแจ้งเตือน</span>';

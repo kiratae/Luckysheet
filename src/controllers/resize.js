@@ -134,12 +134,17 @@ export default function luckysheetsizeauto(isRefreshCanvas = true) {
     const toobarElements = Store.toobarObject.toobarElements;
     let moreButtonIndex = toobarWidths.length;
 
+    
+
     // 找到应该隐藏的起始元素位置
-    for (let index = toobarWidths.length - 1; index >= 0; index--) {
-        if (toobarWidths[index] > gridW - 90) {
-            moreButtonIndex = index;
-            ismore = true;
-            break;
+    if(toobarWidths[toobarWidths.length - 1] >= gridW - 90){
+        for (let index = toobarWidths.length - 1; index >= 0; index--) {
+            console.log('toobarWidths', toobarWidths[index], toobarWidths[index] < gridW - 90);
+            if (toobarWidths[index] < gridW - 90) {
+                moreButtonIndex = index;
+                ismore = true;
+                break;
+            }
         }
     }
 
@@ -300,7 +305,7 @@ export function menuToolBarWidth() {
                 break;
             case 'paintformat':
                 list.push($('#luckysheet-icon-paintformat').offset().left);
-                listEl.push(['#luckysheet-icon-paintformat', '#luckysheet-icon-paintformat+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-icon-paintformat', '#toolbar-separator-paint-format']);
                 break;
             case 'currency':
                 list.push($('#luckysheet-icon-currency').offset().left);
@@ -320,15 +325,15 @@ export function menuToolBarWidth() {
                 break;
             case 'fmt-other':
                 list.push($('#luckysheet-icon-fmt-other').offset().left);
-                listEl.push(['#luckysheet-icon-fmt-other', '#luckysheet-icon-fmt-other+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-icon-fmt-other', '#toolbar-separator-more-format']);
                 break;
             case 'font-family':
                 list.push($('#luckysheet-icon-font-family').offset().left);
-                listEl.push(['#luckysheet-icon-font-family', '#luckysheet-icon-font-family+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-icon-font-family', '#toolbar-separator-font-family']);
                 break;
             case 'font-size':
                 list.push($('#luckysheet-icon-font-size').offset().left);
-                listEl.push(['#luckysheet-icon-font-size', '#luckysheet-icon-font-size+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-icon-font-size', '#toolbar-separator-font-size']);
                 break;
             case 'bold':
                 list.push($('#luckysheet-icon-bold').offset().left);
@@ -344,7 +349,7 @@ export function menuToolBarWidth() {
                 break;
             case 'text-color':
                 list.push($('#luckysheet-icon-text-color').offset().left);
-                listEl.push(['#luckysheet-icon-text-color', '#luckysheet-icon-text-color-menu', '#luckysheet-icon-text-color-menu+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-icon-text-color', '#luckysheet-icon-text-color-menu', '#toolbar-separator-text-color']);
                 break;
             case 'cell-color':
                 list.push($('#luckysheet-icon-cell-color').offset().left);
@@ -356,7 +361,7 @@ export function menuToolBarWidth() {
                 break;
             case 'merge':
                 list.push($('#luckysheet-icon-merge-button').offset().left);
-                listEl.push(['#luckysheet-icon-merge-button', '#luckysheet-icon-merge-menu', '#luckysheet-icon-merge-menu+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-icon-merge-button', '#luckysheet-icon-merge-menu', '#toolbar-separator-merge-cell']);
                 break;
             case 'align':
                 list.push($('#luckysheet-icon-align').offset().left);
@@ -372,7 +377,7 @@ export function menuToolBarWidth() {
                 break;
             case 'rotation':
                 list.push($('#luckysheet-icon-rotation').offset().left);
-                listEl.push(['#luckysheet-icon-rotation', '#luckysheet-icon-rotation-menu', '#luckysheet-icon-rotation-menu+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-icon-rotation', '#luckysheet-icon-rotation-menu', '#toolbar-separator-text-rotate']);
                 break;
             case 'insert-img':
                 list.push($('#luckysheet-insertImg-btn-title').offset().left);
@@ -388,7 +393,7 @@ export function menuToolBarWidth() {
                 break;
             case 'pivot':
                 list.push($('#luckysheet-pivot-btn-title').offset().left);
-                listEl.push(['#luckysheet-pivot-btn-title', '#luckysheet-pivot-btn-title+.luckysheet-toolbar-separator']);
+                listEl.push(['#luckysheet-pivot-btn-title', '#toolbar-separator-pivot-table']);
                 break;
             case 'function':
                 list.push($('#luckysheet-icon-function').offset().left);
