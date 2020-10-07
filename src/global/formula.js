@@ -1633,6 +1633,8 @@ const luckysheetformula = {
             rangetxt = val[0];
         }
 
+        // console.log('[TK] iscelldata');
+
         let reg_cell = /^(([a-zA-Z]+)|([$][a-zA-Z]+))(([0-9]+)|([$][0-9]+))$/g; //增加正则判断单元格为字母+数字的格式：如 A1:B3
         let reg_cellRange = /^(((([a-zA-Z]+)|([$][a-zA-Z]+))(([0-9]+)|([$][0-9]+)))|((([a-zA-Z]+)|([$][a-zA-Z]+))))$/g; //增加正则判断单元格为字母+数字或字母的格式：如 A1:B3，A:A
         
@@ -3792,6 +3794,8 @@ const luckysheetformula = {
             "compare": 0,
             "braces": 0
         }
+
+        console.log('[TK] functionParser ' + txt);
 
         //=(sum(b1:c10)+10)*5-100
 

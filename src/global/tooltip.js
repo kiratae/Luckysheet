@@ -3,6 +3,8 @@ import browser from './browser';
 import { replaceHtml } from '../utils/util';
 import locale from '../locale/locale';
 
+import Store from '../store';
+
 const tooltip = {
     info: function (title, content) {
         $("#luckysheet-modal-dialog-mask").show();
@@ -11,7 +13,7 @@ const tooltip = {
         let _locale = locale();
         let locale_button = _locale.button;
 
-        $("body").append(replaceHtml(modelHTML, { 
+        $(Store.bodyContainer).append(replaceHtml(modelHTML, { 
             "id": "luckysheet-info", 
             "addclass": "", 
             "title": title, 
@@ -24,7 +26,7 @@ const tooltip = {
             myw = $t.outerWidth();
         let winw = $(window).width(), winh = $(window).height();
         let scrollLeft = $(document).scrollLeft(), scrollTop = $(document).scrollTop();
-        $("#luckysheet-info").css({ "left": (winw + scrollLeft - myw) / 2, "top": (winh + scrollTop - myh) / 3 }).show();
+        $("#luckysheet-info").css({ "left": (winw + scrollLeft - myw) / 2, "top": (scrollTop - myh) / 2 }).show();
     },
     confirm: function (title, content, func1, func2, name1, name2) {
         $("#luckysheet-modal-dialog-mask").show();
@@ -40,7 +42,7 @@ const tooltip = {
             name2 = locale_button.cancel;
         }
 
-        $("body").append(replaceHtml(modelHTML, { 
+        $(Store.bodyContainer).append(replaceHtml(modelHTML, { 
             "id": "luckysheet-confirm", 
             "addclass": "", 
             "style": "z-index:100003", 
@@ -53,7 +55,7 @@ const tooltip = {
             myw = $t.outerWidth();
         let winw = $(window).width(), winh = $(window).height();
         let scrollLeft = $(document).scrollLeft(), scrollTop = $(document).scrollTop();
-        $("#luckysheet-confirm").css({ "left": (winw + scrollLeft - myw) / 2, "top": (winh + scrollTop - myh) / 3 }).show();
+        $("#luckysheet-confirm").css({ "left": (winw + scrollLeft - myw) / 2, "top": ((winh + scrollTop - myh) / 3) + Store.topOffset }).show();
         $t.find(".luckysheet-model-conform-btn").click(function () {
             if (typeof func1 == 'function') {
                 func1();

@@ -1354,7 +1354,15 @@ export default function luckysheetHandler() {
         if (Store.flowdata[row_index] != null &&
             Store.flowdata[row_index][col_index] != null &&
             Store.flowdata[row_index][col_index].ro != null &&
-            Store.flowdata[row_index][col_index].ro == true) {
+            Store.flowdata[row_index][col_index].ro == true &&
+            !Store.formEditor) {
+            return;
+        }
+        if (Store.flowdata[row_index] != null &&
+            Store.flowdata[row_index][col_index] != null &&
+            Store.flowdata[row_index][col_index].iv != null &&
+            Store.flowdata[row_index][col_index].iv == true &&
+            Store.formEditor) {
             return;
         }
 

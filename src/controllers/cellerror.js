@@ -2,7 +2,7 @@ import { getSheetIndex } from '../methods/get';
 import Store from '../store';
 
 const cellErrorCtrl = {
-    renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent){
+    renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
         // [TK] custom error message render or draw (draw a top left red triangle)
         if (cellError != null && cellError[r + '_' + c] != null) {
@@ -26,7 +26,7 @@ const cellErrorCtrl = {
             luckysheetTableContent.closePath();
         }
     },
-    renderMessage: function(r, c, top, left){
+    renderMessage: function (r, c, top, left) {
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
         if (cellError != null && cellError[r + '_' + c] != null) {
             let item = cellError[r + '_' + c];
@@ -34,11 +34,11 @@ const cellErrorCtrl = {
 
             hintText = '<span style="color:#FC6666;">ข้อความแจ้งเตือน</span>';
 
-            if(typeof item === 'string'){
+            if (typeof item === 'string') {
                 hintText += item;
-            }else if(typeof item === 'object' && item.length > 0){
+            } else if (typeof item === 'object' && item.length > 0) {
                 hintText += '<ul>';
-                for(let i = 0; i < item.length; i++){
+                for (let i = 0; i < item.length; i++) {
                     hintText += `<li>${item[i]}</li>`;
                 }
                 hintText += '</ul>';
@@ -50,7 +50,7 @@ const cellErrorCtrl = {
             });
 
             return true;
-        }else{
+        } else {
             return false;
         }
     }

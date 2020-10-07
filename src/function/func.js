@@ -1597,6 +1597,8 @@ function luckysheet_getcelldata(txt) {
         return window.luckysheet_getcelldata_cache[txt];
     }
 
+    console.log('[TK] luckysheet_getcelldata (cross-sheet)');
+
     let luckysheetfile = getluckysheetfile();
     let val = txt.split("!");
     let sheettxt = "",

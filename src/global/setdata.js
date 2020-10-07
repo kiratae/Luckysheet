@@ -30,6 +30,17 @@ function setcellvalue(r, c, d, v) {
             if(v.ct != null){
                 cell.ct = v.ct;
             }
+
+            // [TK] custom
+            if(v.ro!=null){
+                cell.ro = v.ro;
+            }
+            if(v.iv!=null){
+                cell.iv = v.iv;
+            }
+            if(v.tp!=null){
+                cell.tp = v.tp;
+            }
         }
         
 

@@ -133,6 +133,9 @@ const Store = {
 
     fontList:[],
 
+    // [TK] custom
+    bodyContainer: null,
+    topOffset: 0
 }
 
 export default Store;

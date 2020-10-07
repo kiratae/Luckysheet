@@ -53,8 +53,10 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         
         "max-width":winW + scrollLeft - col_pre - 20 - Store.rowHeaderWidth, 
         "max-height": winH + scrollTop - row_pre - 20 - 15 - Store.toolbarHeight - Store.infobarHeight - Store.calculatebarHeight - Store.sheetBarHeight - Store.statisticBarHeight, 
-        "left": col_pre + container_offset.left + Store.rowHeaderWidth - scrollLeft - 2, 
-        "top":  row_pre + container_offset.top + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2, 
+        // "left": col_pre + container_offset.left + Store.rowHeaderWidth - scrollLeft - 2, 
+        // "top":  row_pre + container_offset.top + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2, 
+        "left": col_pre + Store.rowHeaderWidth - scrollLeft - 2, 
+        "top":  row_pre + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2, 
     }
 
     let inputContentScale = {
@@ -100,8 +102,10 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
                 // "transform-origin":"center top",
                 "max-width": winW*2/3, 
                 "max-height": winH + scrollTop - row_pre - 20 - 15 - Store.toolbarHeight - Store.infobarHeight - Store.calculatebarHeight - Store.sheetBarHeight - Store.statisticBarHeight, 
-                "left": col_pre + container_offset.left + Store.rowHeaderWidth - scrollLeft - 2, 
-                "top":  row_pre + container_offset.top + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2, 
+                // "left": col_pre + container_offset.left + Store.rowHeaderWidth - scrollLeft - 2, 
+                // "top":  row_pre + container_offset.top + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2, 
+                "left": col_pre + Store.rowHeaderWidth - scrollLeft - 2, 
+                "top":  row_pre + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2, 
             }
 
             if(Store.zoomRatio<1){
@@ -118,8 +122,10 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
                 // "transform-origin":"right top",
                 "max-width": col + container_offset.left - scrollLeft  - 8, 
                 "max-height": winH + scrollTop - row_pre - 20 - 15 - Store.toolbarHeight - Store.infobarHeight - Store.calculatebarHeight - Store.sheetBarHeight - Store.statisticBarHeight, 
-                "right": winW - (container_offset.left + (Store.rowHeaderWidth-1) - scrollLeft) - col, 
-                "top":  row_pre + container_offset.top + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2, 
+                // "right": winW - (container_offset.left + (Store.rowHeaderWidth-1) - scrollLeft) - col, 
+                // "top":  row_pre + container_offset.top + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2,
+                "right": winW - ((Store.rowHeaderWidth-1) - scrollLeft) - col, 
+                "top":  row_pre + Store.infobarHeight + Store.toolbarHeight + Store.calculatebarHeight + Store.columeHeaderHeight - scrollTop - 2,  
             }
 
             if(Store.zoomRatio<1){

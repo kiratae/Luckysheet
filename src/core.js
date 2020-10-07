@@ -106,6 +106,8 @@ luckysheet.create = function (setting) {
     // [TK] custom config
     luckysheetConfigsetting.toolbars = extendsetting.toolbars;
     luckysheetConfigsetting.contextMenus = extendsetting.contextMenus;
+    Store.formEditor = extendsetting.formEditor;
+    Store.bodyContainer = extendsetting.bodyContainer;
     // [TK] custom hooks
     luckysheetConfigsetting.onCellClick = extendsetting.onCellClick;
     luckysheetConfigsetting.onCellMouseDown = extendsetting.onCellMouseDown;

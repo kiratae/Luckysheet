@@ -132,6 +132,17 @@ export function setCellValue(row, column, value, options = {}) {
     }
     if(value instanceof Object){
         let curv = {};
+        // [TK] custom
+        if(value.ro!=null){
+            curv.ro = value.ro;
+        }
+        if(value.iv!=null){
+            curv.iv = value.iv;
+        }
+        if(value.tp!=null){
+            curv.tp = value.tp;
+        }
+
         if(value.f!=null && value.v==null){
             curv.f = value.f;
             if(value.ct!=null){
@@ -155,6 +166,7 @@ export function setCellValue(row, column, value, options = {}) {
             formula.delFunctionGroup(row, column);
             setcellvalue(row, column, data, curv);//update text value
         }
+
         for(let attr in value){
             let v = value[attr];
             if(attr in formatList){
@@ -211,6 +223,11 @@ export function clearCell(row, column, options = {}) {
     if(getObjType(cell) == "object"){
         delete cell["m"];
         delete cell["v"];
+
+        // [TK] custom
+        delete cell["ro"];
+        delete cell["iv"];
+        delete cell["tp"];
 
         if(cell["f"] != null){
             delete cell["f"];
