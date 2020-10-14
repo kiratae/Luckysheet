@@ -20,6 +20,7 @@ import locale from '../locale/locale';
 
 // [TK] custom
 import cellErrorCtrl from '../controllers/cellerror';
+import cellValidationCtrl from '../controllers/cellvalidation';
 
 function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
     if (scrollHeight == null) {
@@ -1183,6 +1184,7 @@ let nullCellRender = function (r, c, start_r, start_c, end_r, end_c, luckysheetT
 
     // [TK] custom
     cellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    cellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
 }
 
 
@@ -1230,6 +1232,7 @@ let cellRender = function (r, c, start_r, start_c, end_r, end_c, value, luckyshe
 
     // [TK] custom
     cellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    cellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
 
     let dataVerification = dataVerificationCtrl.dataVerification;
 

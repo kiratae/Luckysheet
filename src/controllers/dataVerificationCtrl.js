@@ -1428,7 +1428,7 @@ const dataVerificationCtrl = {
     },
     getDropdownList: function(txt){
         let list = [];
-
+        // [TK] getDropdownList
         if(formula.iscelldata(txt)){
             let range = formula.getcellrange(txt);
             let d = Store.luckysheetfile[getSheetIndex(range.sheetIndex)].data;
