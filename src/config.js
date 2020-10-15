@@ -101,7 +101,9 @@ export default {
         'data-verification', // dataVerification-btn-title
         'split-column', // splitColumn-btn-title
         'chart', // chart-btn-screenshot
-        'search-more' // icon-seachmore
+        'search-more', // icon-seachmore
+        'protection',
+        'print'
     ],
     contextMenus: [
         'copy',
