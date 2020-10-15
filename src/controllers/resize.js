@@ -140,18 +140,31 @@ export default function luckysheetsizeauto(isRefreshCanvas = true) {
     
 
     // 找到应该隐藏的起始元素位置
-    for (let index = toobarWidths.length - 1; index >= 0; index--) {
+    if(toobarWidths[toobarWidths.length - 1] >= gridW - 90){
+        for (let index = toobarWidths.length - 1; index >= 0; index--) {
+            // console.log('toobarWidths', toobarWidths[index], toobarWidths[index] < gridW - 90);
+            if (toobarWidths[index] < gridW - 90) {
+                moreButtonIndex = index;
+                if(moreButtonIndex < toobarWidths.length - 1){
 
-        // #luckysheet-icon-morebtn button width plus right is 83px
-        if(toobarWidths[index] < gridW - 90){
-            moreButtonIndex = index;
-            if(moreButtonIndex < toobarWidths.length - 1){
-
-                ismore = true;
+                    ismore = true;
+                }
+                break;
             }
-            break;
         }
     }
+    // for (let index = toobarWidths.length - 1; index >= 0; index--) {
+
+    //     // #luckysheet-icon-morebtn button width plus right is 83px
+    //     if(toobarWidths[index] < gridW - 90){
+    //         moreButtonIndex = index;
+    //         if(moreButtonIndex < toobarWidths.length - 1){
+
+    //             ismore = true;
+    //         }
+    //         break;
+    //     }
+    // }
     // 从起始位置开始，后面的元素统一挪到下方隐藏DIV中
     for (let index = moreButtonIndex; index < toobarElements.length; index++) {
         const element = toobarElements[index];
@@ -443,7 +456,8 @@ export function menuToolBarWidth() {
             break;
         }
     }
-    list[list.length - 1] += $(listEl[listEl.length - 1]).outerWidth() + 5;
+    // console.log('menuToolBarWidth', list, listEl);
+    // list[list.length - 1] += list[list.length - 2] + 5;
     toobarObject.toobarWidths = list;
     toobarObject.toobarElements = listEl;
 }

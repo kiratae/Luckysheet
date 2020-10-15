@@ -26,6 +26,7 @@ import { isInlineStringCell,convertSpanToShareString } from '../controllers/inli
 import { luckysheet_compareWith, luckysheet_getarraydata, luckysheet_getcelldata, luckysheet_parseData, luckysheet_getValue, luckysheet_indirect_check, luckysheet_indirect_check_return, luckysheet_offset_check,luckysheet_calcADPMM } from '../function/func';
 import Store from '../store';
 import locale from '../locale/locale';
+import weVariable from './variable';
 
 const luckysheetformula = {
     error: {
@@ -325,7 +326,7 @@ const luckysheetformula = {
             $("#luckysheet-functionbox-cell").html("");
             return;
         }
-        
+
         let _this = this;
 
         let d = Store.flowdata;
@@ -333,6 +334,8 @@ const luckysheetformula = {
         // && d[r][c].v != null
         if (d[r] != null && d[r][c] != null) {
             let cell = d[r][c];
+
+            weVariable.functionboxshow(cell);
 
             if(isInlineStringCell(cell)){
                 value = getInlineStringNoStyle(r, c);
@@ -1226,8 +1229,6 @@ const luckysheetformula = {
     updatecell: function(r, c, value, isRefresh=true) {
         let _this = this;
 
-        console.log('updatecell', r, c, value, isRefresh);
-
         let $input = $("#luckysheet-rich-text-editor");
         let inputText = $input.text(), inputHtml = $input.html();
 
@@ -1280,6 +1281,8 @@ const luckysheetformula = {
         // API, we get value from user
         value = value || $input.text();
 
+        console.log('updatecell ',r,c,value,curv);
+
         if(!isCurInline){
             if(isRealNull(value) && !isPrevInline){
                 if(curv == null || (isRealNull(curv.v) && curv.spl == null && curv.f == null)){
@@ -1317,6 +1320,8 @@ const luckysheetformula = {
         let d = editor.deepCopyFlowData(Store.flowdata);
         let dynamicArrayItem = null;  //动态数组
 
+        weVariable.updatecell(value);
+
         if (getObjType(curv) == "object") {
 
             if(!isCurInline){
@@ -1327,6 +1332,7 @@ const luckysheetformula = {
                     curv = d[r][c];
                     curv.v = v[1];
                     curv.f = v[2];
+                    curv.df = v[2].replace('=',''); // [TK] custom
 
                     //打进单元格的sparklines的配置串， 报错需要单独处理。
                     if(v.length == 4 && v[3].type == "sparklines"){
@@ -1358,6 +1364,7 @@ const luckysheetformula = {
                         curv = d[r][c];
                         curv.v = v[1];
                         curv.f = v[2];
+                        curv.df = v[2].replace('=',''); // [TK] custom
         
                         //打进单元格的sparklines的配置串， 报错需要单独处理。
                         if(v.length == 4 && v[3].type == "sparklines"){
@@ -1450,7 +1457,8 @@ const luckysheetformula = {
                 isRunExecFunction = false;
                 value = {
                     "v": v[1],
-                    "f": v[2]
+                    "f": v[2],
+                    "df": v[2].replace('=','') // [TK] custom
                 };
 
 
@@ -1484,6 +1492,7 @@ const luckysheetformula = {
                     // update attribute v
                     value.v = v[1];
                     value.f = v[2];
+                    value.df = v[2].replace('=','') // [TK] custom
 
                     //打进单元格的sparklines的配置串， 报错需要单独处理。
                     if(v.length == 4 && v[3].type == "sparklines"){
@@ -3296,6 +3305,8 @@ const luckysheetformula = {
         let value1 = $editer.html(),
             value1txt = $editer.text();
 
+        console.log('[TK] functionInputHanddler', value1, value1txt);
+
         setTimeout(function() {
             let value = $editer.text(),
                 valuetxt = value;
@@ -3385,7 +3396,7 @@ const luckysheetformula = {
 
         _this.functionHTMLIndex = 0;
         
-        return '<span dir="auto" class="luckysheet-formula-text-color">=</span>' + _this.functionHTML(txt);
+        return '<span dir="auto" class="luckysheet-formula-text-color">=</span>' + _this.functionHTML(weVariable.variableHTML(txt));
     },
     functionHTML: function(txt) {
         let _this = this;
