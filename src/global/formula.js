@@ -28,7 +28,7 @@ import locale from '../locale/locale';
 
 const luckysheetformula = {
     error: {
-        v: "#VALUE!",    //错误的参数或运算符
+        v: "#VALUE!",    //错误的参数或运算符 // Wrong parameter or operator
         n: "#NAME?",     //公式名称错误
         na: "#N/A",      //函数或公式中没有可用数值
         r: "#REF!",      //删除了由其他公式引用的单元格
@@ -1221,6 +1221,8 @@ const luckysheetformula = {
         if (_this.rangetosheet != null && _this.rangetosheet != Store.currentSheetIndex) {
             sheetmanage.changeSheetExec(_this.rangetosheet);
         }
+
+        console.log('updatecell', r, c, value, isRefresh);
 
         //数据验证 输入数据无效时禁止输入
         if(dataVerificationCtrl.dataVerification != null){

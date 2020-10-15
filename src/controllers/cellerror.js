@@ -3,6 +3,9 @@ import Store from '../store';
 
 const cellErrorCtrl = {
     renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
+        if(Store.formEditor)
+            return;
+
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
         // [TK] custom error message render or draw (draw a top left red triangle)
         if (cellError != null && cellError[r + '_' + c] != null) {
@@ -27,6 +30,9 @@ const cellErrorCtrl = {
         }
     },
     renderMessage: function (r, c, top, left) {
+        if(Store.formEditor)
+            return;
+            
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
         if (cellError != null && cellError[r + '_' + c] != null) {
             let item = cellError[r + '_' + c];

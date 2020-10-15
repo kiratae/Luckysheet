@@ -3,6 +3,9 @@ import Store from '../store';
 
 const cellValidationCtrl = {
     renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
+        if(!Store.formEditor)
+            return;
+
         let cellValidation = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellvalidation"];
         // [TK] custom validation render or draw (draw a top left red triangle)
         if (cellValidation != null && cellValidation[r + '_' + c] != null) {

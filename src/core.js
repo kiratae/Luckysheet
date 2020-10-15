@@ -32,7 +32,9 @@ import { selectHightlightShow } from './controllers/select';
 import {zoomInitial} from './controllers/zoom';
 import method from './global/method';
 
+// [TK] custom
 import dataVerificationCtrl from './controllers/dataVerificationCtrl';
+import luckysheetformula from './global/formula';
 
 import * as api from './global/api';
 
@@ -227,6 +229,14 @@ luckysheet.setCellError = function(data){
 }
 
 luckysheet.dataVerificationCtrl = dataVerificationCtrl;
+
+luckysheet.execFormula = function(txt){
+    console.log('execFormula', txt);
+    if(typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1){
+        return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
+    }
+}
+// end [TK] custom
 
 export {
     luckysheet
