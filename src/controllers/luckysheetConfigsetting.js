@@ -27,6 +27,8 @@ const luckysheetConfigsetting = {
     
     editMode: false,
     beforeCreateDom: null,
+    workbookCreateBefore: null,
+    workbookCreateAfter: null,
     fireMousedown: null,
     plugins:[],
     forceCalculation:false, // Forced to refresh the formula, more formulas will cause performance problems, use with caution

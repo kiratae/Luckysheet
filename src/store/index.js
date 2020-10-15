@@ -135,7 +135,10 @@ const Store = {
 
     // [TK] custom
     bodyContainer: null,
-    topOffset: 0
+    topOffset: 0,
+
+    currentSheetView:"viewNormal",
+
 }
 
 export default Store;

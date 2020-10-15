@@ -1,9 +1,9 @@
-﻿body {
-    /* margin: 0px;
+/*body {
+    margin: 0px;
     height: 100%;
-    overflow: hidden; */
+    overflow: hidden;
 }
-
+ */
 
 
 ::-webkit-scrollbar-track {
@@ -574,6 +574,15 @@
     top: -1660px;
 } */
 
+#luckysheet-icon-fmt-other .luckysheet-toolbar-menu-button-caption {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 55px;
+    margin-left: 1px;
+    text-align: center;
+}
+
 #luckysheet-icon-font-family .luckysheet-toolbar-menu-button-caption {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -775,10 +784,10 @@
     margin-right: 0px;
 }
 
-.luckysheet-icon-autofilter {
+/* .luckysheet-icon-autofilter {
     left: -36px;
     top: -406px;
-}
+} */
 
 #luckysheet-icon-pivotTable .luckysheet-toolbar-menu-button-caption {
     color: #0188fb;
@@ -973,7 +982,7 @@
 .luckysheet-sta-c .luckysheet-sta-content {
     position: absolute;
     left: 0px;
-    right: 220px;
+    right: 358px;
     height: 22px;
     line-height: 22px;
     text-align: right;
@@ -2616,7 +2625,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     padding: 4px 8px;
     font-size: 14px;
     line-height: 1.42857143;
-    border-radius: 4px;
+    border-radius: 2px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -2732,29 +2741,28 @@ fieldset[disabled] .btn-default.focus {
 
 .btn-primary {
     color: #ffffff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
+    background-color: #2D7FF9;
+    border-color:transparent;
 }
 
 .btn-primary:focus,
 .btn-primary.focus {
     color: #ffffff;
     background-color: #286090;
-    border-color: #122b40;
+    border-color:transparent;
 }
 
 .btn-primary:hover {
     color: #ffffff;
-    background-color: #286090;
-    border-color: #204d74;
+    background-color: #5391ff;
+    border-color:transparent;
 }
 
 .btn-primary:active,
 .btn-primary.active,
 .open>.dropdown-toggle.btn-primary {
     color: #ffffff;
-    background-color: #286090;
-    border-color: #204d74;
+    background-color: #5391ff;
 }
 
 .btn-primary:active:hover,
@@ -2768,7 +2776,7 @@ fieldset[disabled] .btn-default.focus {
 .open>.dropdown-toggle.btn-primary.focus {
     color: #ffffff;
     background-color: #204d74;
-    border-color: #122b40;
+    border-color:transparent;
 }
 
 .btn-primary:active,
@@ -2796,7 +2804,7 @@ fieldset[disabled] .btn-primary:active,
 .btn-primary[disabled].active,
 fieldset[disabled] .btn-primary.active {
     background-color: #337ab7;
-    border-color: #2e6da4;
+    border-color:transparent;
 }
 
 .btn-primary .badge {
@@ -2810,13 +2818,13 @@ fieldset[disabled] .btn-primary.active {
 .list-group-item.active:hover,
 .list-group-item.active:focus {
     background: #0188FB;
-    border-color: #726EFE;
+    border-color:transparent;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background: #388cf5;
-    border-color: #6864FE;
+    background: #5391ff;
+    border-color:transparent;
 }
 
 
