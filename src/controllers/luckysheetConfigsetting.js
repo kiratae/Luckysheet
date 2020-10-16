@@ -33,15 +33,7 @@ const luckysheetConfigsetting = {
     plugins:[],
     forceCalculation:false, // Forced to refresh the formula, more formulas will cause performance problems, use with caution
 
-    // [TK] custom config
-    toolbars: [],
-    contextMenus: [],
-    // [TK] custom hooks
-    onCellClick: null,
-    onCellMouseDown: null,
-    onCellMouseOver: null,
-    onCellMouseOut: null,
-    onSheetMouseOut: null,
+
 
     defaultColWidth:73,
     defaultRowHeight:19,

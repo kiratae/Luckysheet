@@ -133,10 +133,6 @@ const Store = {
 
     fontList:[],
 
-    // [TK] custom
-    bodyContainer: null,
-    topOffset: 0,
-
     currentSheetView:"viewNormal",
 
 }

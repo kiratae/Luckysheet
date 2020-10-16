@@ -1,19 +1,27 @@
 import { getObjType } from '../utils/util';
+import { isInlineStringCell } from '../controllers/inlineString';
+import { getcellvalue, getcellFormula, getInlineStringNoStyle, getOrigincell } from '../global/getdata';
+import { genarate, valueShowEs } from '../global/format';
 
 const weVariable = {
     variablePrefix: '!',
-    functionboxshow: function (cell) {
+    functionboxshow: function (r, c, d, cell) {
         console.log("weVariable:functionboxshow", cell);
-        if (cell != null && cell.df != null) {
-            // TODO : transform df to f
-            cell.f = cell.df;
+        if (isInlineStringCell(cell)) {
+            return getInlineStringNoStyle(r, c);
+        }
+        else if (cell.df != null) {
+            return getcellvalue(r, c, d, "df");
+        }
+        else {
+            return valueShowEs(r, c, d);
         }
     },
-    updatecell: function (value) {
+    updatecell: function (r, c, d, value) {
         if (getObjType(value) == "string") {
-            console.log("weVariable:updatecell:string", value);
+            console.log("weVariable::updatecell:string", r, c, d, value);
         } else if (getObjType(value) == "object") {
-            console.log("weVariable:updatecell:object", value);
+            console.log("weVariable::updatecell:object", r, c, d, value);
         }
     },
     variableHTML: function (text) {

@@ -1,9 +1,10 @@
 import { getSheetIndex } from '../methods/get';
 import Store from '../store';
+import weConfigsetting from './configsetting';
 
-const cellValidationCtrl = {
+const weCellValidationCtrl = {
     renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
-        if(!Store.formEditor)
+        if(!weConfigsetting.formEditor)
             return;
 
         let cellValidation = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellvalidation"];
@@ -31,4 +32,4 @@ const cellValidationCtrl = {
     }
 }
 
-export default cellValidationCtrl;
+export default weCellValidationCtrl;

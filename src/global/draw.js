@@ -19,8 +19,8 @@ import Store from '../store';
 import locale from '../locale/locale';
 
 // [TK] custom
-import cellErrorCtrl from '../controllers/cellerror';
-import cellValidationCtrl from '../controllers/cellvalidation';
+import weCellErrorCtrl from '../custom/cellerror';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
     if (scrollHeight == null) {
@@ -1183,8 +1183,8 @@ let nullCellRender = function (r, c, start_r, start_c, end_r, end_c, luckysheetT
     }
 
     // [TK] custom
-    cellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
-    cellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
 }
 
 
@@ -1231,8 +1231,8 @@ let cellRender = function (r, c, start_r, start_c, end_r, end_c, value, luckyshe
     luckysheetTableContent.fillRect(cellsize[0], cellsize[1], cellsize[2], cellsize[3]);
 
     // [TK] custom
-    cellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
-    cellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
 
     let dataVerification = dataVerificationCtrl.dataVerification;
 

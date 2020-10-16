@@ -1,9 +1,10 @@
 import { getSheetIndex } from '../methods/get';
 import Store from '../store';
+import weConfigsetting from './configsetting';
 
-const cellErrorCtrl = {
+const weCellErrorCtrl = {
     renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
-        if(Store.formEditor)
+        if(weConfigsetting.formEditor)
             return;
 
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
@@ -30,7 +31,7 @@ const cellErrorCtrl = {
         }
     },
     renderMessage: function (r, c, top, left) {
-        if(Store.formEditor)
+        if(weConfigsetting.formEditor)
             return;
             
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
@@ -62,4 +63,4 @@ const cellErrorCtrl = {
     }
 }
 
-export default cellErrorCtrl;
+export default weCellErrorCtrl;

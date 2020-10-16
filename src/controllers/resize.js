@@ -5,6 +5,7 @@ import Store from '../store';
 import locale from '../locale/locale';
 import sheetmanage from './sheetmanage';
 import tooltip from '../global/tooltip'
+import weConfigsetting from '../custom/configsetting';
 
 let gridW = 0,
     gridH = 0;
@@ -312,7 +313,7 @@ export function menuToolBarWidth() {
     toobarObject.toobarWidths = [];
     let list = [];
     let listEl = [];
-    for(let item of luckysheetConfigsetting.toolbars){
+    for(let item of weConfigsetting.toolbars){
         switch (item) {
             case 'undo': 
                 list.push($('#luckysheet-icon-undo').offset().left);

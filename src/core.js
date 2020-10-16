@@ -5,7 +5,6 @@ import Store from './store';
 import server from './controllers/server';
 import luckysheetConfigsetting from './controllers/luckysheetConfigsetting';
 import sheetmanage from './controllers/sheetmanage';
-import luckysheetsizeauto from './controllers/resize';
 import luckysheetHandler from './controllers/handler';
 import {initialFilterHandler} from './controllers/filter';
 import {initialMatrixOperation} from './controllers/matrixOperation';
@@ -34,8 +33,7 @@ import {printInitial} from './controllers/print';
 import method from './global/method';
 
 // [TK] custom
-import dataVerificationCtrl from './controllers/dataVerificationCtrl';
-import luckysheetformula from './global/formula';
+import weCore from './custom/core';
 
 import * as api from './global/api';
 
@@ -108,18 +106,6 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.forceCalculation = extendsetting.forceCalculation;
     luckysheetConfigsetting.plugins = extendsetting.plugins;
 
-    // [TK] custom config
-    luckysheetConfigsetting.toolbars = extendsetting.toolbars;
-    luckysheetConfigsetting.contextMenus = extendsetting.contextMenus;
-    Store.formEditor = extendsetting.formEditor;
-    Store.bodyContainer = extendsetting.bodyContainer;
-    // [TK] custom hooks
-    luckysheetConfigsetting.onCellClick = extendsetting.onCellClick;
-    luckysheetConfigsetting.onCellMouseDown = extendsetting.onCellMouseDown;
-    luckysheetConfigsetting.onCellMouseOver = extendsetting.onCellMouseOver;
-    luckysheetConfigsetting.onCellMouseOut = extendsetting.onCellMouseOut;
-    luckysheetConfigsetting.onSheetMouseOut = extendsetting.onSheetMouseOut;
-
     luckysheetConfigsetting.rowHeaderWidth = extendsetting.rowHeaderWidth;
     luckysheetConfigsetting.columeHeaderHeight = extendsetting.columeHeaderHeight;
 
@@ -128,6 +114,9 @@ luckysheet.create = function (setting) {
 
     luckysheetConfigsetting.title = extendsetting.title;
     luckysheetConfigsetting.container = extendsetting.container;
+
+    // [TK] custom
+    weCore.setConfig(extendsetting);
 
     // Register plugins
     initPlugins(extendsetting.plugins , extendsetting.data);
@@ -226,22 +215,8 @@ luckysheet.selectHightlightShow = selectHightlightShow;
 // Reset parameters after destroying the table
 luckysheet.destroy = method.destroy;
 
-// [TK] custom
-luckysheet.resize = luckysheetsizeauto;
-
-luckysheet.setCellError = function(data){
-    Store.luckysheetfile.cellerror = data;
-}
-
-luckysheet.dataVerificationCtrl = dataVerificationCtrl;
-
-luckysheet.execFormula = function(txt){
-    console.log('execFormula', txt);
-    if(typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1){
-        return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
-    }
-}
-// end [TK] custom
+ // [TK] custom
+weCore.setAPI(luckysheet);
 
 export {
     luckysheet

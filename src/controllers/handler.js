@@ -28,7 +28,9 @@ import {checkProtectionLockedRangeList,checkProtectionAllSelected,checkProtectio
 import { openCellFormatModel } from './cellFormat';
 
 // [TK] custom
-import cellErrorCtrl from './cellerror';
+import weCellErrorCtrl from '../custom/cellerror';
+import weHandler from '../custom/handler';
+import weConfigsetting from '../custom/configsetting';
 
 import {
     replaceHtml,
@@ -271,96 +273,8 @@ export default function luckysheetHandler() {
     });
 
 
-    //#region [TK] 2020-09-28 extend hook actions
-    $('#luckysheet-cell-main').mousedown(function (event) {
-        // console.log('#luckysheet-cell-main clicked!!!');
-        let mouse = mouseposition(event.pageX, event.pageY);
-        if (mouse[0] >= Store.cellmainWidth - Store.cellMainSrollBarSize || mouse[1] >= Store.cellmainHeight - Store.cellMainSrollBarSize) {
-            return;
-        }
-
-        let x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
-        let y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
-
-        if (luckysheetFreezen.freezenverticaldata != null && mouse[0] < (luckysheetFreezen.freezenverticaldata[0] - luckysheetFreezen.freezenverticaldata[2])) {
-            x = mouse[0] + luckysheetFreezen.freezenverticaldata[2];
-        }
-
-        if (luckysheetFreezen.freezenhorizontaldata != null && mouse[1] < (luckysheetFreezen.freezenhorizontaldata[0] - luckysheetFreezen.freezenhorizontaldata[2])) {
-            y = mouse[1] + luckysheetFreezen.freezenhorizontaldata[2];
-        }
-
-        let row_location = rowLocation(y),
-            row = row_location[1],
-            row_pre = row_location[0],
-            row_index = row_location[2];
-
-        let col_location = colLocation(x),
-            col = col_location[1],
-            col_pre = col_location[0],
-            col_index = col_location[2];
-
-        // console.log('onCellClick', row_location, col_location);
-
-        // if (luckysheetConfigsetting.onCellClick != null && getObjType(luckysheetConfigsetting.onCellClick) == "function") {
-        //     luckysheetConfigsetting.onCellClick(row_index, col_index, Store.flowdata[row_index][col_index]);
-        // }
-    });
-
-
-    let tempRow = -1,
-        tempCol = -1;
-    $('#luckysheet-cell-main').mousemove(function (event) {
-        let mouse = mouseposition(event.pageX, event.pageY);
-        if (mouse[0] >= Store.cellmainWidth - Store.cellMainSrollBarSize || mouse[1] >= Store.cellmainHeight - Store.cellMainSrollBarSize) {
-            return;
-        }
-
-        let x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
-        let y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
-
-        if (luckysheetFreezen.freezenverticaldata != null && mouse[0] < (luckysheetFreezen.freezenverticaldata[0] - luckysheetFreezen.freezenverticaldata[2])) {
-            x = mouse[0] + luckysheetFreezen.freezenverticaldata[2];
-        }
-
-        if (luckysheetFreezen.freezenhorizontaldata != null && mouse[1] < (luckysheetFreezen.freezenhorizontaldata[0] - luckysheetFreezen.freezenhorizontaldata[2])) {
-            y = mouse[1] + luckysheetFreezen.freezenhorizontaldata[2];
-        }
-
-        let row_location = rowLocation(y),
-            row = row_location[1],
-            row_pre = row_location[0],
-            row_index = row_location[2];
-
-        let col_location = colLocation(x),
-            col = col_location[1],
-            col_pre = col_location[0],
-            col_index = col_location[2];
-
-        // console.log('mouse over');
-        if (tempRow != row_index || tempCol != col_index) {
-            if (tempRow != -1 && tempCol != -1) {
-                if (luckysheetConfigsetting.onCellMouseOut != null && getObjType(luckysheetConfigsetting.onCellMouseOut) == "function") {
-                    luckysheetConfigsetting.onCellMouseOut(tempRow, tempCol, Store.flowdata[tempRow][tempCol]);
-                }
-            }
-            tempRow = row_index;
-            tempCol = col_index;
-            if (luckysheetConfigsetting.onCellMouseOver != null && getObjType(luckysheetConfigsetting.onCellMouseOver) == "function") {
-                luckysheetConfigsetting.onCellMouseOver(row_index, col_index, Store.flowdata[row_index][col_index]);
-            }
-        } else if (tempRow == row_index && tempCol == col_index) {
-            return false;
-        }
-    }).mouseout(function () {
-        if (luckysheetConfigsetting.onSheetMouseOut != null && getObjType(luckysheetConfigsetting.onSheetMouseOut) == "function") {
-            luckysheetConfigsetting.onSheetMouseOut();
-        }
-
-        tempRow = -1;
-        tempCol = -1;
-    });
-    //#endregion
+    // [TK] custom
+    weHandler.registerMouseOverAndOut();
 
     // Table mousedown
     $("#luckysheet-cell-main, #luckysheetTableContent").mousedown(function (event) {
@@ -450,7 +364,7 @@ export default function luckysheetHandler() {
         }
 
         // TK custom display error message
-        if(cellErrorCtrl.renderMessage(row_index, col_index, row, col_pre))
+        if(weCellErrorCtrl.renderMessage(row_index, col_index, row, col_pre))
             return;
 
         //mousedown是右键
@@ -1335,14 +1249,14 @@ export default function luckysheetHandler() {
             Store.flowdata[row_index][col_index] != null &&
             Store.flowdata[row_index][col_index].ro != null &&
             Store.flowdata[row_index][col_index].ro == true &&
-            !Store.formEditor) {
+            !weConfigsetting.formEditor) {
             return;
         }
         if (Store.flowdata[row_index] != null &&
             Store.flowdata[row_index][col_index] != null &&
             Store.flowdata[row_index][col_index].iv != null &&
             Store.flowdata[row_index][col_index].iv == true &&
-            Store.formEditor) {
+            weConfigsetting.formEditor) {
             return;
         }
 
@@ -1409,13 +1323,8 @@ export default function luckysheetHandler() {
             luckysheetupdateCell(row_index, col_index, Store.flowdata);
         }
 
-        //#region  [TK] custom hook onCellMouseDbClick
-        if (Store.flowdata[row_index] != null && Store.flowdata[row_index][col_index] != null) {
-            if (luckysheetConfigsetting.onCellMouseDbClick != null && getObjType(luckysheetConfigsetting.onCellMouseDbClick) == "function") {
-                luckysheetConfigsetting.onCellMouseDbClick(row_index, col_index, Store.flowdata[row_index][col_index]);
-            }
-        }
-        //#endregion
+        // [TK] custom
+        weHandler.registerMouseDbClick();
     });
 
     //监听拖拽 

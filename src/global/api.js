@@ -34,6 +34,8 @@ import { selectHightlightShow, selectIsOverlap } from '../controllers/select';
 import { sheetHTML } from '../controllers/constant';
 import { createFilterOptions } from '../controllers/filter';
 
+import weAPI from '../custom/api';
+
 
 const IDCardReg = /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i;
 
@@ -143,16 +145,8 @@ export function setCellValue(row, column, value, options = {}) {
     }
     else if(value instanceof Object){
         let curv = {};
-        // [TK] custom
-        if(value.ro!=null){
-            curv.ro = value.ro;
-        }
-        if(value.iv!=null){
-            curv.iv = value.iv;
-        }
-        if(value.tp!=null){
-            curv.tp = value.tp;
-        }
+        
+        weAPI.setCellValue(curv, value); // [TK] custom
 
         if(value.f!=null && value.v==null){
             curv.f = value.f;
@@ -233,10 +227,7 @@ export function clearCell(row, column, options = {}) {
         delete cell["m"];
         delete cell["v"];
 
-        // [TK] custom
-        delete cell["ro"];
-        delete cell["iv"];
-        delete cell["tp"];
+        weAPI.clearCell(cell); // [TK] custom
 
         if(cell["f"] != null){
             delete cell["f"];
