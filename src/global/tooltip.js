@@ -2,8 +2,7 @@ import { modelHTML, luckysheetchartpointconfigHTML, luckysheetToolHTML } from '.
 import browser from './browser';
 import { replaceHtml } from '../utils/util';
 import locale from '../locale/locale';
-
-import Store from '../store';
+import weConfigsetting from '../custom/configsetting';
 
 const tooltip = {
     info: function (title, content) {
@@ -13,7 +12,7 @@ const tooltip = {
         let _locale = locale();
         let locale_button = _locale.button;
 
-        $(Store.bodyContainer).append(replaceHtml(modelHTML, { 
+        $(weConfigsetting.bodyContainer).append(replaceHtml(modelHTML, { 
             "id": "luckysheet-info", 
             "addclass": "", 
             "title": title, 
@@ -42,7 +41,7 @@ const tooltip = {
             name2 = locale_button.cancel;
         }
 
-        $(Store.bodyContainer).append(replaceHtml(modelHTML, { 
+        $(weConfigsetting.bodyContainer).append(replaceHtml(modelHTML, { 
             "id": "luckysheet-confirm", 
             "addclass": "", 
             "style": "z-index:100003", 
@@ -55,7 +54,7 @@ const tooltip = {
             myw = $t.outerWidth();
         let winw = $(window).width(), winh = $(window).height();
         let scrollLeft = $(document).scrollLeft(), scrollTop = $(document).scrollTop();
-        $("#luckysheet-confirm").css({ "left": (winw + scrollLeft - myw) / 2, "top": ((winh + scrollTop - myh) / 3) + Store.topOffset }).show();
+        $("#luckysheet-confirm").css({ "left": (winw + scrollLeft - myw) / 2, "top": ((winh + scrollTop - myh) / 3) + weConfigsetting.topOffset }).show();
         $t.find(".luckysheet-model-conform-btn").click(function () {
             if (typeof func1 == 'function') {
                 func1();

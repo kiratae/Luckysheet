@@ -19,6 +19,7 @@ import rhchInit from './rhchInit';
 import { replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
+import weConfigsetting from '../custom/configsetting';
 
 export default function luckysheetcreatedom(colwidth, rowheight, data, menu, title) {
     // //最少30行
@@ -102,10 +103,10 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     $("#luckysheet-scrollbar-y div").height(Store.rh_height + Store.columeHeaderHeight - Store.cellMainSrollBarSize - 3);
 
     //新建行菜单
-    $(Store.bodyContainer).append(maskHTML);
+    $(weConfigsetting.bodyContainer).append(maskHTML);
     $("body").append(colsmenuHTML);
     $("body").append(rightclickHTML());
-    $(Store.bodyContainer).append(inputHTML);
+    $(weConfigsetting.bodyContainer).append(inputHTML);
     $("body").append(replaceHtml(filtermenuHTML(), { "menuid": "filter" }));
     $("body").append(replaceHtml(filtersubmenuHTML(), { "menuid": "filter" }));
     $("body").append(sheetconfigHTML());
