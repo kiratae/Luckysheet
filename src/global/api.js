@@ -144,33 +144,32 @@ export function setCellValue(row, column, value, options = {}) {
         setcellvalue(row, column, data, value);
     }
     else if(value instanceof Object){
-        let curv = {};
         
-        weAPI.setCellValue(curv, value); // [TK] custom
+        data = weAPI.setCellValue(row, column, data, value); // [TK] custom
 
-        if(value.f!=null && value.v==null){
-            curv.f = value.f;
-            if(value.ct!=null){
-                curv.ct = value.ct;
-            } 
-            data = luckysheetformula.updatecell(row, column, curv, false).data;//update formula value
-        }
-        else{
-            if(value.ct!=null){
-                curv.ct = value.ct;
-            } 
-            if(value.f!=null){
-                curv.f = value.f;
-            } 
-            if(value.v!=null){
-                curv.v = value.v;
-            }
-            if(value.m!=null){
-                curv.m = value.m;
-            }
-            formula.delFunctionGroup(row, column);
-            setcellvalue(row, column, data, curv);//update text value
-        }
+        // if(value.f!=null && value.v==null){
+        //     curv.f = value.f;
+        //     if(value.ct!=null){
+        //         curv.ct = value.ct;
+        //     } 
+        //     data = luckysheetformula.updatecell(row, column, curv, false).data;//update formula value
+        // }
+        // else{
+        //     if(value.ct!=null){
+        //         curv.ct = value.ct;
+        //     } 
+        //     if(value.f!=null){
+        //         curv.f = value.f;
+        //     } 
+        //     if(value.v!=null){
+        //         curv.v = value.v;
+        //     }
+        //     if(value.m!=null){
+        //         curv.m = value.m;
+        //     }
+        //     formula.delFunctionGroup(row, column);
+        //     setcellvalue(row, column, data, curv);//update text value
+        // }
 
         for(let attr in value){
             let v = value[attr];

@@ -14,6 +14,7 @@ import { luckysheetRangeLast } from '../global/cursorPos';
 import cleargridelement from '../global/cleargridelement';
 import {isInlineStringCell} from './inlineString';
 import Store from '../store';
+import weVariable from '../custom/variable';
 
 export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocus) {
 
@@ -151,18 +152,19 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
 
         
         if (!cover) {
-            if(isInlineStringCell(cell)){
-                value = getInlineStringStyle(row_index, col_index, d);
-            }
-            else if(cell.f!=null){
-                value = getcellvalue(row_index, col_index, d, "f");
-            }
-            else{
-                value = valueShowEs(row_index, col_index, d);
-                if(cell.qp=="1"){
-                    value = "'" + value;
-                }
-            }
+            value = weVariable.luckysheetupdateCell(row_index, col_index, d, cell);
+            // if(isInlineStringCell(cell)){
+            //     value = getInlineStringStyle(row_index, col_index, d);
+            // }
+            // else if(cell.f!=null){
+            //     value = getcellvalue(row_index, col_index, d, "f");
+            // }
+            // else{
+            //     value = valueShowEs(row_index, col_index, d);
+            //     if(cell.qp=="1"){
+            //         value = "'" + value;
+            //     }
+            // }
         }
         
         let style = menuButton.getStyleByCell(d, row_index, col_index);

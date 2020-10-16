@@ -1267,6 +1267,7 @@ const luckysheetformula = {
                 curv = {};
             }
             delete curv.f;
+            delete curv.df; // [TK] custom
             delete curv.v;
             delete curv.m;
 
@@ -1281,8 +1282,6 @@ const luckysheetformula = {
 
         // API, we get value from user
         value = value || $input.text();
-
-        console.log('updatecell ', r, c, value, curv);
 
         if (!isCurInline) {
             if (isRealNull(value) && !isPrevInline) {
@@ -1321,18 +1320,20 @@ const luckysheetformula = {
         let d = editor.deepCopyFlowData(Store.flowdata);
         let dynamicArrayItem = null;  //动态数组
 
-        weVariable.updatecell(r, c, d, value);
-
         if (getObjType(curv) == "object") {
 
             if (!isCurInline) {
 
                 if (getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1) {
-                    let v = _this.execfunction(value, r, c, undefined, true);
+                    // [TK] custom
+                    let tf = weVariable.transformFormula(value);
+
+                    let v = _this.execfunction(tf[0], r, c, undefined, true);
                     isRunExecFunction = false;
                     curv = d[r][c];
                     curv.v = v[1];
                     curv.f = v[2];
+                    curv.df = tf[1]; // [TK] custom
 
                     //打进单元格的sparklines的配置串， 报错需要单独处理。
                     if (v.length == 4 && v[3].type == "sparklines") {
@@ -1354,7 +1355,9 @@ const luckysheetformula = {
                 }
                 // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
                 else if (getObjType(value) == "object") {
-                    let valueFunction = value.f;
+                    // [TK] custom
+                    let tf = weVariable.transformFormula(value);
+                    let valueFunction = tf.f;
 
                     if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
                         let v = _this.execfunction(valueFunction, r, c, undefined, true);
@@ -1364,6 +1367,7 @@ const luckysheetformula = {
                         curv = d[r][c];
                         curv.v = v[1];
                         curv.f = v[2];
+                        curv.df = tf.df; // [TK] custom
 
                         //打进单元格的sparklines的配置串， 报错需要单独处理。
                         if (v.length == 4 && v[3].type == "sparklines") {
@@ -1437,6 +1441,7 @@ const luckysheetformula = {
                     curv.v = value;
 
                     delete curv.f;
+                    delete curv.df; // [TK] custom
                     delete curv.spl;
 
                     if (curv.qp == 1 && ('' + value).substr(0, 1) != "'") {//if quotePrefix is 1, cell is force string, cell clear quotePrefix when it is updated 
@@ -1452,11 +1457,14 @@ const luckysheetformula = {
         }
         else {
             if (getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1) {
-                let v = _this.execfunction(value, r, c, undefined, true);
+                // [TK] custom
+                let tf = weVariable.transformFormula(value);
+                let v = _this.execfunction(tf[0], r, c, undefined, true);
                 isRunExecFunction = false;
                 value = {
                     "v": v[1],
-                    "f": v[2]
+                    "f": v[2],
+                    "df": tf[1] // [TK] custom
                 };
 
 
@@ -1477,7 +1485,9 @@ const luckysheetformula = {
             }
             // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
             else if (getObjType(value) == "object") {
-                let valueFunction = value.f;
+                // [TK] custom
+                let tf = weVariable.transformFormula(value);
+                let valueFunction = tf.f;
 
                 if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
                     let v = _this.execfunction(valueFunction, r, c, undefined, true);
@@ -1490,6 +1500,7 @@ const luckysheetformula = {
                     // update attribute v
                     value.v = v[1];
                     value.f = v[2];
+                    value.df = tf.df; // [TK] custom
 
                     //打进单元格的sparklines的配置串， 报错需要单独处理。
                     if (v.length == 4 && v[3].type == "sparklines") {
