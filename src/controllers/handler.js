@@ -398,7 +398,6 @@ export default function luckysheetHandler() {
         // Formula related
         let $input = $("#luckysheet-input-box");
         if (parseInt($input.css("top")) > 0) {
-            console.log("mousedown parseInt($input.css(\"top\")) > 0");
             if (formula.rangestart || formula.rangedrag_column_start || formula.rangedrag_row_start || formula.israngeseleciton()) {
                 //公式选区
                 let rowseleted = [row_index, row_index_ed];
