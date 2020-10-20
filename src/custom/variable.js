@@ -51,14 +51,24 @@ const weVariable = {
     },
     resolveFormula: function (fx, isSub) {
         const self = this;
+        const isDebug = false;
         // if fx is variable like !A, !B, ...
-        // console.log('resolveFormula', fx);
+        console.log('resolveFormula', fx);
         if (self.regexGobal.test(fx) && !isSub) {
             let matchList = fx.match(self.regexGobal);
+            if(isDebug) console.log('!isSub matchList', matchList);
             if (matchList) {
+                let tempFx = fx;
                 for (let vName of matchList) {
-                    fx = fx.replace(vName, self.resolveFormula(vName, true));
+                    let resolved = self.resolveFormula(vName, true);
+                    if(isDebug) console.log('!isSub resolved', resolved, vName);
+                    if (typeof resolved === 'string' && resolved.substr(0, 1) == '=') {
+                        resolved = resolved.replace('=', '');
+                    }
+                    tempFx = tempFx.replace(vName, resolved);
                 }
+                return tempFx;
+            } else {
                 return fx;
             }
         } else if (self.regexTestGobal.test(fx)) {
@@ -68,16 +78,17 @@ const weVariable = {
                 throw luckysheetformula.error.c; // circular error string
             self.resolvedVariables.push(vName);
 
-            // console.log('vName', vName);
+            if(isDebug) console.log('vName', vName);
             let v = self.getVariableByName(vName, true);
-            // console.log('v', v);
+            if(isDebug) console.log('v', v);
             if (!v)
                 return fx;
             let resolved = self.execFormula(v.formula);
-            // console.log('resolved', resolved);
+            if(isDebug) console.log('resolved', resolved);
             if (!resolved)
                 return '=' + v.formula;
             if (resolved[1] != '#NAME?') { // if fx is not variable
+                if(isDebug) console.log('if fx is not variable returning', isSub ? v.value : v.formula);
                 v.value = resolved[1];
                 v.formula = resolved[2];
                 return isSub ? v.value : v.formula;
@@ -130,7 +141,7 @@ const weVariable = {
     },
     execFormula: function (txt) {
         if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
-            return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
+            return luckysheetformula.execfunction(this.resolveFormula(txt), undefined, undefined, undefined, true);
         }
     }
 }

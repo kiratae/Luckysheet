@@ -2,6 +2,7 @@ import weConfigsetting from './configsetting';
 import luckysheetsizeauto from '../controllers/resize';
 import Store from '../store';
 import luckysheetformula from '../global/formula';
+import weVariable from './variable';
 
 const weCore = {
     setConfig: function (config) {
@@ -27,7 +28,8 @@ const weCore = {
         libCore.execFormula = function (txt) {
             console.log('execFormula', txt);
             if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
-                return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
+                return weVariable.execFormula(txt);
+                // return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
             }
         }
     }

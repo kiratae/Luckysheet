@@ -160,9 +160,9 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         if(Store.flowdata[r1][c1] != null && Store.flowdata[r1][c1].spl != null){
             window.luckysheetCurrentRow = r1;
             window.luckysheetCurrentColumn = c1;
-            window.luckysheetCurrentFunction = Store.flowdata[r1][c1].f;
+            window.luckysheetCurrentFunction = Store.flowdata[r1][c1].df;
 
-            let fp = $.trim(formula.functionParserExe(Store.flowdata[r1][c1].f));
+            let fp = $.trim(formula.functionParserExe(Store.flowdata[r1][c1].df));
             let sparklines = eval(fp);
             Store.flowdata[r1][c1].spl = sparklines;
         }
@@ -241,7 +241,8 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
         redo["ctrlType"] = ctrlType;
         redo["ctrlValue"] = ctrlValue;
 
-        server.saveParam("arc", Store.currentSheetIndex, {"index": ctrlValue.index, "len": ctrlValue.len, "direction": ctrlValue.direction, "mc": cfg.merge }, { "rc": ctrlValue.type });
+        if(ctrlValue)
+            server.saveParam("arc", Store.currentSheetIndex, {"index": ctrlValue.index, "len": ctrlValue.len, "direction": ctrlValue.direction, "mc": cfg.merge }, { "rc": ctrlValue.type });
     }
     else if (ctrlType.indexOf("dele")>-1) {
         redo["type"] = "dele";
@@ -254,7 +255,8 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
         redo["ctrlType"] = ctrlType;
         redo["ctrlValue"] = ctrlValue;
 
-        server.saveParam("drc", Store.currentSheetIndex, {"index": ctrlValue.index, "len":ctrlValue.len, "mc": cfg.merge, "borderInfo": cfg.borderInfo }, { "rc": ctrlValue.type});
+        if(ctrlValue)
+            server.saveParam("drc", Store.currentSheetIndex, {"index": ctrlValue.index, "len":ctrlValue.len, "mc": cfg.merge, "borderInfo": cfg.borderInfo }, { "rc": ctrlValue.type});
     }
     else {
         redo["type"] = "datachangeAll";

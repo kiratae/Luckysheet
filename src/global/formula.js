@@ -342,8 +342,8 @@ const luckysheetformula = {
             // if(isInlineStringCell(cell)){
             //     value = getInlineStringNoStyle(r, c);
             // }
-            // else if(cell.df != null){
-            //     value = getcellvalue(r, c, d, "df");
+            // else if(cell.f != null){
+            //     value = getcellvalue(r, c, d, "f");
             // }
             // else{
             //     value = valueShowEs(r, c, d);
@@ -1453,8 +1453,7 @@ const luckysheetformula = {
                 try {
                     tf = weVariable.transformFormula(value);
                     isRunExecFunction = false;
-
-                    let tf = weVariable.transformFormula(value);
+                    
                     let v = _this.execfunction(tf[0], r, c, undefined, true);
                     // isRunExecFunction = false;
                     value = {
