@@ -118,5 +118,7 @@ export default {
     // [TK] custom hooks
     onCellMouseDown: function(row, col, cell){
         console.log('onCellMouseDown', row, col, cell);
-    }
+    },
+
+    defaultFontSize:10,
 }
