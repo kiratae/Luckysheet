@@ -337,13 +337,12 @@ const luckysheetformula = {
             let cell = d[r][c];
 
             value = weVariable.functionboxshow(r, c, d, cell);
-
             // [TK] move to above function
             // if(isInlineStringCell(cell)){
             //     value = getInlineStringNoStyle(r, c);
             // }
-            // else if(cell.f != null){
-            //     value = getcellvalue(r, c, d, "f");
+            // else if(cell.df != null){
+            //     value = getcellvalue(r, c, d, "df");
             // }
             // else{
             //     value = valueShowEs(r, c, d);
@@ -3413,7 +3412,7 @@ const luckysheetformula = {
 
         _this.functionHTMLIndex = 0;
 
-        return '<span dir="auto" class="luckysheet-formula-text-color">=</span>' + _this.functionHTML(weVariable.variableHTML(txt));
+        return '<span dir="auto" class="luckysheet-formula-text-color">=</span>' + _this.functionHTML(txt);
     },
     functionHTML: function (txt) {
         let _this = this;

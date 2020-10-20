@@ -151,11 +151,12 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         
         if (!cover) {
             value = weVariable.luckysheetupdateCell(row_index, col_index, d, cell);
+            // [TK] move to above function
             // if(isInlineStringCell(cell)){
             //     value = getInlineStringStyle(row_index, col_index, d);
             // }
-            // else if(cell.f!=null){
-            //     value = getcellvalue(row_index, col_index, d, "f");
+            // else if(cell.df!=null){
+            //     value = getcellvalue(row_index, col_index, d, "df");
             // }
             // else{
             //     value = valueShowEs(row_index, col_index, d);
