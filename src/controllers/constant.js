@@ -800,7 +800,7 @@ function menuToolBar() {
     const toolbar = locale().toolbar;
     const fontarray = locale().fontarray;
 
-    let html = `<div class="luckysheet-toolbar-left-theme"></div>`;
+    let html = '';
     for (let index = 0; index < weConfigsetting.toolbars.length; index++) {
         switch (weConfigsetting.toolbars[index]) {
             case 'undo':

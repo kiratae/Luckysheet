@@ -340,16 +340,7 @@ export default function luckysheetHandler() {
         }
 
         // TK custom onCellClick
-        // console.log('onCellClick', row_index, col_index, row_index_ed, col_index_ed);
-        if (row_index == row_index_ed && col_index == col_index_ed) {
-            if (Store.flowdata[row_index][col_index] && Store.flowdata[row_index][col_index].iv) {
-                if (luckysheetConfigsetting.onCellClick != null && getObjType(luckysheetConfigsetting.onCellClick) == "function") {
-                    luckysheetConfigsetting.onCellClick(row_index, col_index, Store.flowdata[row_index][col_index]);
-                    return;
-                }
-            }
-        }
-        
+        weHandler.registerCellClick(row_index, col_index, row_index_ed, col_index_ed);
 
         //数据验证 单元格聚焦
         dataVerificationCtrl.cellFocus(row_index, col_index, true);

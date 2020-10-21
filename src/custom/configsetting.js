@@ -8,7 +8,8 @@ const weConfigsetting = {
     onCellMouseDown: null,
     onCellMouseOver: null,
     onCellMouseOut: null,
-    onSheetMouseOut: null
+    onSheetMouseOut: null,
+    onSelectHightlightShow: null
 }
 
 export default weConfigsetting;

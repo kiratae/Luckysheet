@@ -63,6 +63,20 @@ const weHandler = {
             }
         }
     },
+    registerCellClick: function (r1, c1, r2, c2) {
+        if (r1 == r2 && c1 == c2) {
+            if (Store.flowdata[r1][c1]) {
+                if (weConfigsetting.onCellClick != null && getObjType(weConfigsetting.onCellClick) == "function") {
+                    weConfigsetting.onCellClick(r1, c1, Store.flowdata[r1][c1]);
+                }
+            }
+        }
+    },
+    registerSelectHightlightShow: function () {
+        if (weConfigsetting.onSelectHightlightShow != null && getObjType(weConfigsetting.onSelectHightlightShow) == "function") {
+            weConfigsetting.onSelectHightlightShow();
+        }
+    }
 }
 
 export default weHandler;

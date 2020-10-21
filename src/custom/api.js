@@ -1,6 +1,8 @@
 import luckysheetformula from '../global/formula';
 import formula from '../global/formula';
+import Store from '../store';
 import { setAccuracy, setcellvalue } from "../global/setdata";
+import { getSheetIndex, getRangetxt } from '../methods/get';
 
 const weAPI = {
     setCellValue: function (row, column, data, value) {
@@ -48,6 +50,47 @@ const weAPI = {
         delete cell["iv"];
         delete cell["tp"];
         delete cell["df"];
+    },
+    getSelectedCell: function () {
+        // [ range, txt, isMerge ]
+        let range = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+        let rf = range["row_focus"], cf = range["column_focus"];
+        if (Store.config["merge"] != null && (rf + "_" + cf) in Store.config["merge"]) {
+            return [
+                range, 
+                getRangetxt(Store.currentSheetIndex, {
+                    column: [cf, cf],
+                    row: [rf, rf],
+                }),
+                true
+            ];
+        }
+        else {
+            return [ range , getRangetxt(Store.currentSheetIndex, range), false ]
+        }
+    },
+    getRangeByTxt: function(txt){
+        let range = [];
+
+        if(txt.indexOf(",") != -1){
+            let arr = txt.split(",");
+            for(let i = 0; i < arr.length; i++){
+                if(formula.iscelldata(arr[i])){
+                    range.push(formula.getcellrange(arr[i]));
+                }
+                else{
+                    range = [];
+                    break;    
+                }
+            }
+        }
+        else{
+            if(formula.iscelldata(txt)){
+                range.push(formula.getcellrange(txt));
+            }
+        }
+
+        return range;
     }
 }
 

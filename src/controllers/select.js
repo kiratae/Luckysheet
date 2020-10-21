@@ -7,6 +7,7 @@ import dataVerificationCtrl from './dataVerificationCtrl';
 import { getSheetIndex, getRangetxt } from '../methods/get';
 import Store from '../store';
 import locale from '../locale/locale';
+import weHandler from '../custom/handler';
 
 //公式函数 选区实体框
 function seletedHighlistByindex(id, r1, r2, c1, c2) {
@@ -174,6 +175,9 @@ function selectHightlightShow(isRestore=false) {
 
         //左上角范围显示
         selectHelpboxFill();
+
+        // [TK] custom
+        weHandler.registerSelectHightlightShow();
         
         //动态数组显示
         if(Store.luckysheet_select_save.length == 1 && Store.luckysheet_select_save[0].row[0] == Store.luckysheet_select_save[0].row[1] && Store.luckysheet_select_save[0].column[0] == Store.luckysheet_select_save[0].column[1]){

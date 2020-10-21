@@ -53,7 +53,7 @@ const weVariable = {
         const self = this;
         const isDebug = false;
         // if fx is variable like !A, !B, ...
-        console.log('resolveFormula', fx);
+        console.log('resolveFormula', fx, isDebug);
         if (self.regexGobal.test(fx) && !isSub) {
             let matchList = fx.match(self.regexGobal);
             if(isDebug) console.log('!isSub matchList', matchList);
