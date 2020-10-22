@@ -18,6 +18,7 @@ import { selectHightlightShow, selectionCopyShow } from '../controllers/select';
 import { createFilterOptions } from '../controllers/filter';
 import { getSheetIndex } from '../methods/get';
 import Store from '../store';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 let refreshCanvasTimeOut = null;
 
@@ -59,6 +60,10 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
     let dataVerification = allParam["dataVerification"];  //数据验证
     let dynamicArray = allParam["dynamicArray"];  //动态数组
 
+    // [TK] custom
+    let cellValidation = allParam["cellValidation"];
+    // [TK] end custom
+
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
 
     if (Store.clearjfundo) {
@@ -95,6 +100,16 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         else{
             curDynamicArray = dynamicArray;
         }
+
+        // [TK] custom
+        let curCellValidation;
+        if(cellValidation == null){
+            curCellValidation = $.extend(true, [], file["cellValidation"]);
+        }
+        else{
+            curCellValidation = cellValidation;
+        }
+        // [TK] end custom
         
         Store.jfredo.push({ 
             "type": "datachange", 
@@ -110,7 +125,11 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
             "dataVerification": $.extend(true, [], file["dataVerification"]),
             "curDataVerification": curDataVerification,
             "dynamicArray": $.extend(true, [], file["dynamicArray"]),
-            "curDynamicArray": curDynamicArray
+            "curDynamicArray": curDynamicArray,
+            // [TK] custom
+            "cellValidation": $.extend(true, [], file["cellValidation"]),
+            "curCellValidation": curCellValidation,
+            // [TK] end custom
         });
     }
 
@@ -151,6 +170,13 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
 
         server.saveParam("all", Store.currentSheetIndex, dynamicArray, { "k": "dynamicArray" });
     }
+
+    // [TK] custom
+    if(dataVerification != null){
+        weCellValidationCtrl.cellValidation = cellValidation;
+        file["cellValidation"] = cellValidation;
+    }
+    // [TK] end custom
 
     //更新数据的范围
     for(let s = 0; s < range.length; s++){

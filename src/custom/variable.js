@@ -41,7 +41,6 @@ const weVariable = {
     transformFormula: function (value) {
         const self = this;
         self.resolvedVariables.splice(0, self.resolvedVariables.length);
-        // TODO: resolve display formula
         if (getObjType(value) == "string") {
             return [self.resolveFormula(value), value]
         } else if (getObjType(value) == "object" && value.df != null) {
@@ -51,17 +50,13 @@ const weVariable = {
     },
     resolveFormula: function (fx, isSub) {
         const self = this;
-        const isDebug = false;
         // if fx is variable like !A, !B, ...
-        console.log('resolveFormula', fx, isDebug);
         if (self.regexGobal.test(fx) && !isSub) {
             let matchList = fx.match(self.regexGobal);
-            if(isDebug) console.log('!isSub matchList', matchList);
             if (matchList) {
                 let tempFx = fx;
                 for (let vName of matchList) {
                     let resolved = self.resolveFormula(vName, true);
-                    if(isDebug) console.log('!isSub resolved', resolved, vName);
                     if (typeof resolved === 'string' && resolved.substr(0, 1) == '=') {
                         resolved = resolved.replace('=', '');
                     }
@@ -78,17 +73,14 @@ const weVariable = {
                 throw luckysheetformula.error.c; // circular error string
             self.resolvedVariables.push(vName);
 
-            if(isDebug) console.log('vName', vName);
             let v = self.getVariableByName(vName, true);
-            if(isDebug) console.log('v', v);
             if (!v)
                 return fx;
+
             let resolved = self.execFormula(v.formula);
-            if(isDebug) console.log('resolved', resolved);
             if (!resolved)
                 return '=' + v.formula;
             if (resolved[1] != '#NAME?') { // if fx is not variable
-                if(isDebug) console.log('if fx is not variable returning', isSub ? v.value : v.formula);
                 v.value = resolved[1];
                 v.formula = resolved[2];
                 return isSub ? v.value : v.formula;

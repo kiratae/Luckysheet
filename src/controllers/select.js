@@ -8,6 +8,7 @@ import { getSheetIndex, getRangetxt } from '../methods/get';
 import Store from '../store';
 import locale from '../locale/locale';
 import weHandler from '../custom/handler';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 //公式函数 选区实体框
 function seletedHighlistByindex(id, r1, r2, c1, c2) {
@@ -167,6 +168,8 @@ function selectHightlightShow(isRestore=false) {
                 formula.fucntionboxshow(rf, cf);
                 //focus单元格数据验证
                 dataVerificationCtrl.cellFocus(rf, cf);
+                // [TK] custom
+                weCellValidationCtrl.cellFocus(rf, cf);
             }
         }
 

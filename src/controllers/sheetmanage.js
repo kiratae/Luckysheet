@@ -28,6 +28,7 @@ import { renderChartShow } from '../expendPlugins/chart/plugin';
 import {changeSheetContainerSize, menuToolBarWidth} from './resize';
 import {zoomNumberDomBind} from './zoom';
 import menuButton from './menuButton';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -912,6 +913,9 @@ const sheetmanage = {
         //数据验证
         dataVerificationCtrl.dataVerification = file.dataVerification;
         dataVerificationCtrl.init();
+
+        weCellValidationCtrl.cellValidation = file.cellValidation;
+        weCellValidationCtrl.init();
         
         createFilterOptions(file["filter_select"], file["filter"]);
     },

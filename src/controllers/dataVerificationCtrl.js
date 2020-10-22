@@ -1388,6 +1388,8 @@ const dataVerificationCtrl = {
     dropdownListShow: function(){
         $("#luckysheet-dataVerification-showHintBox").hide();
 
+        console.log('[TK] dropdownListShow');
+
         let _this = this;
 
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];

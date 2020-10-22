@@ -69,6 +69,7 @@ import { luckysheetDrawMain } from '../global/draw';
 import locale from '../locale/locale';
 import Store from '../store';
 import { createLuckyChart, hideAllNeedRangeShow } from '../expendPlugins/chart/plugin'
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
@@ -341,6 +342,7 @@ export default function luckysheetHandler() {
 
         // TK custom onCellClick
         weHandler.registerCellClick(row_index, col_index, row_index_ed, col_index_ed);
+        weCellValidationCtrl.cellFocus(row_index, col_index, true);
 
         //数据验证 单元格聚焦
         dataVerificationCtrl.cellFocus(row_index, col_index, true);
