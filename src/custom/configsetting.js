@@ -1,4 +1,5 @@
 const weConfigsetting = {
+    formApi: null,
     bodyContainer: null,
     topOffset: 0,
     formEditor: true,

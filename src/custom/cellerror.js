@@ -32,7 +32,7 @@ const weCellErrorCtrl = {
     },
     renderMessage: function (r, c, top, left) {
         if(weConfigsetting.formEditor)
-            return;
+            return false;
             
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
         if (cellError != null && cellError[r + '_' + c] != null) {

@@ -4,10 +4,12 @@ import Store from '../store';
 import luckysheetformula from '../global/formula';
 import weVariable from './variable';
 import weAPI from './api';
+import weCellValidationCtrl from './cellvalidation';
 
 const weCore = {
     setConfig: function (config) {
         // config
+        weConfigsetting.formApi = config.formApi;
         weConfigsetting.toolbars = config.toolbars;
         weConfigsetting.contextMenus = config.contextMenus;
         weConfigsetting.formEditor = config.formEditor;
@@ -19,6 +21,8 @@ const weCore = {
         weConfigsetting.onCellMouseOut = config.onCellMouseOut;
         weConfigsetting.onSheetMouseOut = config.onSheetMouseOut;
         weConfigsetting.onSelectHightlightShow = config.onSelectHightlightShow;
+
+        weVariable.init(config.variablePrefix);
     },
     setAPI: function (libCore) {
         libCore.resize = luckysheetsizeauto;
@@ -29,6 +33,8 @@ const weCore = {
         
         libCore.getSelectedCell = weAPI.getSelectedCell;
         libCore.getRangeByTxt = weAPI.getRangeByTxt;
+
+        libCore.weCellValidationCtrl = weCellValidationCtrl;
 
         libCore.execFormula = function (txt) {
             console.log('execFormula', txt);

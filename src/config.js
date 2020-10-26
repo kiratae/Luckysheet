@@ -115,6 +115,7 @@ export default {
         'data=clear|matrix|sort|filter|chart|image|data-validation',
     ],
     formEditor: true,
+    formApi: null,
     // [TK] custom hooks
     onCellMouseDown: function(row, col, cell){
         console.log('onCellMouseDown', row, col, cell);

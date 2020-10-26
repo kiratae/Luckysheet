@@ -5,11 +5,13 @@ import menuButton from '../controllers/menuButton';
 
 const weCellValidationCtrl = {
     cellValidation: null,
-    init: function(){
+    init: function () {
         console.log('weCellValidationCtrl::init');
+        const self = this;
+        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = self.cellValidation;
     },
     renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
-        if(!weConfigsetting.formEditor)
+        if (!weConfigsetting.formEditor)
             return;
 
         // [TK] custom validation render or draw (draw a top left red triangle)
@@ -34,13 +36,13 @@ const weCellValidationCtrl = {
             luckysheetTableContent.closePath();
         }
     },
-    cellFocus: function(r, c, clickMode){
+    cellFocus: function (r, c, clickMode) {
         $("#luckysheet-dataVerification-dropdown-btn").hide();
         $("#luckysheet-dataVerification-showHintBox").hide();
 
-        let _this = this;
+        const self = this;
 
-        if(_this.cellValidation == null || _this.cellValidation[r + '_' + c] == null){
+        if (self.cellValidation == null || self.cellValidation[r + '_' + c] == null) {
             $("#luckysheet-dataVerification-dropdown-List").hide();
             return;
         }
@@ -51,22 +53,22 @@ const weCellValidationCtrl = {
             col_pre = c == 0 ? 0 : Store.visibledatacolumn[c - 1];
 
         let margeset = menuButton.mergeborer(Store.flowdata, r, c);
-        if(!!margeset){
+        if (!!margeset) {
             row = margeset.row[1];
             row_pre = margeset.row[0];
-            
+
             col = margeset.column[1];
             col_pre = margeset.column[0];
         }
 
-        let item = _this.cellValidation[r + '_' + c];
+        let item = self.cellValidation[r + '_' + c];
 
         // if(clickMode && item.type == 'checkbox'){
         //     _this.checkboxChange(r, c);
         //     return;
         // }
 
-        if(item.ruleTypeId == '10114'){
+        if (item.ruleTypeId == '10114') {
             console.log('dropdown');
             // $("#luckysheet-dataVerification-dropdown-btn").show().css({
             //     'max-width': col - col_pre,
@@ -77,22 +79,22 @@ const weCellValidationCtrl = {
 
             // if($("#luckysheet-dataVerification-dropdown-List").is(":visible")){
             //     let dataIndex = $("#luckysheet-dataVerification-dropdown-List").prop("data-index");
-                
+
             //     if(dataIndex != (r + '_' + c)){
             //         $("#luckysheet-dataVerification-dropdown-List").hide();
             //     }
             // }
         }
-        else{
+        else {
             $("#luckysheet-dataVerification-dropdown-List").hide();
         }
     },
-    dropdownListShow: function(){
+    dropdownListShow: function () {
         $("#luckysheet-dataVerification-showHintBox").hide();
 
         console.log('weDropdown::dropdownListShow');
 
-        let _this = this;
+        const self = this;
 
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let rowIndex = last.row_focus;
@@ -104,16 +106,16 @@ const weCellValidationCtrl = {
             col_pre = colIndex == 0 ? 0 : Store.visibledatacolumn[colIndex - 1];
 
         let margeset = menuButton.mergeborer(Store.flowdata, rowIndex, colIndex);
-        if(!!margeset){
+        if (!!margeset) {
             row = margeset.row[1];
             row_pre = margeset.row[0];
-            
+
             col = margeset.column[1];
             col_pre = margeset.column[0];
         }
 
-        let item = _this.cellValidation[rowIndex + '_' + colIndex];
-        let list = _this.getDropdownList(item.value1);
+        let item = self.cellValidation[rowIndex + '_' + colIndex];
+        let list = self.getDropdownList(item.value1);
 
         let optionHtml = '';
         list.forEach(i => {
@@ -121,18 +123,31 @@ const weCellValidationCtrl = {
         })
 
         $("#luckysheet-dataVerification-dropdown-List")
-        .html(optionHtml)
-        .prop("data-index", rowIndex + '_' + colIndex)
-        .show()
-        .css({
-            'width': col - col_pre - 1,
-            'left': col_pre,
-            'top': row,
-        });
+            .html(optionHtml)
+            .prop("data-index", rowIndex + '_' + colIndex)
+            .show()
+            .css({
+                'width': col - col_pre - 1,
+                'left': col_pre,
+                'top': row,
+            });
 
     },
-    getDropdownList: function(){
+    getDropdownList: function () {
         let ddl = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdown"];
+    },
+    setCellValidation: function (r, c, obj) {
+        const self = this;
+        self.cellValidation[r + '_' + c] = Object.assign({}, obj);
+        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = self.cellValidation;
+    },
+    getCellValidation: function (r, c) {
+        const self = this;
+        return self.cellValidation[r + '_' + c] ?? null;
+    },
+    deleteCellValidation: function (r, c) {
+        const self = this;
+        delete self.cellValidation[r + '_' + c];
     }
 }
 

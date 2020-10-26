@@ -39,7 +39,6 @@ const luckysheetformula = {
         nm: "#NUM!",     //当公式或函数中某个数字有问题时
         nl: "#NULL!",    //交叉运算符（空格）使用不正确
         sp: "#SPILL!",    //数组范围有其它值,
-        c: "#CIRCULAR!"
     },
     errorInfo: function (err) {
         return err;
@@ -1333,10 +1332,9 @@ const luckysheetformula = {
                     let tf;
                     try {
                         tf = weVariable.transformFormula(value);
-                        isRunExecFunction = false;
 
                         let v = _this.execfunction(tf[0], r, c, undefined, true);
-                        // isRunExecFunction = false;
+                        isRunExecFunction = false;
                         curv = d[r][c];
                         curv.v = v[1];
                         curv.f = v[2];
@@ -1373,13 +1371,12 @@ const luckysheetformula = {
                     let tf;
                     try {
                         tf = weVariable.transformFormula(value);
-                        isRunExecFunction = false;
 
                         let valueFunction = tf.f;
 
                         if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
                             let v = _this.execfunction(valueFunction, r, c, undefined, true);
-                            // isRunExecFunction = false;
+                            isRunExecFunction = false;
                             // get v/m/ct
 
                             curv = d[r][c];
@@ -1452,10 +1449,9 @@ const luckysheetformula = {
                 let tf;
                 try {
                     tf = weVariable.transformFormula(value);
-                    isRunExecFunction = false;
                     
                     let v = _this.execfunction(tf[0], r, c, undefined, true);
-                    // isRunExecFunction = false;
+                    isRunExecFunction = false;
                     value = {
                         "v": v[1],
                         "f": v[2],
@@ -1492,13 +1488,12 @@ const luckysheetformula = {
                 let tf;
                 try {
                     tf = weVariable.transformFormula(value);
-                    isRunExecFunction = false;
 
                     let valueFunction = tf.f;
 
                     if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
                         let v = _this.execfunction(valueFunction, r, c, undefined, true);
-                        // isRunExecFunction = false;
+                        isRunExecFunction = false;
                         // value = {
                         //     "v": v[1],
                         //     "f": v[2]

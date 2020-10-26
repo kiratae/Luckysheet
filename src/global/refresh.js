@@ -172,7 +172,7 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
     }
 
     // [TK] custom
-    if(dataVerification != null){
+    if(cellValidation != null){
         weCellValidationCtrl.cellValidation = cellValidation;
         file["cellValidation"] = cellValidation;
     }
@@ -471,7 +471,9 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
             "freezen": { "freezenhorizontaldata": luckysheetFreezen.freezenhorizontaldata, "freezenverticaldata": luckysheetFreezen.freezenverticaldata },
             "curFreezen": freezen,
             "dataVerification": $.extend(true, {}, file.dataVerification),
-            "curDataVerification": dataVerification
+            "curDataVerification": dataVerification,
+            "cellValidation": $.extend(true, {}, file.cellValidation),
+            "curCellValidation": cellValidation,
         });
     }
 
@@ -594,6 +596,10 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     dataVerificationCtrl.dataVerification = dataVerification;
     file.dataVerification = dataVerification;
     server.saveParam("all", Store.currentSheetIndex, file.dataVerification, { "k": "dataVerification" });
+
+    // [TK] custom
+    weCellValidationCtrl.cellValidation = cellValidation;
+    file.cellValidation = cellValidation;
 
     //行高、列宽刷新
     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
