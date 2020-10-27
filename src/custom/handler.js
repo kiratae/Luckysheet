@@ -76,7 +76,7 @@ const weHandler = {
         if (weConfigsetting.onSelectHightlightShow != null && getObjType(weConfigsetting.onSelectHightlightShow) == "function") {
             weConfigsetting.onSelectHightlightShow();
         }
-    }
+    },
 }
 
 export default weHandler;

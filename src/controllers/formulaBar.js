@@ -28,6 +28,8 @@ export function formulaBarInitial(){
             return;
         }
 
+        console.log('#luckysheet-functionbox-cell focus')
+
         if(Store.luckysheet_select_save.length > 0){
             let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
 

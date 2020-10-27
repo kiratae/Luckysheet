@@ -1216,7 +1216,7 @@ const luckysheetformula = {
         $("#luckysheet-formula-search-c, #luckysheet-formula-help-c").hide();
         _this.helpFunctionExe($editer, currSelection);
         
-        console.log(currSelection, $(currSelection).closest(".luckysheet-formula-functionrange-cell").length);
+        // console.log(currSelection, $(currSelection).closest(".luckysheet-formula-functionrange-cell").length);
         if ($(currSelection).closest(".luckysheet-formula-functionrange-cell").length == 0) {
             _this.searchFunction($editer);
             return;

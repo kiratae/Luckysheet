@@ -440,7 +440,7 @@ function luckysheetContainerFocus() {
     // });
     
     // fix jquery error: Uncaught TypeError: ((n.event.special[g.origType] || {}).handle || g.handler).apply is not a function
-    console.log('luckysheetContainerFocus');
+    // console.log('[TK] luckysheetContainerFocus');
     $("#" + Store.container).attr("tabindex", 0).focus();
 }
 

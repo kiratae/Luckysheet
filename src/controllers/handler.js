@@ -736,6 +736,7 @@ export default function luckysheetHandler() {
             return;
         }
 
+        // [TK] TODO: custom cell range select
         //数据验证 单元格范围选择
         if ($("#luckysheet-dataVerificationRange-dialog").is(":visible")) {
             dataVerificationCtrl.selectStatus = true;
@@ -1242,7 +1243,7 @@ export default function luckysheetHandler() {
             col_index = col_location[2];
 
         // break here for read-only
-        console.log("readOnly checking", Store.flowdata[row_index][col_index]);
+        // console.log("[TK] readOnly checking", Store.flowdata[row_index][col_index]);
         // ro is stand for readOnly
         if (Store.flowdata[row_index] != null &&
             Store.flowdata[row_index][col_index] != null &&
