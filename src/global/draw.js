@@ -21,6 +21,7 @@ import locale from '../locale/locale';
 // [TK] custom
 import weCellErrorCtrl from '../custom/cellerror';
 import weCellValidationCtrl from '../custom/cellvalidation';
+import weCellTagCtrl from '../custom/celltag';
 
 function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
     if (scrollHeight == null) {
@@ -1185,6 +1186,7 @@ let nullCellRender = function (r, c, start_r, start_c, end_r, end_c, luckysheetT
     // [TK] custom
     weCellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellTagCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
 }
 
 
@@ -1233,6 +1235,7 @@ let cellRender = function (r, c, start_r, start_c, end_r, end_c, value, luckyshe
     // [TK] custom
     weCellErrorCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellTagCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
 
     let dataVerification = dataVerificationCtrl.dataVerification;
 

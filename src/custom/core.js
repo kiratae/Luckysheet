@@ -5,6 +5,8 @@ import luckysheetformula from '../global/formula';
 import weVariable from './variable';
 import weAPI from './api';
 import weCellValidationCtrl from './cellvalidation';
+import weCellTagCtrl from './celltag';
+import weDropdownCtrl from './dropdown';
 
 const weCore = {
     setConfig: function (config) {
@@ -35,7 +37,9 @@ const weCore = {
         libCore.getRangeByTxt = weAPI.getRangeByTxt;
 
         libCore.weCellValidationCtrl = weCellValidationCtrl;
-
+        libCore.weCellTagCtrl = weCellTagCtrl;
+        libCore.weDropdownCtrl = weDropdownCtrl;
+        
         libCore.execFormula = function (txt) {
             console.log('execFormula', txt);
             if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {

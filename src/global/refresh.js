@@ -19,6 +19,7 @@ import { createFilterOptions } from '../controllers/filter';
 import { getSheetIndex } from '../methods/get';
 import Store from '../store';
 import weCellValidationCtrl from '../custom/cellvalidation';
+import weCellTagCtrl from '../custom/celltag';
 
 let refreshCanvasTimeOut = null;
 
@@ -62,6 +63,7 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
 
     // [TK] custom
     let cellValidation = allParam["cellValidation"];
+    let cellTag = allParam["cellTag"];
     // [TK] end custom
 
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
@@ -109,6 +111,14 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         else{
             curCellValidation = cellValidation;
         }
+
+        let curCellTag;
+        if(cellTag == null){
+            curCellTag = $.extend(true, [], file["cellTag"]);
+        }
+        else{
+            curCellTag = cellTag;
+        }
         // [TK] end custom
         
         Store.jfredo.push({ 
@@ -129,6 +139,8 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
             // [TK] custom
             "cellValidation": $.extend(true, [], file["cellValidation"]),
             "curCellValidation": curCellValidation,
+            "cellTag": $.extend(true, [], file["cellTag"]),
+            "curCellTag": curCellTag,
             // [TK] end custom
         });
     }
@@ -175,6 +187,11 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
     if(cellValidation != null){
         weCellValidationCtrl.cellValidation = cellValidation;
         file["cellValidation"] = cellValidation;
+    }
+
+    if(cellTag != null){
+        weCellTagCtrl.cellTag = cellTag;
+        file["cellTag"] = cellTag;
     }
     // [TK] end custom
 
@@ -472,8 +489,12 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
             "curFreezen": freezen,
             "dataVerification": $.extend(true, {}, file.dataVerification),
             "curDataVerification": dataVerification,
+            // [TK] custom
             "cellValidation": $.extend(true, {}, file.cellValidation),
             "curCellValidation": cellValidation,
+            "cellTag": $.extend(true, {}, file.cellTag),
+            "curCellTag": cellTag,
+            // [TK] custom
         });
     }
 
@@ -600,6 +621,10 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     // [TK] custom
     weCellValidationCtrl.cellValidation = cellValidation;
     file.cellValidation = cellValidation;
+
+    weCellTagCtrl.cellTag = cellTag;
+    file.cellTag = cellTag;
+    // [TK] custom
 
     //行高、列宽刷新
     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);

@@ -29,6 +29,7 @@ import {changeSheetContainerSize, menuToolBarWidth} from './resize';
 import {zoomNumberDomBind} from './zoom';
 import menuButton from './menuButton';
 import weCellValidationCtrl from '../custom/cellvalidation';
+import weCellTagCtrl from '../custom/celltag';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -916,6 +917,9 @@ const sheetmanage = {
 
         weCellValidationCtrl.cellValidation = file.cellValidation;
         weCellValidationCtrl.init();
+
+        weCellTagCtrl.cellTag = file.cellTag;
+        weCellTagCtrl.init();
         
         createFilterOptions(file["filter_select"], file["filter"]);
     },

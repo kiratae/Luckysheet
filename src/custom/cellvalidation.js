@@ -4,11 +4,10 @@ import weConfigsetting from './configsetting';
 import menuButton from '../controllers/menuButton';
 
 const weCellValidationCtrl = {
-    cellValidation: null,
+    cellValidation: {},
     init: function () {
         console.log('weCellValidationCtrl::init');
-        const self = this;
-        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = self.cellValidation;
+        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
     },
     renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)
