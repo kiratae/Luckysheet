@@ -5,17 +5,18 @@ import menuButton from '../controllers/menuButton';
 
 const weCellValidationCtrl = {
     cellValidation: {},
-    init: function () {
+    init: function() {
         console.log('weCellValidationCtrl::init');
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
     },
-    renderCell: function (r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
+    renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)
             return;
 
         // [TK] custom validation render or draw (draw a top left red triangle)
         if (this.cellValidation != null && this.cellValidation[r + '_' + c] != null) {
-            let dv_w = 5 * Store.zoomRatio, dv_h = 5 * Store.zoomRatio; //红色小三角宽高
+            let dv_w = 5 * Store.zoomRatio,
+                dv_h = 5 * Store.zoomRatio; //红色小三角宽高
 
             luckysheetTableContent.beginPath();
             luckysheetTableContent.moveTo(
@@ -35,7 +36,7 @@ const weCellValidationCtrl = {
             luckysheetTableContent.closePath();
         }
     },
-    cellFocus: function (r, c, clickMode) {
+    cellFocus: function(r, c, clickMode) {
         $("#luckysheet-dataVerification-dropdown-btn").hide();
         $("#luckysheet-dataVerification-showHintBox").hide();
 
@@ -83,12 +84,11 @@ const weCellValidationCtrl = {
             //         $("#luckysheet-dataVerification-dropdown-List").hide();
             //     }
             // }
-        }
-        else {
+        } else {
             $("#luckysheet-dataVerification-dropdown-List").hide();
         }
     },
-    dropdownListShow: function () {
+    dropdownListShow: function() {
         $("#luckysheet-dataVerification-showHintBox").hide();
 
         console.log('weDropdown::dropdownListShow');
@@ -114,7 +114,7 @@ const weCellValidationCtrl = {
         }
 
         let item = self.cellValidation[rowIndex + '_' + colIndex];
-        let list = self.getDropdownList(item.value1);
+        let list = self.getDropdownList(item);
 
         let optionHtml = '';
         list.forEach(i => {
@@ -132,21 +132,35 @@ const weCellValidationCtrl = {
             });
 
     },
-    getDropdownList: function () {
-        let ddl = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdown"];
+    getDropdownList: function(value) {
+        let list = [];
+        if (value.setEqual != null) {
+            let arr = value.setEqual.split(",");
+
+            for (let i = 0; i < arr.length; i++) {
+                let v = arr[i];
+
+                if (v.length == 0) {
+                    continue;
+                }
+
+                if (!list.includes(v)) {
+                    list.push(v);
+                }
+            }
+        }
+        return list;
+        // let ddl = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdown"];
     },
-    setCellValidation: function (r, c, obj) {
-        const self = this;
-        self.cellValidation[r + '_' + c] = Object.assign({}, obj);
-        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = self.cellValidation;
+    setCellValidation: function(r, c, obj) {
+        this.cellValidation[r + '_' + c] = Object.assign({}, obj);
+        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
     },
-    getCellValidation: function (r, c) {
-        const self = this;
-        return self.cellValidation[r + '_' + c] ?? null;
+    getCellValidation: function(r, c) {
+        return this.cellValidation[r + '_' + c] ? this.cellValidation[r + '_' + c] : null;
     },
-    deleteCellValidation: function (r, c) {
-        const self = this;
-        delete self.cellValidation[r + '_' + c];
+    deleteCellValidation: function(r, c) {
+        delete this.cellValidation[r + '_' + c];
     }
 }
 

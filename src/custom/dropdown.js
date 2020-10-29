@@ -3,13 +3,13 @@ import { getUUID, Log } from './utils';
 const weDropdownCtrl = {
     log: new Log("weDropdownCtrl"),
     dropdownStorage: [],
-    getList: function () {
+    getList: function() {
         return this.dropdownStorage.slice();
     },
-    getData: function (id) {
+    getData: function(id) {
         return this.dropdownStorage.find(item => item.id === id);
     },
-    saveData: function (data) {
+    saveData: function(data) {
         if (!data.id) {
             // insert
             data.id = getUUID();
@@ -24,7 +24,7 @@ const weDropdownCtrl = {
             }
         }
     },
-    deteleData: function (id) {
+    deteleData: function(id) {
         const func = 'deteleData';
         try {
             let index = this.dropdownStorage.findIndex(item => item === id);
