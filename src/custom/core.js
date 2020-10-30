@@ -9,9 +9,10 @@ import weCellTagCtrl from './celltag';
 import weDropdownCtrl from './dropdown';
 
 const weCore = {
-    setConfig: function (config) {
+    setConfig: function(config) {
         // config
         weConfigsetting.formApi = config.formApi;
+        weConfigsetting.formReportSetId = config.formReportSetId;
         weConfigsetting.toolbars = config.toolbars;
         weConfigsetting.contextMenus = config.contextMenus;
         weConfigsetting.formEditor = config.formEditor;
@@ -26,21 +27,21 @@ const weCore = {
 
         weVariable.init(config.variablePrefix);
     },
-    setAPI: function (libCore) {
+    setAPI: function(libCore) {
         libCore.resize = luckysheetsizeauto;
 
-        libCore.setCellError = function (data) {
+        libCore.setCellError = function(data) {
             Store.luckysheetfile.cellerror = data;
         }
-        
+
         libCore.getSelectedCell = weAPI.getSelectedCell;
         libCore.getRangeByTxt = weAPI.getRangeByTxt;
 
         libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
         libCore.weDropdownCtrl = weDropdownCtrl;
-        
-        libCore.execFormula = function (txt) {
+
+        libCore.execFormula = function(txt) {
             console.log('execFormula', txt);
             if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
                 return weVariable.execFormula(txt);

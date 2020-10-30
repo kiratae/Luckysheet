@@ -24,29 +24,25 @@ const weVariable = {
         se: "#SERVER!",
         v: "#VAR!",
     },
-    init: function (vPrefix) {
+    init: function(vPrefix) {
         console.log('weVariable::init');
-        this.variablePrefix = vPrefix ?? this.variablePrefix;
+        this.variablePrefix = vPrefix ? vPrefix : this.variablePrefix;
     },
-    functionboxshow: function (r, c, d, cell) {
+    functionboxshow: function(r, c, d, cell) {
         if (isInlineStringCell(cell)) {
             return getInlineStringNoStyle(r, c);
-        }
-        else if (cell.df != null) {
+        } else if (cell.df != null) {
             return getcellvalue(r, c, d, "df");
-        }
-        else {
+        } else {
             return valueShowEs(r, c, d);
         }
     },
-    luckysheetupdateCell: function (r, c, d, cell) {
+    luckysheetupdateCell: function(r, c, d, cell) {
         if (isInlineStringCell(cell)) {
             return getInlineStringStyle(r, c, d);
-        }
-        else if (cell.df != null) {
+        } else if (cell.df != null) {
             return getcellvalue(r, c, d, "df");
-        }
-        else {
+        } else {
             let v = valueShowEs(r, c, d);
             if (cell.qp == "1") {
                 v = "'" + v;
@@ -54,7 +50,7 @@ const weVariable = {
             return v;
         }
     },
-    transformFormula: function (value) {
+    transformFormula: function(value) {
         const self = this;
         self.resolvedVariables.splice(0, self.resolvedVariables.length);
         if (getObjType(value) == "string") {
@@ -64,7 +60,7 @@ const weVariable = {
             return value;
         }
     },
-    resolveFormula: function (fx, isSub) {
+    resolveFormula: function(fx, isSub) {
         const self = this;
         if (self.regex.test(fx) && !isSub) {
 
@@ -94,7 +90,7 @@ const weVariable = {
             return fx;
         }
     },
-    getVariableByName: function (name, isLocal, sheetName) {
+    getVariableByName: function(name, isLocal, sheetName) {
         const self = this;
         let variables = null;
         if (isLocal)
@@ -107,13 +103,13 @@ const weVariable = {
         else
             throw self.error.v;
     },
-    detectCircular: function (varName) {
+    detectCircular: function(varName) {
         const self = this;
         if (self.resolvedVariables.includes(varName))
             throw self.error.c; // circular error string
         self.resolvedVariables.push(varName);
     },
-    resolveMultiVariable: function (fx) {
+    resolveMultiVariable: function(fx) {
         const self = this;
         let variables = fx.match(self.regex);
         if (variables) {
@@ -130,7 +126,7 @@ const weVariable = {
             return fx;
         }
     },
-    resolveVariable: function (fx, isSub, sheetName) {
+    resolveVariable: function(fx, isSub, sheetName) {
         const self = this;
         let varName = fx.match(self.regexTest)[1];
 
@@ -151,26 +147,30 @@ const weVariable = {
             return self.resolveMultiVariable(v.formula);
         }
     },
-    addRemoteSheet: function (name) {
+    addRemoteSheet: function(name) {
         let sheetName = name.replace('_', '-')
-        let removeLoading = function (ex) {
-            setTimeout(function () {
+        let removeLoading = function(ex) {
+            setTimeout(function() {
                 $("#luckysheetloadingdata").fadeOut().remove();
             }, 500);
-            if(ex)
+            if (ex)
                 throw ex;
         }
         const self = this;
+        let postData = { rptFormCode: sheetName };
+        if (!weConfigsetting.formEditor) {
+            postData['formReportSetId'] = weConfigsetting.formReportSetId;
+        }
         $.ajax({
             url: weConfigsetting.formApi,
             type: 'post',
             dataType: 'json',
-            data: { code: sheetName },
-            beforeSend: function () {
+            data: postData,
+            beforeSend: function() {
                 console.log(`calling: "${weConfigsetting.formApi}" with code "${sheetName}".`);
                 $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML());
             },
-            success: function (data, textStatus, jqXHR) {
+            success: function(data, textStatus, jqXHR) {
                 if (data.data) {
                     if (data.statusCode == "0") {
                         let formData = JSON.parse(data.data.data)[0];
@@ -195,13 +195,13 @@ const weVariable = {
                     removeLoading(self.error.se);
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: function(jqXHR, textStatus, errorThrown) {
                 console.log('error', textStatus);
                 removeLoading(self.error.ce);
             }
         });
     },
-    variableHTML: function (text) {
+    variableHTML: function(text) {
         // console.log('variableHTML', text);
         // TODO: custom variable html display in formula bar here!
 
@@ -226,12 +226,12 @@ const weVariable = {
         // console.log(var_str);
         return text;
     },
-    execFormula: function (txt) {
+    execFormula: function(txt) {
         if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
             return luckysheetformula.execfunction(this.resolveFormula(txt), undefined, undefined, undefined, true);
         }
     },
-    isGlobalFX: function (fx) {
+    isGlobalFX: function(fx) {
         return this.regexTestIsGlobal.test(fx);
     }
 }
