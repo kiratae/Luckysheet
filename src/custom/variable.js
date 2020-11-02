@@ -29,25 +29,50 @@ const weVariable = {
         this.variablePrefix = vPrefix ? vPrefix : this.variablePrefix;
     },
     functionboxshow: function(r, c, d, cell) {
-        if (isInlineStringCell(cell)) {
-            return getInlineStringNoStyle(r, c);
-        } else if (cell.df != null) {
-            return getcellvalue(r, c, d, "df");
+        if (weConfigsetting.formEditor) {
+            if (isInlineStringCell(cell)) {
+                return getInlineStringNoStyle(r, c);
+            } else if (cell.df != null) {
+                return getcellvalue(r, c, d, "df");
+            } else {
+                return valueShowEs(r, c, d);
+            }
         } else {
-            return valueShowEs(r, c, d);
+            if (isInlineStringCell(cell)) {
+                return getInlineStringNoStyle(r, c);
+            } else if (cell.f != null) {
+                return getcellvalue(r, c, d, "f");
+            } else {
+                return valueShowEs(r, c, d);
+            }
         }
+
     },
     luckysheetupdateCell: function(r, c, d, cell) {
-        if (isInlineStringCell(cell)) {
-            return getInlineStringStyle(r, c, d);
-        } else if (cell.df != null) {
-            return getcellvalue(r, c, d, "df");
-        } else {
-            let v = valueShowEs(r, c, d);
-            if (cell.qp == "1") {
-                v = "'" + v;
+        if (weConfigsetting.formEditor) {
+            if (isInlineStringCell(cell)) {
+                return getInlineStringStyle(r, c, d);
+            } else if (cell.df != null) {
+                return getcellvalue(r, c, d, "df");
+            } else {
+                let v = valueShowEs(r, c, d);
+                if (cell.qp == "1") {
+                    v = "'" + v;
+                }
+                return v;
             }
-            return v;
+        } else {
+            if (isInlineStringCell(cell)) {
+                return getInlineStringStyle(r, c, d);
+            } else if (cell.f != null) {
+                return getcellvalue(r, c, d, "f");
+            } else {
+                let v = valueShowEs(r, c, d);
+                if (cell.qp == "1") {
+                    v = "'" + v;
+                }
+                return v;
+            }
         }
     },
     transformFormula: function(value) {
