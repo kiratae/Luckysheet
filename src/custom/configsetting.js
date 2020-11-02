@@ -1,4 +1,5 @@
 const weConfigsetting = {
+    slientMode: false,
     formApi: null,
     formReportSetId: null,
     bodyContainer: null,

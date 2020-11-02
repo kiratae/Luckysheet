@@ -11,6 +11,7 @@ import weDropdownCtrl from './dropdown';
 const weCore = {
     setConfig: function(config) {
         // config
+        weConfigsetting.slientMode = config.slientMode;
         weConfigsetting.formApi = config.formApi;
         weConfigsetting.formReportSetId = config.formReportSetId;
         weConfigsetting.toolbars = config.toolbars;
