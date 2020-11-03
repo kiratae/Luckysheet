@@ -2,12 +2,32 @@ import { getSheetIndex } from '../methods/get';
 import Store from '../store';
 import weConfigsetting from './configsetting';
 import menuButton from '../controllers/menuButton';
+import formula from '../global/formula';
 
 const weCellValidationCtrl = {
     cellValidation: {},
     init: function() {
         console.log('weCellValidationCtrl::init');
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
+        const self = this;
+
+        $(document).off("click.dropdownBtn").on("click.dropdownBtn", "#luckysheet-dataVerification-dropdown-btn", function(e) {
+            self.dropdownListShow();
+            e.stopPropagation();
+        });
+        $(document).off("click.dropdownListItem").on("click.dropdownListItem", "#luckysheet-dataVerification-dropdown-List .dropdown-List-item", function(e) {
+            $("#luckysheet-dataVerification-dropdown-List").hide();
+
+            let value = e.target.innerText;
+            let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+            let rowIndex = last.row_focus;
+            let colIndex = last.column_focus;
+
+            $("#luckysheet-rich-text-editor").text(value);
+            formula.updatecell(rowIndex, colIndex);
+
+            e.stopPropagation();
+        });
     },
     renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)
@@ -68,22 +88,21 @@ const weCellValidationCtrl = {
         //     return;
         // }
 
-        if (item.ruleTypeId == '10114') {
-            console.log('dropdown');
-            // $("#luckysheet-dataVerification-dropdown-btn").show().css({
-            //     'max-width': col - col_pre,
-            //     'max-height': row - row_pre,
-            //     'left': col - 20,
-            //     'top': row_pre + (row - row_pre - 20) / 2
-            // })
+        if (item.ruleTypeId == '10115') {
+            $("#luckysheet-dataVerification-dropdown-btn").show().css({
+                'max-width': col - col_pre,
+                'max-height': row - row_pre,
+                'left': col - 20,
+                'top': row_pre + (row - row_pre - 20) / 2
+            })
 
-            // if($("#luckysheet-dataVerification-dropdown-List").is(":visible")){
-            //     let dataIndex = $("#luckysheet-dataVerification-dropdown-List").prop("data-index");
+            if ($("#luckysheet-dataVerification-dropdown-List").is(":visible")) {
+                let dataIndex = $("#luckysheet-dataVerification-dropdown-List").prop("data-index");
 
-            //     if(dataIndex != (r + '_' + c)){
-            //         $("#luckysheet-dataVerification-dropdown-List").hide();
-            //     }
-            // }
+                if (dataIndex != (r + '_' + c)) {
+                    $("#luckysheet-dataVerification-dropdown-List").hide();
+                }
+            }
         } else {
             $("#luckysheet-dataVerification-dropdown-List").hide();
         }
@@ -134,8 +153,8 @@ const weCellValidationCtrl = {
     },
     getDropdownList: function(value) {
         let list = [];
-        if (value.setEqual != null) {
-            let arr = value.setEqual.split(",");
+        if (value.inSet != null) {
+            let arr = value.inSet.split(",");
 
             for (let i = 0; i < arr.length; i++) {
                 let v = arr[i];
@@ -149,6 +168,7 @@ const weCellValidationCtrl = {
                 }
             }
         }
+        console.log('weCellValidationCtrl::getDropdownList', list);
         return list;
         // let ddl = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdown"];
     },

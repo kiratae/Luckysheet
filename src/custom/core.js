@@ -12,6 +12,7 @@ const weCore = {
     setConfig: function(config) {
         // config
         weConfigsetting.slientMode = config.slientMode;
+        weConfigsetting.fillErrorInCell = config.fillErrorInCell;
         weConfigsetting.formApi = config.formApi;
         weConfigsetting.formReportSetId = config.formReportSetId;
         weConfigsetting.toolbars = config.toolbars;
