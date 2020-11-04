@@ -110,7 +110,7 @@ const weCellValidationCtrl = {
     dropdownListShow: function() {
         $("#luckysheet-dataVerification-showHintBox").hide();
 
-        console.log('weDropdown::dropdownListShow');
+        // console.log('weDropdown::dropdownListShow');
 
         const self = this;
 
@@ -167,6 +167,8 @@ const weCellValidationCtrl = {
                     list.push(v);
                 }
             }
+        } else if (value.inSet != null) {
+
         }
         console.log('weCellValidationCtrl::getDropdownList', list);
         return list;

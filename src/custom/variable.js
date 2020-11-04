@@ -195,13 +195,13 @@ const weVariable = {
                 console.log(`calling: "${weConfigsetting.formApi}" with code "${sheetName}".`);
                 $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML());
             },
-            success: function(data, textStatus, jqXHR) {
-                if (data.data) {
-                    if (data.statusCode == "0") {
-                        let formData = JSON.parse(data.data.data)[0];
+            success: function(res, textStatus, jqXHR) {
+                if (res.data) {
+                    if (res.statusCode == "0") {
+                        let formData = JSON.parse(res.data.data)[0];
 
                         formData.order = Store.luckysheetfile.length;
-                        formData.index = sheetName;
+                        formData.index = name;
                         formData.status = 0;
                         formData.hide = 1;
                         formData.allowEdit = false;

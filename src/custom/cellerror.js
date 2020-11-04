@@ -82,28 +82,28 @@ const weCellErrorCtrl = {
             return false;
 
         let cellError = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellerror"];
-        console.log('cellError', cellError, cellError[r + '_' + c]);
+        // console.log('cellError', cellError, cellError[r + '_' + c]);
         if (cellError != null && cellError[r + '_' + c] != null) {
             let item = cellError[r + '_' + c];
-            let hintText;
+            let errorMsg;
 
-            hintText = '<span style="color:#FC6666;">';
+            errorMsg = '<span style="color:#FC6666;">';
 
             if (typeof item === 'string') {
-                hintText += item;
+                errorMsg += item;
             } else if (typeof item === 'object' && item.length > 0) {
-                hintText += '<ul>';
+                errorMsg += '<ul>';
                 for (let i = 0; i < item.length; i++) {
-                    hintText += `<li>${item[i]}</li>`;
+                    errorMsg += `<li>${item[i]}</li>`;
                 }
-                hintText += '</ul>';
+                errorMsg += '</ul>';
             }
 
-            hintText += '</span>';
+            errorMsg += '</span>';
 
-            console.log('hintText', hintText);
+            // console.log('hintText', hintText);
 
-            $("#luckysheet-cellError-showErrorMsg").html(hintText).show().css({
+            $("#luckysheet-cellError-showErrorMsg").html(errorMsg).show().css({
                 'left': left,
                 'top': top
             });

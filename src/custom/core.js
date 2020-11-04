@@ -44,7 +44,7 @@ const weCore = {
         libCore.weDropdownCtrl = weDropdownCtrl;
 
         libCore.execFormula = function(txt) {
-            console.log('execFormula', txt);
+            // console.log('execFormula', txt);
             if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
                 return weVariable.execFormula(txt);
                 // return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
