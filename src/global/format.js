@@ -1,6 +1,7 @@
 import { isRealNum, valueIsError } from './validate';
 import { isdatetime } from './datecontroll';
 import { getcellvalue } from './getdata';
+import weFormat from '../custom/format';
 
 var SSF = ({});
 var make_ssf = function make_ssf(SSF) {
@@ -90,7 +91,7 @@ var make_ssf = function make_ssf(SSF) {
         t[11] = '0.00E+00';
         t[12] = '# ?/?';
         t[13] = '# ??/??';
-        t[14] = 'm/d/yy';
+        t[14] = 'dd/mm/yyyy'; // t[14] = 'm/d/yy';
         t[15] = 'd-mmm-yy';
         t[16] = 'd-mmm';
         t[17] = 'mmm-yy';
@@ -194,6 +195,7 @@ var make_ssf = function make_ssf(SSF) {
 
     function parse_date_code(v, opts, b2) {
         if (v > 2958465 || v < 0) return null;
+        // console.log('[TK] custom; parse_date_code => ', v, opts, b2);
         var date = (v | 0),
             time = Math.floor(86400 * (v - date)),
             dow = 0;
@@ -349,10 +351,12 @@ var make_ssf = function make_ssf(SSF) {
             out, outl = 0;
         switch (type) {
             case 98:
-                /* 'b' buddhist year */ y = val.y + 543;
+                /* 'b' buddhist year */
+                y = val.y + 543;
                 /* falls through */
             case 121:
-                /* 'y' year */ switch (fmt.length) {
+                /* 'y' year */
+                switch (fmt.length) {
                     case 1:
                     case 2:
                         out = y % 100;
@@ -365,7 +369,8 @@ var make_ssf = function make_ssf(SSF) {
                 }
                 break;
             case 109:
-                /* 'm' month */ switch (fmt.length) {
+                /* 'm' month */
+                switch (fmt.length) {
                     case 1:
                     case 2:
                         out = val.m;
@@ -380,7 +385,8 @@ var make_ssf = function make_ssf(SSF) {
                 }
                 break;
             case 100:
-                /* 'd' day */ switch (fmt.length) {
+                /* 'd' day */
+                switch (fmt.length) {
                     case 1:
                     case 2:
                         out = val.d;
@@ -393,7 +399,8 @@ var make_ssf = function make_ssf(SSF) {
                 }
                 break;
             case 104:
-                /* 'h' 12-hour */ switch (fmt.length) {
+                /* 'h' 12-hour */
+                switch (fmt.length) {
                     case 1:
                     case 2:
                         out = 1 + (val.H + 11) % 12;
@@ -404,7 +411,8 @@ var make_ssf = function make_ssf(SSF) {
                 }
                 break;
             case 72:
-                /* 'H' 24-hour */ switch (fmt.length) {
+                /* 'H' 24-hour */
+                switch (fmt.length) {
                     case 1:
                     case 2:
                         out = val.H;
@@ -415,7 +423,8 @@ var make_ssf = function make_ssf(SSF) {
                 }
                 break;
             case 77:
-                /* 'M' minutes */ switch (fmt.length) {
+                /* 'M' minutes */
+                switch (fmt.length) {
                     case 1:
                     case 2:
                         out = val.M;
@@ -426,7 +435,8 @@ var make_ssf = function make_ssf(SSF) {
                 }
                 break;
             case 115:
-                /* 's' seconds */ if (fmt != 's' && fmt != 'ss' && fmt != '.0' && fmt != '.00' && fmt != '.000') throw 'bad second format: ' + fmt;
+                /* 's' seconds */
+                if (fmt != 's' && fmt != 'ss' && fmt != '.0' && fmt != '.00' && fmt != '.000') throw 'bad second format: ' + fmt;
                 if (val.u === 0 && (fmt == "s" || fmt == "ss")) return pad0(val.S, fmt.length);
                 if (ss0 >= 2) tt = ss0 === 3 ? 1000 : 100;
                 else tt = ss0 === 1 ? 10 : 1;
@@ -437,7 +447,8 @@ var make_ssf = function make_ssf(SSF) {
                 if (fmt === 'ss') return o.substr(0, 2);
                 return "." + o.substr(2, fmt.length - 1);
             case 90:
-                /* 'Z' absolute time */ switch (fmt) {
+                /* 'Z' absolute time */
+                switch (fmt) {
                     case '[h]':
                     case '[hh]':
                         out = val.D * 24 + val.H;
@@ -456,7 +467,8 @@ var make_ssf = function make_ssf(SSF) {
                 outl = fmt.length === 3 ? 1 : 2;
                 break;
             case 101:
-                /* 'e' era */ out = y;
+                /* 'e' era */
+                out = y;
                 outl = 1;
                 break;
         }
@@ -818,7 +830,8 @@ var make_ssf = function make_ssf(SSF) {
         var in_str = false /*, cc*/ ;
         for (var i = 0, j = 0; i < fmt.length; ++i) switch (( /*cc=*/ fmt.charCodeAt(i))) {
             case 34:
-                /* '"' */ in_str = !in_str;
+                /* '"' */
+                in_str = !in_str;
                 break;
             case 95:
             case 42:
@@ -827,7 +840,8 @@ var make_ssf = function make_ssf(SSF) {
                 ++i;
                 break;
             case 59:
-                /* ';' */ out[out.length] = fmt.substr(j, i - j);
+                /* ';' */
+                out[out.length] = fmt.substr(j, i - j);
                 j = i + 1;
         }
         out[out.length] = fmt.substr(j);
@@ -839,7 +853,8 @@ var make_ssf = function make_ssf(SSF) {
 
     function fmt_is_date(fmt) {
         var i = 0,
-            /*cc = 0,*/ c = "",
+            /*cc = 0,*/
+            c = "",
             o = "";
         while (i < fmt.length) {
             switch ((c = fmt.charAt(i))) {
@@ -944,7 +959,8 @@ var make_ssf = function make_ssf(SSF) {
         while (i < fmt.length) {
             switch ((c = fmt.charAt(i))) {
                 case 'G':
-                    /* General */ if (!isgeneral(fmt, i)) throw new Error('unrecognized character ' + c + ' in ' + fmt);
+                    /* General */
+                    if (!isgeneral(fmt, i)) throw new Error('unrecognized character ' + c + ' in ' + fmt);
                     out[out.length] = {
                         t: 'G',
                         v: 'General'
@@ -952,7 +968,8 @@ var make_ssf = function make_ssf(SSF) {
                     i += 7;
                     break;
                 case '"':
-                    /* Literal text */ for (o = "";
+                    /* Literal text */
+                    for (o = "";
                         (cc = fmt.charCodeAt(++i)) !== 34 && i < fmt.length;) o += String.fromCharCode(cc);
                     out[out.length] = {
                         t: 't',
@@ -977,7 +994,8 @@ var make_ssf = function make_ssf(SSF) {
                     i += 2;
                     break;
                 case '@':
-                    /* Text Placeholder */ out[out.length] = {
+                    /* Text Placeholder */
+                    out[out.length] = {
                         t: 'T',
                         v: v
                     };
@@ -1194,7 +1212,8 @@ var make_ssf = function make_ssf(SSF) {
                     }
                     break;
                 case 'X':
-                    /*if(out[i].v === "B2");*/ break;
+                    /*if(out[i].v === "B2");*/
+                    break;
                 case 'Z':
                     if (bt < 1 && out[i].v.match(/[Hh]/)) bt = 1;
                     if (bt < 2 && out[i].v.match(/[Mm]/)) bt = 2;
@@ -1278,6 +1297,7 @@ var make_ssf = function make_ssf(SSF) {
                     break;
             }
         }
+        // console.log(`[TK] custom; nstr =>`, nstr);
         var vv = "",
             myv, ostr;
         if (nstr.length > 0) {
@@ -1343,6 +1363,7 @@ var make_ssf = function make_ssf(SSF) {
                 }
             }
         }
+        // console.log(`[TK] custom; out =>`, out);
         for (i = 0; i < out.length; ++i)
             if (out[i] != null && 'n?'.indexOf(out[i].t) > -1) {
                 myv = (flen > 1 && v < 0 && i > 0 && out[i - 1].v === "-" ? -v : v);
@@ -1352,6 +1373,7 @@ var make_ssf = function make_ssf(SSF) {
         var retval = "";
         for (i = 0; i !== out.length; ++i)
             if (out[i] != null) retval += out[i].v;
+            // console.log(`[TK] custom; retval =>`, retval);
         return retval;
     }
     SSF._eval = eval_fmt;
@@ -1386,6 +1408,7 @@ var make_ssf = function make_ssf(SSF) {
 
     function choose_fmt(f, v) {
         var fmt = split_fmt(f);
+        // console.log(`[TK] custom; choose_fmt `, fmt);
         var l = fmt.length,
             lat = fmt[l - 1].indexOf("@");
         if (l < 4 && lat > -1) --l;
@@ -1416,6 +1439,7 @@ var make_ssf = function make_ssf(SSF) {
 
     function format(fmt, v, o) {
         if (o == null) o = {};
+        // console.log(`[TK] custom; begin format`, fmt, v, o);
         var sfmt = "";
         switch (typeof fmt) {
             case "string":
@@ -1433,46 +1457,46 @@ var make_ssf = function make_ssf(SSF) {
         //new runze 增加万 亿 格式  
         //注："w":2万2500  "w0":2万2500  "w0.0":2万2500.2  "w0.00":2万2500.23......自定义精确度
         var reg = /^(w|W)((0?)|(0\.0+))$/;
-        if(!!sfmt.match(reg)){
-            if(isNaN(v)){
+        if (!!sfmt.match(reg)) {
+            if (isNaN(v)) {
                 return v;
             }
 
-             //var v =300101886.436;
+            //var v =300101886.436;
             var acc = sfmt.slice(1); //取得0/0.0/0.00
             var isNegative = false;
-            if(!isNaN(v) && Number(v) < 0){
+            if (!isNaN(v) && Number(v) < 0) {
                 isNegative = true;
                 v = Math.abs(v);
             }
             var vInt = parseInt(v);
-             
+
             var vlength = vInt.toString().length;
-            if( vlength> 4){
-                if(vlength > 8){
-                    var y =parseInt (v / 100000000);  //亿
-                    var w = parseInt(parseFloat(v).subtract(y*100000000) / 10000); //万
-                    var q = parseFloat(v).subtract(y*100000000 + w*10000); //千以后
-                    if(acc != ""){
+            if (vlength > 4) {
+                if (vlength > 8) {
+                    var y = parseInt(v / 100000000); //亿
+                    var w = parseInt(parseFloat(v).subtract(y * 100000000) / 10000); //万
+                    var q = parseFloat(v).subtract(y * 100000000 + w * 10000); //千以后
+                    if (acc != "") {
                         q = numeral(q).format(acc); //处理精确度
                     }
                     v = y + "亿" + w + "万" + q;
-                }else{
+                } else {
                     var w = parseInt(v / 10000); //万
-                    var q = parseFloat(v).subtract(w*10000) //千以后
-                    if(acc != ""){
+                    var q = parseFloat(v).subtract(w * 10000) //千以后
+                    if (acc != "") {
                         q = numeral(q).format(acc); //处理精确度
                     }
                     v = w + "万" + q;
                 }
-                
 
-                if(v.indexOf("亿0万0") != -1){
-                    v = v.replace("0万0","");
-                }else if(v.indexOf("亿0万") != -1){
-                    v = v.replace("0万","");
-                }else if(v.indexOf("万0") != -1){
-                    v = v.replace("万0","万");
+
+                if (v.indexOf("亿0万0") != -1) {
+                    v = v.replace("0万0", "");
+                } else if (v.indexOf("亿0万") != -1) {
+                    v = v.replace("0万", "");
+                } else if (v.indexOf("万0") != -1) {
+                    v = v.replace("万0", "万");
                 }
 
                 //舍弃正则后顾断言写法，旧浏览器不识别（360 V9）
@@ -1509,7 +1533,7 @@ var make_ssf = function make_ssf(SSF) {
                         v = v.substring(0, v.indexOf("万") + 1) + afterWan;
                     }
                 } else if (v.indexOf("亿") != -1 && v.indexOf("万") != -1) { //1亿0053万0611
-                    var afterYi = v.substring(v.indexOf("亿") + 1,v.indexOf("万")),
+                    var afterYi = v.substring(v.indexOf("亿") + 1, v.indexOf("万")),
                         afterWan = v.substring(v.indexOf("万") + 1);
 
                     switch ((parseInt(afterYi) + "").length) {
@@ -1524,7 +1548,7 @@ var make_ssf = function make_ssf(SSF) {
                             break;
                     }
                     v = v.substring(0, v.indexOf("亿") + 1) + afterYi + v.substring(v.indexOf("万"))
-                    
+
 
                     if (afterWan.substring(0, 1) !== "." && afterWan != "") {
                         switch ((parseInt(afterWan) + "").length) {
@@ -1542,20 +1566,21 @@ var make_ssf = function make_ssf(SSF) {
                     }
                 }
 
-            }else{
-                if(acc != ""){
+            } else {
+                if (acc != "") {
                     v = numeral(v).format(acc); //处理精确度
                 }
             }
-            if(isNegative){
+            if (isNegative) {
                 return '-' + v;
-            }else{
+            } else {
                 return v;
             }
-            
+
         }
 
 
+        // console.log(`[TK] custom; sfmt => ${sfmt}, v => ${v}`);
         if (isgeneral(sfmt, 0)) return general_fmt(v, o);
         if (v instanceof Date) v = datenum_local(v, o.date1904);
         var f = choose_fmt(sfmt, v);
@@ -1563,6 +1588,7 @@ var make_ssf = function make_ssf(SSF) {
         if (v === true) v = "TRUE";
         else if (v === false) v = "FALSE";
         else if (v === "" || v == null) return "";
+        // console.log(`[TK] custom; format(f[1] => ${f[1]}, v => ${v}, f[0] => ${f[0]}) o =>`, o);
         return eval_fmt(f[1], v, o, f[0]);
     }
 
@@ -1700,8 +1726,9 @@ if (isNaN(good_pd_date.getFullYear())) good_pd_date = new Date('2/19/17');
 var good_pd = good_pd_date.getFullYear() == 2017;
 /* parses a date as a local date */
 function parseDate(str, fixdate) {
-    var d = new Date(str);
-    //console.log(d);
+    // var d = new Date(str);
+    var d = weFormat.parseDate(str);
+    console.log('parseDate', d);
     if (good_pd) {
         if (fixdate > 0) d.setTime(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
         else if (fixdate < 0) d.setTime(d.getTime() - d.getTimezoneOffset() * 60 * 1000);
@@ -1723,7 +1750,7 @@ function parseDate(str, fixdate) {
 /* TODO: stress test */
 function fuzzynum(s) {
     var v = Number(s);
-    if(typeof s == "number"){
+    if (typeof s == "number") {
         return s;
     }
     if (!isNaN(v)) return v;
@@ -1755,209 +1782,187 @@ function fuzzydate(s) {
     return o;
 }
 
-export function genarate(value) {//万 单位格式增加！！！
+export function genarate(value) { //万 单位格式增加！！！ (Million unit format added! ! !)
+    // console.log('[TK] custom; genarate', value);
     var ret = [];
-    var m = null, ct = {}, v = value;
-    
-    if(value == null){
+    var m = null,
+        ct = {},
+        v = value;
+
+    if (value == null) {
         return null;
     }
 
-    if(value.toString().substr(0, 1) === "'"){
+    if (value.toString().substr(0, 1) === "'") {
         m = value.toString().substr(1);
         ct = { "fa": "@", "t": "s" };
-    }
-    else if(value.toString().toUpperCase() === "TRUE"){
+    } else if (value.toString().toUpperCase() === "TRUE") {
         m = "TRUE";
         ct = { "fa": "General", "t": "b" };
         v = true;
-    }
-    else if(value.toString().toUpperCase() === "FALSE"){
+    } else if (value.toString().toUpperCase() === "FALSE") {
         m = "FALSE";
         ct = { "fa": "General", "t": "b" };
         v = false;
-    }
-    else if(valueIsError(value)){
+    } else if (valueIsError(value)) {
         m = value.toString();
         ct = { "fa": "General", "t": "e" };
-    }
-    else if(/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(value)){
+    } else if (/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(value)) {
         m = value.toString();
         ct = { "fa": "@", "t": "s" };
-    }
-    else if(isRealNum(value) && Math.abs(parseFloat(value)) > 0 && (Math.abs(parseFloat(value)) >= 1e+11 || Math.abs(parseFloat(value)) < 1e-9)){
+    } else if (isRealNum(value) && Math.abs(parseFloat(value)) > 0 && (Math.abs(parseFloat(value)) >= 1e+11 || Math.abs(parseFloat(value)) < 1e-9)) {
         v = numeral(value).value();
 
         var str = v.toExponential();
-        if(str.indexOf(".") > -1){
+        if (str.indexOf(".") > -1) {
             var strlen = str.split(".")[1].split("e")[0].length;
-            if(strlen > 5){
+            if (strlen > 5) {
                 strlen = 5;
             }
 
-            ct = { "fa": "#0."+ new Array(strlen + 1).join("0") +"E+00", "t": "n" }; 
-        }
-        else{
+            ct = { "fa": "#0." + new Array(strlen + 1).join("0") + "E+00", "t": "n" };
+        } else {
             ct = { "fa": "#0.E+00", "t": "n" };
         }
 
         m = SSF.format(ct.fa, v);
-    }
-    else if(value.toString().indexOf("%") > -1){
+    } else if (value.toString().indexOf("%") > -1) {
         var index = value.toString().indexOf("%");
         var value2 = value.toString().substr(0, index);
         var value3 = value2.replace(/,/g, "");
 
-        if(index == value.toString().length - 1 && isRealNum(value3)){
-            if(value2.indexOf(".") > -1){
-                if(value2.indexOf(".") == value2.lastIndexOf(".")){
+        if (index == value.toString().length - 1 && isRealNum(value3)) {
+            if (value2.indexOf(".") > -1) {
+                if (value2.indexOf(".") == value2.lastIndexOf(".")) {
                     var value4 = value2.split(".")[0];
                     var value5 = value2.split(".")[1];
 
                     var len = value5.length;
-                    if(len > 9){
+                    if (len > 9) {
                         len = 9;
                     }
 
-                    if(value4.indexOf(",") > -1){
+                    if (value4.indexOf(",") > -1) {
                         var isThousands = true;
                         var ThousandsArr = value4.split(",");
 
-                        for(var i = 1; i < ThousandsArr.length; i++){
-                            if(ThousandsArr[i].length < 3){
+                        for (var i = 1; i < ThousandsArr.length; i++) {
+                            if (ThousandsArr[i].length < 3) {
                                 isThousands = false;
                                 break;
                             }
                         }
 
-                        if(isThousands){
+                        if (isThousands) {
                             ct = { "fa": "#,##0." + new Array(len + 1).join("0") + "%", "t": "n" };
                             v = numeral(value).value();
                             m = SSF.format(ct.fa, v);
-                        }
-                        else{
+                        } else {
                             m = value.toString();
                             ct = { "fa": "@", "t": "s" };
                         }
-                    }
-                    else{
+                    } else {
                         ct = { "fa": "0." + new Array(len + 1).join("0") + "%", "t": "n" };
                         v = numeral(value).value();
                         m = SSF.format(ct.fa, v);
                     }
-                }
-                else{
+                } else {
                     m = value.toString();
                     ct = { "fa": "@", "t": "s" };
                 }
-            }
-            else if(value2.indexOf(",") > -1){
+            } else if (value2.indexOf(",") > -1) {
                 var isThousands = true;
                 var ThousandsArr = value2.split(",");
 
-                for(var i = 1; i < ThousandsArr.length; i++){
-                    if(ThousandsArr[i].length < 3){
+                for (var i = 1; i < ThousandsArr.length; i++) {
+                    if (ThousandsArr[i].length < 3) {
                         isThousands = false;
                         break;
                     }
                 }
 
-                if(isThousands){
+                if (isThousands) {
                     ct = { "fa": "#,##0%", "t": "n" };
                     v = numeral(value).value();
                     m = SSF.format(ct.fa, v);
-                }
-                else{
+                } else {
                     m = value.toString();
                     ct = { "fa": "@", "t": "s" };
                 }
-            }
-            else{
+            } else {
                 ct = { "fa": "0%", "t": "n" };
                 v = numeral(value).value();
                 m = SSF.format(ct.fa, v);
             }
-        }
-        else{
+        } else {
             m = value.toString();
             ct = { "fa": "@", "t": "s" };
         }
-    }
-    else if(value.toString().indexOf(".") > -1){
-        if(value.toString().indexOf(".") == value.toString().lastIndexOf(".")){
+    } else if (value.toString().indexOf(".") > -1) {
+        if (value.toString().indexOf(".") == value.toString().lastIndexOf(".")) {
             var value1 = value.toString().split(".")[0];
             var value2 = value.toString().split(".")[1];
 
             var len = value2.length;
-            if(len > 9){
+            if (len > 9) {
                 len = 9;
             }
 
-            if(value1.indexOf(",") > -1){
+            if (value1.indexOf(",") > -1) {
                 var isThousands = true;
                 var ThousandsArr = value1.split(",");
 
-                for(var i = 1; i < ThousandsArr.length; i++){
-                    if(!isRealNum(ThousandsArr[i]) || ThousandsArr[i].length < 3){
+                for (var i = 1; i < ThousandsArr.length; i++) {
+                    if (!isRealNum(ThousandsArr[i]) || ThousandsArr[i].length < 3) {
                         isThousands = false;
                         break;
                     }
                 }
 
-                if(isThousands){
+                if (isThousands) {
                     ct = { "fa": "#,##0." + new Array(len + 1).join("0"), "t": "n" };
                     v = numeral(value).value();
                     m = SSF.format(ct.fa, v);
-                }
-                else{
+                } else {
                     m = value.toString();
                     ct = { "fa": "@", "t": "s" };
                 }
-            }
-            else{
-                if(isRealNum(value1) && isRealNum(value2)){
+            } else {
+                if (isRealNum(value1) && isRealNum(value2)) {
                     ct = { "fa": "0." + new Array(len + 1).join("0"), "t": "n" };
                     v = numeral(value).value();
                     m = SSF.format(ct.fa, v);
-                }
-                else{
+                } else {
                     m = value.toString();
                     ct = { "fa": "@", "t": "s" };
                 }
             }
-        }
-        else{
+        } else {
             m = value.toString();
             ct = { "fa": "@", "t": "s" };
         }
-    }
-    else if(isRealNum(value)){
+    } else if (isRealNum(value)) {
         m = value.toString();
         ct = { "fa": "General", "t": "n" };
         v = parseFloat(value);
-    }
-    else if (isdatetime(value) && (value.toString().indexOf(".") > -1 || value.toString().indexOf(":") > -1 || value.toString().length < 16)){
+    } else if (weFormat.isdatetime(value) && (value.toString().indexOf(".") > -1 || value.toString().indexOf(":") > -1 || value.toString().length < 16)) {
         v = datenum_local(parseDate(value.toString().replace(/-/g, "/")));
 
-        if(v.toString().indexOf(".") > -1){
-            if(value.toString().length > 18){
-                ct.fa = "yyyy-MM-dd hh:mm:ss";
+        if (v.toString().indexOf(".") > -1) {
+            if (value.toString().length > 18) {
+                ct.fa = "dd/MM/yyyy hh:mm:ss"; // yyyy-MM-dd hh:mm:ss
+            } else if (value.toString().length > 11) {
+                ct.fa = "dd/MM/yyyy hh:mm"; // yyyy-MM-dd hh:mm
+            } else {
+                ct.fa = "dd/MM/yyyy"; // yyyy-MM-dd
             }
-            else if(value.toString().length > 11){
-                ct.fa = "yyyy-MM-dd hh:mm";
-            }
-            else{
-                ct.fa = "yyyy-MM-dd";
-            }
+        } else {
+            ct.fa = "dd/MM/yyyy"; // yyyy-MM-dd
         }
-        else{
-            ct.fa = "yyyy-MM-dd";
-        }
-        
+
         ct.t = "d";
         m = SSF.format(ct.fa, v);
-    }
-    else{
+    } else {
         m = value;
         ct.fa = "General";
         ct.t = "g";
@@ -1967,6 +1972,7 @@ export function genarate(value) {//万 单位格式增加！！！
 }
 
 export function update(fmt, v) {
+    // console.log(`[TK] custom; update(fmt => ${fmt}, v => ${v})`);
     return SSF.format(fmt, v);
 }
 
@@ -1976,26 +1982,22 @@ export function is_date(fmt, v) {
 
 export function valueShowEs(r, c, d) {
     var value = getcellvalue(r, c, d, "m");
-    if(value == null){
+    if (value == null) {
         value = getcellvalue(r, c, d, "v");
-    }
-    else{
-        if (!isNaN(fuzzynum(value))){
-            if(typeof(value) == "string" && value.indexOf("%") > -1){
-                
-            }
-            else{
+    } else {
+        if (!isNaN(fuzzynum(value))) {
+            if (typeof(value) == "string" && value.indexOf("%") > -1) {
+
+            } else {
                 value = getcellvalue(r, c, d, "v");
             }
         }
         // else if (!isNaN(parseDate(value).getDate())){
-        else if (d[r][c].ct != null && d[r][c].ct.t == "d"){
+        else if (d[r][c].ct != null && d[r][c].ct.t == "d") {
 
-        }
-        else if (d[r][c].ct != null && d[r][c].ct.t == "b"){
+        } else if (d[r][c].ct != null && d[r][c].ct.t == "b") {
 
-        }
-        else{
+        } else {
             value = getcellvalue(r, c, d, "v");
         }
     }

@@ -27,7 +27,8 @@
     "vuepress": "^1.5.0"
   },
   "dependencies": {
-    "jspdf": "^2.1.1"
+    "jspdf": "^2.1.1",
+    "luxon": "^1.25.0"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production gulp build",
