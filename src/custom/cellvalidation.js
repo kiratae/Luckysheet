@@ -29,6 +29,11 @@ const weCellValidationCtrl = {
             e.stopPropagation();
         });
     },
+    createdom: function() {
+        $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-btn"></div>');
+        $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>');
+        $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-showHintBox" class="luckysheet-mousedown-cancel"></div>');
+    },
     renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)
             return;
