@@ -1614,7 +1614,7 @@ const menuButton = {
                         if (row_st == -1) {
                             row_st = 0;
                         }
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -1652,7 +1652,7 @@ const menuButton = {
                         if (row_st == -1) {
                             row_st = 0;
                         }
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -1696,7 +1696,7 @@ const menuButton = {
                             row_st = 0;
                         }
 
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -1772,7 +1772,7 @@ const menuButton = {
                             row_st = 0;
                         }
 
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -2830,6 +2830,7 @@ const menuButton = {
                 $attr.css({ "top": top, "left": left }).show();
                 _this.rightclickmenu = $t;
             } else {
+                clearTimeout(_this.submenuhide);
                 _this.submenuhide = setTimeout(function() { $attr.hide(); }, 200);
             }
         }).on("mouseover mouseleave", ".luckysheet-menuButton-sub", function(e) {

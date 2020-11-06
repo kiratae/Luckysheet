@@ -4,16 +4,17 @@ import editor from './editor';
 import { setcellvalue } from './setdata';
 import { getcellFormula } from './getdata';
 import { computeRowlenArr } from './getRowlen';
-import { 
-    luckysheetDrawMain, 
-    luckysheetDrawgridRowTitle, 
-    luckysheetDrawgridColumnTitle 
+import {
+    luckysheetDrawMain,
+    luckysheetDrawgridRowTitle,
+    luckysheetDrawgridColumnTitle
 } from './draw';
 import luckysheetFreezen from '../controllers/freezen';
 import server from '../controllers/server';
 import sheetmanage from '../controllers/sheetmanage';
 import luckysheetPostil from '../controllers/postil';
 import dataVerificationCtrl from '../controllers/dataVerificationCtrl';
+import hyperlinkCtrl from '../controllers/hyperlinkCtrl';
 import { selectHightlightShow, selectionCopyShow } from '../controllers/select';
 import { createFilterOptions } from '../controllers/filter';
 import { getSheetIndex } from '../methods/get';
@@ -23,11 +24,11 @@ import weCellTagCtrl from '../custom/celltag';
 
 let refreshCanvasTimeOut = null;
 
-function runExecFunction(range, index, data){
+function runExecFunction(range, index, data) {
     formula.execFunctionExist = [];
-    for(let s = 0; s < range.length; s++){
-        for(let r = range[s].row[0]; r <= range[s].row[1]; r++){
-            for(let c = range[s].column[0]; c <= range[s].column[1]; c++){
+    for (let s = 0; s < range.length; s++) {
+        for (let r = range[s].row[0]; r <= range[s].row[1]; r++) {
+            for (let c = range[s].column[0]; c <= range[s].column[1]; c++) {
                 formula.execFunctionExist.push({ "r": r, "c": c, "i": index });
             }
         }
@@ -38,11 +39,11 @@ function runExecFunction(range, index, data){
 }
 
 function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefreshCanvas = true) {
-    if(data == null){
+    if (data == null) {
         data = Store.flowdata;
     }
 
-    if(range == null){
+    if (range == null) {
         range = Store.luckysheet_select_save;
     }
 
@@ -51,15 +52,15 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
 
 
     //关联参数
-    if(allParam == null){
+    if (allParam == null) {
         allParam = {};
     }
 
-    let cfg = allParam["cfg"];  //config
-    let RowlChange = allParam["RowlChange"];  //行高改变
-    let cdformat = allParam["cdformat"];  //条件格式
-    let dataVerification = allParam["dataVerification"];  //数据验证
-    let dynamicArray = allParam["dynamicArray"];  //动态数组
+    let cfg = allParam["cfg"]; //config
+    let RowlChange = allParam["RowlChange"]; //行高改变
+    let cdformat = allParam["cdformat"]; //条件格式
+    let dataVerification = allParam["dataVerification"]; //数据验证
+    let dynamicArray = allParam["dynamicArray"]; //动态数组
 
     // [TK] custom
     let cellValidation = allParam["cellValidation"];
@@ -72,64 +73,58 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         Store.jfundo = [];
 
         let curConfig;
-        if(cfg == null){
+        if (cfg == null) {
             curConfig = $.extend(true, {}, Store.config);
-        }
-        else{
+        } else {
             curConfig = $.extend(true, {}, cfg);
         }
 
         let curCdformat;
-        if(cdformat == null){
+        if (cdformat == null) {
             curCdformat = $.extend(true, [], file["luckysheet_conditionformat_save"]);
-        }
-        else{
+        } else {
             curCdformat = cdformat;
         }
 
         let curDataVerification;
-        if(dataVerification == null){
+        if (dataVerification == null) {
             curDataVerification = $.extend(true, {}, file["dataVerification"])
-        }
-        else{
+        } else {
             curDataVerification = dataVerification;
         }
 
         let curDynamicArray;
-        if(dynamicArray == null){
+        if (dynamicArray == null) {
             curDynamicArray = $.extend(true, [], file["dynamicArray"]);
-        }
-        else{
+        } else {
             curDynamicArray = dynamicArray;
         }
 
         // [TK] custom
         let curCellValidation;
-        if(cellValidation == null){
+        if (cellValidation == null) {
             curCellValidation = $.extend(true, [], file["cellValidation"]);
-        }
-        else{
+        } else {
             curCellValidation = cellValidation;
         }
 
         let curCellTag;
-        if(cellTag == null){
+        if (cellTag == null) {
             curCellTag = $.extend(true, [], file["cellTag"]);
-        }
-        else{
+        } else {
             curCellTag = cellTag;
         }
         // [TK] end custom
-        
-        Store.jfredo.push({ 
-            "type": "datachange", 
-            "data": Store.flowdata, 
-            "curdata": data, 
-            "sheetIndex": Store.currentSheetIndex, 
-            "range": range, 
-            "config": $.extend(true, {}, Store.config), 
+
+        Store.jfredo.push({
+            "type": "datachange",
+            "data": Store.flowdata,
+            "curdata": data,
+            "sheetIndex": Store.currentSheetIndex,
+            "range": range,
+            "config": $.extend(true, {}, Store.config),
             "curConfig": curConfig,
-            "cdformat":  $.extend(true, [], file["luckysheet_conditionformat_save"]),
+            "cdformat": $.extend(true, [], file["luckysheet_conditionformat_save"]),
             "curCdformat": curCdformat,
             "RowlChange": RowlChange,
             "dataVerification": $.extend(true, [], file["dataVerification"]),
@@ -147,60 +142,60 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
 
     //Store.flowdata
     Store.flowdata = data;
-    editor.webWorkerFlowDataCache(Store.flowdata);//worker存数据
+    editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
     file.data = Store.flowdata;
 
     //config
-    if(cfg != null){
+    if (cfg != null) {
         Store.config = cfg;
         file.config = Store.config;
 
         server.saveParam("all", Store.currentSheetIndex, cfg, { "k": "config" });
 
-        if(RowlChange != null){
+        if (RowlChange != null) {
             jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
         }
     }
 
     //条件格式
-    if(cdformat != null){
+    if (cdformat != null) {
         file["luckysheet_conditionformat_save"] = cdformat;
 
         server.saveParam("all", Store.currentSheetIndex, cdformat, { "k": "luckysheet_conditionformat_save" });
     }
 
     //数据验证
-    if(dataVerification != null){
+    if (dataVerification != null) {
         dataVerificationCtrl.dataVerification = dataVerification;
         file["dataVerification"] = dataVerification;
         server.saveParam("all", Store.currentSheetIndex, dataVerification, { "k": "dataVerification" });
     }
 
     //动态数组
-    if(dynamicArray != null){
+    if (dynamicArray != null) {
         file["dynamicArray"] = dynamicArray;
 
         server.saveParam("all", Store.currentSheetIndex, dynamicArray, { "k": "dynamicArray" });
     }
 
     // [TK] custom
-    if(cellValidation != null){
+    if (cellValidation != null) {
         weCellValidationCtrl.cellValidation = cellValidation;
         file["cellValidation"] = cellValidation;
     }
 
-    if(cellTag != null){
+    if (cellTag != null) {
         weCellTagCtrl.cellTag = cellTag;
         file["cellTag"] = cellTag;
     }
     // [TK] end custom
 
     //更新数据的范围
-    for(let s = 0; s < range.length; s++){
+    for (let s = 0; s < range.length; s++) {
         let r1 = range[s].row[0];
         let c1 = range[s].column[0];
 
-        if(Store.flowdata[r1][c1] != null && Store.flowdata[r1][c1].spl != null){
+        if (Store.flowdata[r1][c1] != null && Store.flowdata[r1][c1].spl != null) {
             window.luckysheetCurrentRow = r1;
             window.luckysheetCurrentColumn = c1;
             window.luckysheetCurrentFunction = Store.flowdata[r1][c1].df;
@@ -210,12 +205,12 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
             Store.flowdata[r1][c1].spl = sparklines;
         }
 
-        if(server.allowUpdate){ //共享编辑模式
+        if (server.allowUpdate) { //共享编辑模式
             server.historyParam(Store.flowdata, Store.currentSheetIndex, range[s]);
         }
         // 刷新图表
-        if(typeof(Store.chartparam.jfrefreshchartall)=="function"){
-            Store.chartparam.jfrefreshchartall(Store.flowdata,range[s].row[0],range[s].row[1],range[s].column[0],range[s].column[1]);
+        if (typeof(Store.chartparam.jfrefreshchartall) == "function") {
+            Store.chartparam.jfrefreshchartall(Store.flowdata, range[s].row[0], range[s].row[1], range[s].column[0], range[s].column[1]);
         }
     }
     //单元格数据更新联动
@@ -223,8 +218,8 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         runExecFunction(range, Store.currentSheetIndex, data);
     }
     //刷新表格
-    if(isRefreshCanvas){
-        refreshCanvasTimeOut = setTimeout(function () {
+    if (isRefreshCanvas) {
+        refreshCanvasTimeOut = setTimeout(function() {
             luckysheetrefreshgrid();
         }, 1);
     }
@@ -232,8 +227,9 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
     window.luckysheet_getcelldata_cache = null;
 }
 
-function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlValue, cdformat, isRefreshCanvas=true) {
-    let redo = {}, isRunExecFunction=false;
+function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlValue, cdformat, isRefreshCanvas = true) {
+    let redo = {},
+        isRunExecFunction = false;
     clearTimeout(refreshCanvasTimeOut);
     if (ctrlType == "cellRowChange") {
         redo["type"] = "cellRowChange";
@@ -248,13 +244,12 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
 
         let setfield = cfg["rowlen"];
 
-        if(setfield == null){
+        if (setfield == null) {
             setfield = {};
         }
 
         server.saveParam("cg", Store.currentSheetIndex, setfield, { "k": "rowlen" });
-    }
-    else if (ctrlType == "resizeC") {
+    } else if (ctrlType == "resizeC") {
         redo["type"] = "resize";
         redo["config"] = $.extend(true, {}, Store.config);
         redo["curconfig"] = $.extend(true, {}, cfg);
@@ -267,13 +262,12 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
 
         let setfield = cfg["columnlen"];
 
-        if(setfield == null){
+        if (setfield == null) {
             setfield = {};
         }
 
         server.saveParam("cg", Store.currentSheetIndex, setfield, { "k": "columnlen" });
-    }
-    else if (ctrlType.indexOf("extend")>-1) {
+    } else if (ctrlType.indexOf("extend") > -1) {
         redo["type"] = "extend";
         redo["config"] = $.extend(true, {}, Store.config);
         redo["curconfig"] = $.extend(true, {}, cfg);
@@ -284,10 +278,9 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
         redo["ctrlType"] = ctrlType;
         redo["ctrlValue"] = ctrlValue;
 
-        if(ctrlValue)
-            server.saveParam("arc", Store.currentSheetIndex, {"index": ctrlValue.index, "len": ctrlValue.len, "direction": ctrlValue.direction, "mc": cfg.merge }, { "rc": ctrlValue.type });
-    }
-    else if (ctrlType.indexOf("dele")>-1) {
+        if (ctrlValue)
+            server.saveParam("arc", Store.currentSheetIndex, { "index": ctrlValue.index, "len": ctrlValue.len, "direction": ctrlValue.direction, "mc": cfg.merge }, { "rc": ctrlValue.type });
+    } else if (ctrlType.indexOf("dele") > -1) {
         redo["type"] = "dele";
         redo["config"] = $.extend(true, {}, Store.config);
         redo["curconfig"] = $.extend(true, {}, cfg);
@@ -298,10 +291,9 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
         redo["ctrlType"] = ctrlType;
         redo["ctrlValue"] = ctrlValue;
 
-        if(ctrlValue)
-            server.saveParam("drc", Store.currentSheetIndex, {"index": ctrlValue.index, "len":ctrlValue.len, "mc": cfg.merge, "borderInfo": cfg.borderInfo }, { "rc": ctrlValue.type});
-    }
-    else {
+        if (ctrlValue)
+            server.saveParam("drc", Store.currentSheetIndex, { "index": ctrlValue.index, "len": ctrlValue.len, "mc": cfg.merge, "borderInfo": cfg.borderInfo }, { "rc": ctrlValue.type });
+    } else {
         redo["type"] = "datachangeAll";
 
         redo["range"] = $.extend(true, [], Store.luckysheet_select_save);
@@ -312,8 +304,8 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
 
         isRunExecFunction = true;
 
-        for(let s = 0; s < range.length; s++){
-            server.historyParam(data, Store.currentSheetIndex, range[s]);    
+        for (let s = 0; s < range.length; s++) {
+            server.historyParam(data, Store.currentSheetIndex, range[s]);
         }
     }
 
@@ -331,7 +323,7 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
 
     //Store.flowdata
     Store.flowdata = data;
-    editor.webWorkerFlowDataCache(data);//worker存数据
+    editor.webWorkerFlowDataCache(data); //worker存数据
     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].data = Store.flowdata;
 
     //config
@@ -343,21 +335,21 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
     }
 
     //条件格式
-    if(cdformat != null){
+    if (cdformat != null) {
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["luckysheet_conditionformat_save"] = cdformat;
-    
+
         server.saveParam("all", Store.currentSheetIndex, cdformat, { "k": "luckysheet_conditionformat_save" });
     }
 
     //选区
     Store.luckysheet_select_save = $.extend(true, [], range);
-    if(Store.luckysheet_select_save.length > 0){
+    if (Store.luckysheet_select_save.length > 0) {
         //有选区时，刷新一下选区
         selectHightlightShow();
     }
 
 
-    if(isRunExecFunction){
+    if (isRunExecFunction) {
         //单元格数据更新联动
         runExecFunction(range, Store.currentSheetIndex, data);
     }
@@ -365,15 +357,15 @@ function jfrefreshgridall(colwidth, rowheight, data, cfg, range, ctrlType, ctrlV
     //行高、列宽 刷新  
     jfrefreshgrid_rhcw(rowheight, colwidth);
 
-    if(isRefreshCanvas){
-        refreshCanvasTimeOut = setTimeout(function () {
+    if (isRefreshCanvas) {
+        refreshCanvasTimeOut = setTimeout(function() {
             luckysheetrefreshgrid();
         }, 1);
     }
-    
+
 
     sheetmanage.storeSheetParamALL();
-    
+
     window.luckysheet_getcelldata_cache = null;
 }
 
@@ -383,25 +375,25 @@ function jfrefreshrange(data, range, cdformat) {
     if (Store.clearjfundo) {
         Store.jfundo = [];
 
-        Store.jfredo.push({ 
-            "type": "rangechange", 
-            "data": Store.flowdata, 
-            "curdata": data, 
-            "range": range, 
+        Store.jfredo.push({
+            "type": "rangechange",
+            "data": Store.flowdata,
+            "curdata": data,
+            "range": range,
             "sheetIndex": Store.currentSheetIndex,
-            "cdformat":  $.extend(true, [],  Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["luckysheet_conditionformat_save"]),
-            "curCdformat": cdformat 
+            "cdformat": $.extend(true, [], Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["luckysheet_conditionformat_save"]),
+            "curCdformat": cdformat
         });
     }
 
     //flowdata
     Store.flowdata = data;
-    editor.webWorkerFlowDataCache(Store.flowdata);//worker存数据
+    editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
 
     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].data = Store.flowdata;
 
     //条件格式
-    if(cdformat != null){
+    if (cdformat != null) {
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["luckysheet_conditionformat_save"] = cdformat;
     }
 
@@ -409,62 +401,64 @@ function jfrefreshrange(data, range, cdformat) {
     runExecFunction(range, Store.currentSheetIndex, data);
 
     //刷新表格
-    refreshCanvasTimeOut = setTimeout(function () {
+    refreshCanvasTimeOut = setTimeout(function() {
         luckysheetrefreshgrid();
     }, 1);
 
     //发送给后台
-    for(let s = 0; s < range.length; s++){
+    for (let s = 0; s < range.length; s++) {
         server.historyParam(Store.flowdata, Store.currentSheetIndex, range[s]);
     }
 }
 
 //删除、增加行列 刷新表格
-function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf, af, freezen, dataVerification){
+function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf, af, freezen, dataVerification, hyperlink) {
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
 
     //merge改变对应的单元格值改变
     let mcData = [];
-    for(let m in cfg["merge"]){
+    for (let m in cfg["merge"]) {
         let mc = cfg["merge"][m];
 
-        for(let r = mc.r; r <= mc.r + mc.rs - 1; r++){
-            for(let c = mc.c; c <= mc.c + mc.cs - 1; c++){
-                if(data[r][c] == null){
+        for (let r = mc.r; r <= mc.r + mc.rs - 1; r++) {
+            for (let c = mc.c; c <= mc.c + mc.cs - 1; c++) {
+                if (data[r][c] == null) {
                     data[r][c] = {};
                 }
 
-                if(r == mc.r && c == mc.c){
+                if (r == mc.r && c == mc.c) {
                     data[r][c].mc = mc;
-                }
-                else{
+                } else {
                     data[r][c].mc = { "r": mc.r, "c": mc.c };
                 }
 
-                mcData.push({ "r": r, "c": c });                       
+                mcData.push({ "r": r, "c": c });
             }
         }
     }
 
     //公式链中公式范围改变对应单元格值的改变
     let funcData = [];
-    if(calc.length > 0){
+    if (calc.length > 0) {
         // formula.execFunctionGroupData = data;
 
-        for(let i = 0; i < calc.length; i++){
+        for (let i = 0; i < calc.length; i++) {
             let clc = calc[i];
-            let clc_r = clc.r, clc_c = clc.c, clc_i = clc.index, clc_funcStr =  getcellFormula(clc_r, clc_c, clc_i, data);
-            let clc_result = formula.execfunction(clc_funcStr, clc_r, clc_c, clc_i,null, true);
+            let clc_r = clc.r,
+                clc_c = clc.c,
+                clc_i = clc.index,
+                clc_funcStr = getcellFormula(clc_r, clc_c, clc_i, data);
+            let clc_result = formula.execfunction(clc_funcStr, clc_r, clc_c, clc_i, null, true);
             clc.func = clc_result;
 
-            if(data[clc_r][clc_c].f == clc_funcStr){
+            if (data[clc_r][clc_c].f == clc_funcStr) {
                 setcellvalue(clc_r, clc_c, data, clc_result[1]);
                 funcData.push({ "r": clc_r, "c": clc_c });
             }
         }
     }
 
-    if(Store.clearjfundo){
+    if (Store.clearjfundo) {
         Store.jfundo = [];
 
         Store.jfredo.push({
@@ -489,12 +483,16 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
             "curFreezen": freezen,
             "dataVerification": $.extend(true, {}, file.dataVerification),
             "curDataVerification": dataVerification,
+
             // [TK] custom
             "cellValidation": $.extend(true, {}, file.cellValidation),
             "curCellValidation": cellValidation,
             "cellTag": $.extend(true, {}, file.cellTag),
             "curCellTag": cellTag,
             // [TK] custom
+
+            "hyperlink": $.extend(true, {}, file.hyperlink),
+            "curHyperlink": hyperlink
         });
     }
 
@@ -502,44 +500,41 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
         len = ctrlValue.len,
         rc = ctrlValue.rc;
 
-    if(ctrlType == "addRC"){
+    if (ctrlType == "addRC") {
         let direction = ctrlValue.direction,
             restore = ctrlValue.restore;
 
         let addData = [];
-        if(restore){
-            if(rc == "r"){
+        if (restore) {
+            if (rc == "r") {
                 let st_r;
-                if(direction == "lefttop"){
+                if (direction == "lefttop") {
                     st_r = index;
-                }
-                else if(direction == "rightbottom"){
+                } else if (direction == "rightbottom") {
                     st_r = index + 1;
                 }
                 let ed_r = st_r + len - 1;
 
-                for(let r = st_r; r <= ed_r; r++){
+                for (let r = st_r; r <= ed_r; r++) {
                     let row = [];
-                    for(let c = 0; c < data[0].length; c++){
+                    for (let c = 0; c < data[0].length; c++) {
                         let cell = data[r][c];
                         row.push(cell);
                     }
                     addData.push(row);
                 }
-            }
-            else if(rc == "c"){
+            } else if (rc == "c") {
                 let st_c;
-                if(direction == "lefttop"){
+                if (direction == "lefttop") {
                     st_c = index;
-                }
-                else if(direction == "rightbottom"){
+                } else if (direction == "rightbottom") {
                     st_c = index + 1;
                 }
                 let ed_c = st_c + len - 1;
 
-                for(let r = 0; r < data.length; r++){
+                for (let r = 0; r < data.length; r++) {
                     let row = [];
-                    for(let c = st_c; c <= ed_c; c++){
+                    for (let c = st_c; c <= ed_c; c++) {
                         let cell = data[r][c];
                         row.push(cell);
                     }
@@ -548,15 +543,14 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
             }
         }
 
-        server.saveParam("arc", Store.currentSheetIndex, {"index": index, "len": len, "direction": direction, "data": addData }, { "rc": rc });
-    }
-    else if(ctrlType == "delRC"){
-        server.saveParam("drc", Store.currentSheetIndex, {"index": index, "len": len }, { "rc": rc });
+        server.saveParam("arc", Store.currentSheetIndex, { "index": index, "len": len, "direction": direction, "data": addData }, { "rc": rc });
+    } else if (ctrlType == "delRC") {
+        server.saveParam("drc", Store.currentSheetIndex, { "index": index, "len": len }, { "rc": rc });
     }
 
     //Store.flowdata
     Store.flowdata = data;
-    editor.webWorkerFlowDataCache(Store.flowdata);//worker存数据
+    editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
     file.data = data;
 
     //config
@@ -565,7 +559,7 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     server.saveParam("all", Store.currentSheetIndex, cfg, { "k": "config" });
 
     //mcData
-    for(let i = 0; i < mcData.length; i++){
+    for (let i = 0; i < mcData.length; i++) {
         let mcData_r = mcData[i].r,
             mcData_c = mcData[i].c;
 
@@ -575,7 +569,7 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     //calc函数链
     file.calcChain = calc;
     server.saveParam("all", Store.currentSheetIndex, calc, { "k": "calcChain" });
-    for(let i = 0; i < funcData.length; i++){
+    for (let i = 0; i < funcData.length; i++) {
         let funcData_r = funcData[i].r,
             funcData_c = funcData[i].c;
 
@@ -583,11 +577,10 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     }
 
     //筛选配置
-    if(filterObj != null){
+    if (filterObj != null) {
         file.filter_select = filterObj.filter_select;
         file.filter = filterObj.filter;
-    }
-    else{
+    } else {
         file.filter_select = null;
         file.filter = null;
     }
@@ -604,11 +597,10 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     server.saveParam("all", Store.currentSheetIndex, file.luckysheet_alternateformat_save, { "k": "luckysheet_alternateformat_save" });
 
     //冻结配置
-    if(freezen != null){
+    if (freezen != null) {
         luckysheetFreezen.freezenhorizontaldata = freezen.freezenhorizontaldata;
         luckysheetFreezen.freezenverticaldata = freezen.freezenverticaldata;
-    }
-    else{
+    } else {
         luckysheetFreezen.freezenhorizontaldata = null;
         luckysheetFreezen.freezenverticaldata = null;
     }
@@ -625,47 +617,49 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     weCellTagCtrl.cellTag = cellTag;
     file.cellTag = cellTag;
     // [TK] custom
+    //超链接
+    hyperlinkCtrl.hyperlink = hyperlink;
+    file.hyperlink = hyperlink;
+    server.saveParam("all", Store.currentSheetIndex, file.hyperlink, { "k": "hyperlink" });
 
     //行高、列宽刷新
     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
 }
 
 //删除单元格 刷新表格
-function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVerification){
+function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVerification, hyperlink) {
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
     clearTimeout(refreshCanvasTimeOut);
     //merge改变对应的单元格值改变
     let mcData = [];
-    if(JSON.stringify(cfg["merge"]) == "{}"){
-        for(let r = 0; r < data.length; r++){
-            for(let c = 0; c < data[0].length; c++){
+    if (JSON.stringify(cfg["merge"]) == "{}") {
+        for (let r = 0; r < data.length; r++) {
+            for (let c = 0; c < data[0].length; c++) {
                 let cell = data[r][c];
-    
-                if(cell != null && cell.mc != null){
+
+                if (cell != null && cell.mc != null) {
                     delete cell.mc;
                     mcData.push({ "r": r, "c": c });
                 }
             }
         }
-    }
-    else{
-        for(let m in cfg["merge"]){
+    } else {
+        for (let m in cfg["merge"]) {
             let mc = cfg["merge"][m];
-    
-            for(let r = mc.r; r <= mc.r + mc.rs - 1; r++){
-                for(let c = mc.c; c <= mc.c + mc.cs - 1; c++){
-                    if(data[r][c] == null){
+
+            for (let r = mc.r; r <= mc.r + mc.rs - 1; r++) {
+                for (let c = mc.c; c <= mc.c + mc.cs - 1; c++) {
+                    if (data[r][c] == null) {
                         data[r][c] = {};
                     }
-    
-                    if(r == mc.r && c == mc.c){
+
+                    if (r == mc.r && c == mc.c) {
                         data[r][c].mc = mc;
-                    }
-                    else{
+                    } else {
                         data[r][c].mc = { "r": mc.r, "c": mc.c };
                     }
-    
-                    mcData.push({ "r": r, "c": c });                       
+
+                    mcData.push({ "r": r, "c": c });
                 }
             }
         }
@@ -673,23 +667,26 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
 
     //公式链中公式范围改变对应单元格值的改变
     let funcData = [];
-    if(calc.length > 0){
+    if (calc.length > 0) {
         // formula.execFunctionGroupData = data;
 
-        for(let i = 0; i < calc.length; i++){
+        for (let i = 0; i < calc.length; i++) {
             let clc = calc[i];
-            let clc_r = clc.r, clc_c = clc.c, clc_i = clc.index, clc_funcStr =  getcellFormula(clc_r, clc_c, clc_i, data);
-            let clc_result = formula.execfunction(clc_funcStr, clc_r, clc_c, clc_i,null, true);
+            let clc_r = clc.r,
+                clc_c = clc.c,
+                clc_i = clc.index,
+                clc_funcStr = getcellFormula(clc_r, clc_c, clc_i, data);
+            let clc_result = formula.execfunction(clc_funcStr, clc_r, clc_c, clc_i, null, true);
             clc.func = clc_result;
 
-            if(data[clc_r][clc_c].f == clc_funcStr){
+            if (data[clc_r][clc_c].f == clc_funcStr) {
                 setcellvalue(clc_r, clc_c, data, clc_result[1]);
                 funcData.push({ "r": clc_r, "c": clc_c });
             }
         }
     }
 
-    if(Store.clearjfundo){
+    if (Store.clearjfundo) {
         Store.jfundo = [];
 
         Store.jfredo.push({
@@ -709,17 +706,19 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
             "cf": $.extend(true, [], file.luckysheet_conditionformat_save),
             "curCf": cf,
             "dataVerification": $.extend(true, {}, file.dataVerification),
-            "curDataVerification": dataVerification
+            "curDataVerification": dataVerification,
+            "hyperlink": $.extend(true, {}, file.hyperlink),
+            "curHyperlink": hyperlink
         });
     }
 
     //Store.flowdata
     Store.flowdata = data;
-    editor.webWorkerFlowDataCache(Store.flowdata);//worker存数据
+    editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
     file.data = data;
 
     //共享编辑模式
-    if(server.allowUpdate){
+    if (server.allowUpdate) {
         let type = ctrl.type,
             str = ctrl.str,
             edr = ctrl.edr,
@@ -727,13 +726,12 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
             edc = ctrl.edc;
 
         let range;
-        if(type == 'moveUp'){
+        if (type == 'moveUp') {
             range = {
                 "row": [str, data.length - 1],
                 "column": [stc, edc]
             }
-        }
-        else if(type == 'moveLeft'){
+        } else if (type == 'moveLeft') {
             range = {
                 "row": [str, edr],
                 "column": [stc, data[0].length - 1]
@@ -749,7 +747,7 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
     server.saveParam("all", Store.currentSheetIndex, cfg, { "k": "config" });
 
     //mcData
-    for(let i = 0; i < mcData.length; i++){
+    for (let i = 0; i < mcData.length; i++) {
         let mcData_r = mcData[i].r,
             mcData_c = mcData[i].c;
 
@@ -759,7 +757,7 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
     //calc函数链
     file.calcChain = calc;
     server.saveParam("all", Store.currentSheetIndex, calc, { "k": "calcChain" });
-    for(let i = 0; i < funcData.length; i++){
+    for (let i = 0; i < funcData.length; i++) {
         let funcData_r = funcData[i].r,
             funcData_c = funcData[i].c;
 
@@ -767,11 +765,10 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
     }
 
     //筛选配置
-    if(filterObj != null){
+    if (filterObj != null) {
         file.filter_select = filterObj.filter_select;
         file.filter = filterObj.filter;
-    }
-    else{
+    } else {
         file.filter_select = null;
         file.filter = null;
     }
@@ -788,20 +785,25 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
     file.dataVerification = dataVerification;
     server.saveParam("all", Store.currentSheetIndex, file.dataVerification, { "k": "dataVerification" });
 
-    refreshCanvasTimeOut = setTimeout(function () {
+    //超链接
+    hyperlinkCtrl.hyperlink = hyperlink;
+    file.hyperlink = hyperlink;
+    server.saveParam("all", Store.currentSheetIndex, file.hyperlink, { "k": "hyperlink" });
+
+    refreshCanvasTimeOut = setTimeout(function() {
         luckysheetrefreshgrid();
     }, 1);
 }
 
 //复制剪切 刷新表格
-function jfrefreshgrid_pastcut(source, target, RowlChange){
+function jfrefreshgrid_pastcut(source, target, RowlChange) {
     //单元格数据更新联动
     let execF_rc = {};
     formula.execFunctionExist = [];
     clearTimeout(refreshCanvasTimeOut);
-    for(let r = source["range"].row[0]; r <= source["range"].row[1]; r++){
-        for(let c = source["range"].column[0]; c <= source["range"].column[1]; c++){
-            if((r + "_" + c + "_" + source["sheetIndex"]) in execF_rc){
+    for (let r = source["range"].row[0]; r <= source["range"].row[1]; r++) {
+        for (let c = source["range"].column[0]; c <= source["range"].column[1]; c++) {
+            if ((r + "_" + c + "_" + source["sheetIndex"]) in execF_rc) {
                 continue;
             }
 
@@ -810,9 +812,9 @@ function jfrefreshgrid_pastcut(source, target, RowlChange){
         }
     }
 
-    for(let r = target["range"].row[0]; r <= target["range"].row[1]; r++){
-        for(let c = target["range"].column[0]; c <= target["range"].column[1]; c++){
-            if((r + "_" + c + "_" + target["sheetIndex"]) in execF_rc){
+    for (let r = target["range"].row[0]; r <= target["range"].row[1]; r++) {
+        for (let c = target["range"].column[0]; c <= target["range"].column[1]; c++) {
+            if ((r + "_" + c + "_" + target["sheetIndex"]) in execF_rc) {
                 continue;
             }
 
@@ -823,7 +825,7 @@ function jfrefreshgrid_pastcut(source, target, RowlChange){
 
 
 
-    if(Store.clearjfundo){
+    if (Store.clearjfundo) {
         Store.jfundo = [];
 
         Store.jfredo.push({
@@ -836,24 +838,23 @@ function jfrefreshgrid_pastcut(source, target, RowlChange){
 
     //config
     let rowHeight;
-    if(Store.currentSheetIndex == source["sheetIndex"]){
+    if (Store.currentSheetIndex == source["sheetIndex"]) {
         Store.config = source["curConfig"];
         rowHeight = source["curData"].length;
         Store.luckysheetfile[getSheetIndex(target["sheetIndex"])]["config"] = target["curConfig"];
-    }
-    else if(Store.currentSheetIndex == target["sheetIndex"]){
+    } else if (Store.currentSheetIndex == target["sheetIndex"]) {
         Store.config = target["curConfig"];
         rowHeight = target["curData"].length;
         Store.luckysheetfile[getSheetIndex(source["sheetIndex"])]["config"] = source["curConfig"];
     }
 
-    if(RowlChange){
+    if (RowlChange) {
         Store.visibledatarow = [];
         Store.rh_height = 0;
-        
+
         for (let i = 0; i < rowHeight; i++) {
             let rowlen = Store.defaultrowlen;
-            
+
             if (Store.config["rowlen"] != null && Store.config["rowlen"][i] != null) {
                 rowlen = Store.config["rowlen"][i];
             }
@@ -862,46 +863,42 @@ function jfrefreshgrid_pastcut(source, target, RowlChange){
                 rowlen = Store.config["rowhidden"][i];
                 Store.visibledatarow.push(Store.rh_height);
                 continue;
-            }
-            else {
+            } else {
                 Store.rh_height += rowlen + 1;
             }
 
-            Store.visibledatarow.push(Store.rh_height);//行的临时长度分布
+            Store.visibledatarow.push(Store.rh_height); //行的临时长度分布
         }
         Store.rh_height += 110;
         // sheetmanage.showSheet();
 
-        if(Store.currentSheetIndex == source["sheetIndex"]){
+        if (Store.currentSheetIndex == source["sheetIndex"]) {
             let rowlenArr = computeRowlenArr(target["curData"].length, target["curConfig"]);
             Store.luckysheetfile[getSheetIndex(target["sheetIndex"])]["visibledatarow"] = rowlenArr;
-        }
-        else if(Store.currentSheetIndex == target["sheetIndex"]){
+        } else if (Store.currentSheetIndex == target["sheetIndex"]) {
             let rowlenArr = computeRowlenArr(source["curData"].length, source["curConfig"]);
             Store.luckysheetfile[getSheetIndex(source["sheetIndex"])]["visibledatarow"] = rowlenArr;
         }
     }
 
     //Store.flowdata
-    if(Store.currentSheetIndex == source["sheetIndex"]){
+    if (Store.currentSheetIndex == source["sheetIndex"]) {
         Store.flowdata = source["curData"];
         Store.luckysheetfile[getSheetIndex(target["sheetIndex"])]["data"] = target["curData"];
-    }
-    else if(Store.currentSheetIndex == target["sheetIndex"]){
+    } else if (Store.currentSheetIndex == target["sheetIndex"]) {
         Store.flowdata = target["curData"];
         Store.luckysheetfile[getSheetIndex(source["sheetIndex"])]["data"] = source["curData"];
     }
-    editor.webWorkerFlowDataCache(Store.flowdata);//worker存数据
+    editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].data = Store.flowdata;
-    
+
     //luckysheet_select_save
-    if(Store.currentSheetIndex == target["sheetIndex"]){
-        Store.luckysheet_select_save = [{"row": target["range"].row, "column": target["range"].column}];
+    if (Store.currentSheetIndex == target["sheetIndex"]) {
+        Store.luckysheet_select_save = [{ "row": target["range"].row, "column": target["range"].column }];
+    } else {
+        Store.luckysheet_select_save = [{ "row": source["range"].row, "column": source["range"].column }];
     }
-    else{
-        Store.luckysheet_select_save = [{"row": source["range"].row, "column": source["range"].column}];
-    }
-    if(Store.luckysheet_select_save.length > 0){
+    if (Store.luckysheet_select_save.length > 0) {
         //有选区时，刷新一下选区
         selectHightlightShow();
     }
@@ -911,21 +908,20 @@ function jfrefreshgrid_pastcut(source, target, RowlChange){
     Store.luckysheetfile[getSheetIndex(target["sheetIndex"])].luckysheet_conditionformat_save = target["curCdformat"];
 
     //数据验证
-    if(Store.currentSheetIndex == source["sheetIndex"]){
+    if (Store.currentSheetIndex == source["sheetIndex"]) {
         dataVerificationCtrl.dataVerification = source["curDataVerification"];
-    }
-    else if(Store.currentSheetIndex == target["sheetIndex"]){
+    } else if (Store.currentSheetIndex == target["sheetIndex"]) {
         dataVerificationCtrl.dataVerification = target["curDataVerification"]
     }
     Store.luckysheetfile[getSheetIndex(source["sheetIndex"])].dataVerification = source["curDataVerification"];
     Store.luckysheetfile[getSheetIndex(target["sheetIndex"])].dataVerification = target["curDataVerification"];
-    
-    
+
+
     formula.execFunctionExist.reverse();
     formula.execFunctionGroup(null, null, null, null, target["curData"]);
     formula.execFunctionGlobalData = null;
 
-    refreshCanvasTimeOut = setTimeout(function () {
+    refreshCanvasTimeOut = setTimeout(function() {
         luckysheetrefreshgrid();
     }, 1);
 
@@ -936,11 +932,11 @@ function jfrefreshgrid_pastcut(source, target, RowlChange){
     server.saveParam("all", source["sheetIndex"], source["curConfig"], { "k": "config" });
     //目的表
     server.saveParam("all", target["sheetIndex"], target["curConfig"], { "k": "config" });
-    
+
     //来源表
-    server.historyParam(source["curData"], source["sheetIndex"], {"row": source["range"]["row"], "column": source["range"]["column"]});
+    server.historyParam(source["curData"], source["sheetIndex"], { "row": source["range"]["row"], "column": source["range"]["column"] });
     //目的表
-    server.historyParam(target["curData"], target["sheetIndex"], {"row": target["range"]["row"], "column": target["range"]["column"]});
+    server.historyParam(target["curData"], target["sheetIndex"], { "row": target["range"]["row"], "column": target["range"]["column"] });
 
     //来源表
     server.saveParam("all", source["sheetIndex"], source["curCdformat"], { "k": "luckysheet_conditionformat_save" });
@@ -954,27 +950,29 @@ function jfrefreshgrid_pastcut(source, target, RowlChange){
 }
 
 //行高、列宽改变 刷新表格
-function jfrefreshgrid_rhcw(rowheight, colwidth, isRefreshCanvas=true){
+function jfrefreshgrid_rhcw(rowheight, colwidth, isRefreshCanvas = true) {
     rhchInit(rowheight, colwidth);
     clearTimeout(refreshCanvasTimeOut);
     sheetmanage.storeSheetParam();
 
     //行高列宽改变时 重新计算sparklines
     let calcChain = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].calcChain;
-    
-    if(calcChain != null && calcChain.length > 0){
-        if(Store.config["rowlen"] == null){
+
+    if (calcChain != null && calcChain.length > 0) {
+        if (Store.config["rowlen"] == null) {
             Store.config["rowlen"] = {};
         }
 
-        if(Store.config["columnlen"] == null){
+        if (Store.config["columnlen"] == null) {
             Store.config["columnlen"] = {};
-        }            
+        }
 
-        for(let i = 0; i < calcChain.length; i++){
-            let r = calcChain[i].r, c = calcChain[i].c, index = calcChain[i].index;
+        for (let i = 0; i < calcChain.length; i++) {
+            let r = calcChain[i].r,
+                c = calcChain[i].c,
+                index = calcChain[i].index;
 
-            if(index == Store.currentSheetIndex && Store.flowdata[r][c] != null && Store.flowdata[r][c].spl != null && ((r in Store.config["rowlen"]) || (c in Store.config["columnlen"]))){
+            if (index == Store.currentSheetIndex && Store.flowdata[r][c] != null && Store.flowdata[r][c].spl != null && ((r in Store.config["rowlen"]) || (c in Store.config["columnlen"]))) {
                 window.luckysheetCurrentRow = r;
                 window.luckysheetCurrentColumn = c;
                 window.luckysheetCurrentFunction = Store.flowdata[r][c].f;
@@ -997,37 +995,37 @@ function jfrefreshgrid_rhcw(rowheight, colwidth, isRefreshCanvas=true){
     selectHightlightShow();
 
     //改变单元格行高，复制虚线框同步
-    if($(".luckysheet-selection-copy").is(":visible")){
+    if ($(".luckysheet-selection-copy").is(":visible")) {
         selectionCopyShow();
     }
 
     //改变单元格行高，选区下拉icon隐藏
-    if($("#luckysheet-dropCell-icon").is(":visible")){
+    if ($("#luckysheet-dropCell-icon").is(":visible")) {
         $("#luckysheet-dropCell-icon").remove();
     }
 
     //有冻结状态时，同步行高、列宽
-    if(luckysheetFreezen.freezenhorizontaldata != null && luckysheetFreezen.freezenverticaldata != null){
+    if (luckysheetFreezen.freezenhorizontaldata != null && luckysheetFreezen.freezenverticaldata != null) {
         let row_st = luckysheetFreezen.freezenhorizontaldata[1] - 1;
         let col_st = luckysheetFreezen.freezenverticaldata[1] - 1;
 
         let scrollTop = luckysheetFreezen.freezenhorizontaldata[2];
         let scrollLeft = luckysheetFreezen.freezenverticaldata[2];
 
-        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
         let freezenhorizontaldata = [
-            Store.visibledatarow[row_st], 
-            row_st + 1, 
-            scrollTop, 
-            luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), 
+            Store.visibledatarow[row_st],
+            row_st + 1,
+            scrollTop,
+            luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1),
             top
         ];
         let left = Store.visibledatacolumn[col_st] - 2 - scrollLeft + Store.rowHeaderWidth;
         let freezenverticaldata = [
-            Store.visibledatacolumn[col_st], 
-            col_st + 1, 
-            scrollLeft, 
-            luckysheetFreezen.cutVolumn(Store.visibledatacolumn, col_st + 1), 
+            Store.visibledatacolumn[col_st],
+            col_st + 1,
+            scrollLeft,
+            luckysheetFreezen.cutVolumn(Store.visibledatacolumn, col_st + 1),
             left
         ];
 
@@ -1035,46 +1033,44 @@ function jfrefreshgrid_rhcw(rowheight, colwidth, isRefreshCanvas=true){
         luckysheetFreezen.createFreezenHorizontal(freezenhorizontaldata, top);
         luckysheetFreezen.createFreezenVertical(freezenverticaldata, left);
         luckysheetFreezen.createAssistCanvas();
-    }
-    else if(luckysheetFreezen.freezenhorizontaldata != null){
+    } else if (luckysheetFreezen.freezenhorizontaldata != null) {
         let row_st = luckysheetFreezen.freezenhorizontaldata[1] - 1;
         let scrollTop = luckysheetFreezen.freezenhorizontaldata[2];
 
-        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
         let freezenhorizontaldata = [
-            Store.visibledatarow[row_st], 
-            row_st + 1, 
-            scrollTop, 
-            luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), 
+            Store.visibledatarow[row_st],
+            row_st + 1,
+            scrollTop,
+            luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1),
             top
         ];
 
         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
         luckysheetFreezen.createFreezenHorizontal(freezenhorizontaldata, top);
         luckysheetFreezen.createAssistCanvas();
-    }
-    else if(luckysheetFreezen.freezenverticaldata != null){
+    } else if (luckysheetFreezen.freezenverticaldata != null) {
         let col_st = luckysheetFreezen.freezenverticaldata[1] - 1;
         let scrollLeft = luckysheetFreezen.freezenverticaldata[2];
 
         let left = Store.visibledatacolumn[col_st] - 2 - scrollLeft + Store.rowHeaderWidth;
         let freezenverticaldata = [
-            Store.visibledatacolumn[col_st], 
-            col_st + 1, 
-            scrollLeft, 
-            luckysheetFreezen.cutVolumn(Store.visibledatacolumn, col_st + 1), 
+            Store.visibledatacolumn[col_st],
+            col_st + 1,
+            scrollLeft,
+            luckysheetFreezen.cutVolumn(Store.visibledatacolumn, col_st + 1),
             left
         ];
 
         luckysheetFreezen.saveFreezen(null, null, freezenverticaldata, left);
         luckysheetFreezen.createFreezenVertical(freezenverticaldata, left);
         luckysheetFreezen.createAssistCanvas();
-    }
-    else{
+    } else {
         //有筛选标志时，同步筛选按钮和筛选范围位置
-        if($("#luckysheet-filter-options-sheet" + Store.currentSheetIndex + " .luckysheet-filter-options").length > 0){
-            $("#luckysheet-filter-options-sheet" + Store.currentSheetIndex + " .luckysheet-filter-options").each(function(i, e){
-                let str = $(e).data("str"), cindex = $(e).data("cindex");
+        if ($("#luckysheet-filter-options-sheet" + Store.currentSheetIndex + " .luckysheet-filter-options").length > 0) {
+            $("#luckysheet-filter-options-sheet" + Store.currentSheetIndex + " .luckysheet-filter-options").each(function(i, e) {
+                let str = $(e).data("str"),
+                    cindex = $(e).data("cindex");
 
                 let left = Store.visibledatacolumn[cindex] - 20;
                 let top = str - 1 == -1 ? 0 : Store.visibledatarow[str - 1];
@@ -1084,17 +1080,17 @@ function jfrefreshgrid_rhcw(rowheight, colwidth, isRefreshCanvas=true){
         }
     }
 
-    if($("#luckysheet-filter-selected-sheet" + Store.currentSheetIndex).length > 0){
+    if ($("#luckysheet-filter-selected-sheet" + Store.currentSheetIndex).length > 0) {
         let luckysheet_filter_save = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].filter_select;
 
-        let r1 = luckysheet_filter_save.row[0], 
+        let r1 = luckysheet_filter_save.row[0],
             r2 = luckysheet_filter_save.row[1];
-        let c1 = luckysheet_filter_save.column[0], 
+        let c1 = luckysheet_filter_save.column[0],
             c2 = luckysheet_filter_save.column[1];
 
-        let row = Store.visibledatarow[r2], 
+        let row = Store.visibledatarow[r2],
             row_pre = r1 - 1 == -1 ? 0 : Store.visibledatarow[r1 - 1];
-        let col = Store.visibledatacolumn[c2], 
+        let col = Store.visibledatacolumn[c2],
             col_pre = c1 - 1 == -1 ? 0 : Store.visibledatacolumn[c1 - 1];
 
         $("#luckysheet-filter-selected-sheet" + Store.currentSheetIndex).css({
@@ -1107,18 +1103,18 @@ function jfrefreshgrid_rhcw(rowheight, colwidth, isRefreshCanvas=true){
 
     sheetmanage.showSheet();
 
-    if(isRefreshCanvas){
-        refreshCanvasTimeOut = setTimeout(function () {
+    if (isRefreshCanvas) {
+        refreshCanvasTimeOut = setTimeout(function() {
             luckysheetrefreshgrid();
         }, 1);
     }
-   
+
 }
 
 //Refresh the canvas display data according to scrollHeight and scrollWidth
 function luckysheetrefreshgrid(scrollWidth, scrollHeight) {
     formula.groupValuesRefresh();
-    
+
     if (scrollWidth == null) {
         scrollWidth = $("#luckysheet-cell-main").scrollLeft();
     }
@@ -1129,8 +1125,9 @@ function luckysheetrefreshgrid(scrollWidth, scrollHeight) {
     if (luckysheetFreezen.freezenverticaldata != null || luckysheetFreezen.freezenhorizontaldata != null) {
         let freezen_horizon_px, freezen_horizon_ed, freezen_horizon_scrollTop;
         let freezen_vertical_px, freezen_vertical_ed, freezen_vertical_scrollTop;
-        let drawWidth = Store.luckysheetTableContentHW[0], drawHeight = Store.luckysheetTableContentHW[1];
-        
+        let drawWidth = Store.luckysheetTableContentHW[0],
+            drawHeight = Store.luckysheetTableContentHW[1];
+
         if (luckysheetFreezen.freezenverticaldata != null && luckysheetFreezen.freezenhorizontaldata != null) {
             freezen_horizon_px = luckysheetFreezen.freezenhorizontaldata[0];
             freezen_horizon_ed = luckysheetFreezen.freezenhorizontaldata[1];
@@ -1142,155 +1139,152 @@ function luckysheetrefreshgrid(scrollWidth, scrollHeight) {
 
             //左上canvas freezen_3
             luckysheetDrawMain(
-                freezen_vertical_scrollTop, 
-                freezen_horizon_scrollTop, 
-                freezen_vertical_px, 
-                freezen_horizon_px, 
-                1, 
-                1, 
-                null, 
-                null, 
+                freezen_vertical_scrollTop,
+                freezen_horizon_scrollTop,
+                freezen_vertical_px,
+                freezen_horizon_px,
+                1,
+                1,
+                null,
+                null,
                 "freezen_3"
             );
 
             //上右canvas freezen_4
             luckysheetDrawMain(
-                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop, 
-                freezen_horizon_scrollTop, 
-                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop, 
-                freezen_horizon_px, 
-                1, 
-                1, 
-                null, 
-                null, 
+                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop,
+                freezen_horizon_scrollTop,
+                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop,
+                freezen_horizon_px,
+                1,
+                1,
+                null,
+                null,
                 "freezen_4"
             );
 
             //左下canvas freezen_7
             luckysheetDrawMain(
-                freezen_vertical_scrollTop, 
-                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop, 
-                freezen_vertical_px, 
-                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop, 
-                1, 
-                1, 
-                null, 
-                null, 
+                freezen_vertical_scrollTop,
+                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop,
+                freezen_vertical_px,
+                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop,
+                1,
+                1,
+                null,
+                null,
                 "freezen_7"
             );
 
             //右下canvas luckysheetTableContent
             luckysheetDrawMain(
-                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop, 
-                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop, 
-                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop, 
-                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop, 
-                freezen_vertical_px - freezen_vertical_scrollTop + Store.rowHeaderWidth, 
-                freezen_horizon_px - freezen_horizon_scrollTop + Store.columeHeaderHeight
+                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop,
+                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop,
+                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop,
+                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop,
+                freezen_vertical_px - freezen_vertical_scrollTop + Store.rowHeaderWidth,
+                freezen_horizon_px - freezen_horizon_scrollTop + Store.columnHeaderHeight
             );
 
             //标题
             luckysheetDrawgridColumnTitle(freezen_vertical_scrollTop, freezen_vertical_px, Store.rowHeaderWidth);
             luckysheetDrawgridColumnTitle(
-                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop, 
-                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop, 
+                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop,
+                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop,
                 freezen_vertical_px - freezen_vertical_scrollTop + Store.rowHeaderWidth
             );
-            
-            luckysheetDrawgridRowTitle(freezen_horizon_scrollTop, freezen_horizon_px, Store.columeHeaderHeight);
+
+            luckysheetDrawgridRowTitle(freezen_horizon_scrollTop, freezen_horizon_px, Store.columnHeaderHeight);
             luckysheetDrawgridRowTitle(
-                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop, 
-                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop, 
-                freezen_horizon_px - freezen_horizon_scrollTop + Store.columeHeaderHeight
+                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop,
+                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop,
+                freezen_horizon_px - freezen_horizon_scrollTop + Store.columnHeaderHeight
             );
-           
-        }
-        else if (luckysheetFreezen.freezenhorizontaldata != null) {
+
+        } else if (luckysheetFreezen.freezenhorizontaldata != null) {
             freezen_horizon_px = luckysheetFreezen.freezenhorizontaldata[0];
             freezen_horizon_ed = luckysheetFreezen.freezenhorizontaldata[1];
             freezen_horizon_scrollTop = luckysheetFreezen.freezenhorizontaldata[2];
 
             luckysheetDrawMain(
-                scrollWidth, 
-                freezen_horizon_scrollTop, 
-                drawWidth, 
-                freezen_horizon_px, 
-                1, 
-                1, 
-                null, 
-                null, 
+                scrollWidth,
+                freezen_horizon_scrollTop,
+                drawWidth,
+                freezen_horizon_px,
+                1,
+                1,
+                null,
+                null,
                 "freezen_h"
             );
             luckysheetDrawMain(
-                scrollWidth, 
-                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop, 
-                drawWidth, 
-                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop, 
-                null, 
-                freezen_horizon_px - freezen_horizon_scrollTop + Store.columeHeaderHeight
+                scrollWidth,
+                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop,
+                drawWidth,
+                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop,
+                null,
+                freezen_horizon_px - freezen_horizon_scrollTop + Store.columnHeaderHeight
             );
-        
+
             luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, null);
-            
-            luckysheetDrawgridRowTitle(freezen_horizon_scrollTop, freezen_horizon_px, Store.columeHeaderHeight);
+
+            luckysheetDrawgridRowTitle(freezen_horizon_scrollTop, freezen_horizon_px, Store.columnHeaderHeight);
             luckysheetDrawgridRowTitle(
-                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop, 
-                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop, 
-                freezen_horizon_px - freezen_horizon_scrollTop + Store.columeHeaderHeight
+                scrollHeight + freezen_horizon_px - freezen_horizon_scrollTop,
+                drawHeight - freezen_horizon_px + freezen_horizon_scrollTop,
+                freezen_horizon_px - freezen_horizon_scrollTop + Store.columnHeaderHeight
             );
-            
-        }
-        else if (luckysheetFreezen.freezenverticaldata != null) {
+
+        } else if (luckysheetFreezen.freezenverticaldata != null) {
             freezen_vertical_px = luckysheetFreezen.freezenverticaldata[0];
             freezen_vertical_ed = luckysheetFreezen.freezenverticaldata[1];
             freezen_vertical_scrollTop = luckysheetFreezen.freezenverticaldata[2];
-            
+
             luckysheetDrawMain(
-                freezen_vertical_scrollTop, 
-                scrollHeight, 
-                freezen_vertical_px, 
-                drawHeight, 
-                1, 
-                1, 
-                null, 
-                null, 
+                freezen_vertical_scrollTop,
+                scrollHeight,
+                freezen_vertical_px,
+                drawHeight,
+                1,
+                1,
+                null,
+                null,
                 "freezen_v"
             );
             luckysheetDrawMain(
-                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop, 
-                scrollHeight, 
-                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop, 
-                drawHeight, 
-                freezen_vertical_px - freezen_vertical_scrollTop + Store.rowHeaderWidth, 
+                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop,
+                scrollHeight,
+                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop,
+                drawHeight,
+                freezen_vertical_px - freezen_vertical_scrollTop + Store.rowHeaderWidth,
                 null
             );
-            
+
             luckysheetDrawgridRowTitle(scrollHeight, drawHeight, null);
-            
+
             luckysheetDrawgridColumnTitle(freezen_vertical_scrollTop, freezen_vertical_px, Store.rowHeaderWidth);
             luckysheetDrawgridColumnTitle(
-                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop, 
-                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop, 
+                scrollWidth + freezen_vertical_px - freezen_vertical_scrollTop,
+                drawWidth - freezen_vertical_px + freezen_vertical_scrollTop,
                 freezen_vertical_px - freezen_vertical_scrollTop + Store.rowHeaderWidth
             );
-            
+
         }
-    }
-    else {
-        if($("#luckysheetTableContent").length == 0){
+    } else {
+        if ($("#luckysheetTableContent").length == 0) {
             return;
         }
         let luckysheetTableContent = $("#luckysheetTableContent").get(0).getContext("2d");
         luckysheetDrawMain(scrollWidth, scrollHeight);
-    
+
         // luckysheetTableContent.clearRect(0, 0, 46, 20);
-        
+
         luckysheetDrawgridColumnTitle(scrollWidth);
         luckysheetDrawgridRowTitle(scrollHeight);
 
         //清除canvas左上角区域 防止列标题栏序列号溢出显示
-        
-        luckysheetTableContent.clearRect(0, 0, (Store.rowHeaderWidth* Store.devicePixelRatio-1) , (Store.columeHeaderHeight* Store.devicePixelRatio-1) );
+
+        luckysheetTableContent.clearRect(0, 0, (Store.rowHeaderWidth * Store.devicePixelRatio - 1), (Store.columnHeaderHeight * Store.devicePixelRatio - 1));
     }
 }
 
