@@ -11,12 +11,12 @@ const weCellValidationCtrl = {
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
         const self = this;
 
-        $(document).off("click.dropdownBtn").on("click.dropdownBtn", "#luckysheet-dataVerification-dropdown-btn", function(e) {
+        $(document).off("click.dropdownBtn").on("click.dropdownBtn", "#luckysheet-cellValidation-dropdown-btn", function(e) {
             self.dropdownListShow();
             e.stopPropagation();
         });
-        $(document).off("click.dropdownListItem").on("click.dropdownListItem", "#luckysheet-dataVerification-dropdown-List .dropdown-List-item", function(e) {
-            $("#luckysheet-dataVerification-dropdown-List").hide();
+        $(document).off("click.dropdownListItem").on("click.dropdownListItem", "#luckysheet-cellValidation-dropdown-List .dropdown-List-item", function(e) {
+            $("#luckysheet-cellValidation-dropdown-List").hide();
 
             let value = e.target.innerText;
             let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
@@ -30,9 +30,9 @@ const weCellValidationCtrl = {
         });
     },
     createdom: function() {
-        $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-btn"></div>');
-        $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>');
-        $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-showHintBox" class="luckysheet-mousedown-cancel"></div>');
+        // $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-btn"></div>');
+        // $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>');
+        // $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-showHintBox" class="luckysheet-mousedown-cancel"></div>');
     },
     renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)
@@ -62,13 +62,13 @@ const weCellValidationCtrl = {
         }
     },
     cellFocus: function(r, c, clickMode) {
-        $("#luckysheet-dataVerification-dropdown-btn").hide();
-        $("#luckysheet-dataVerification-showHintBox").hide();
+        $("#luckysheet-cellValidation-dropdown-btn").hide();
 
+        console.log('weCellValidationCtrl::cellFocus');
         const self = this;
 
         if (self.cellValidation == null || self.cellValidation[r + '_' + c] == null) {
-            $("#luckysheet-dataVerification-dropdown-List").hide();
+            $("#luckysheet-cellValidation-dropdown-List").hide();
             return;
         }
 
@@ -77,13 +77,13 @@ const weCellValidationCtrl = {
         let col = Store.visibledatacolumn[c],
             col_pre = c == 0 ? 0 : Store.visibledatacolumn[c - 1];
 
-        let margeset = menuButton.mergeborer(Store.flowdata, r, c);
-        if (!!margeset) {
-            row = margeset.row[1];
-            row_pre = margeset.row[0];
+        let mergeset = menuButton.mergeborer(Store.flowdata, r, c);
+        if (!!mergeset) {
+            row = mergeset.row[1];
+            row_pre = mergeset.row[0];
 
-            col = margeset.column[1];
-            col_pre = margeset.column[0];
+            col = mergeset.column[1];
+            col_pre = mergeset.column[0];
         }
 
         let item = self.cellValidation[r + '_' + c];
@@ -93,29 +93,31 @@ const weCellValidationCtrl = {
         //     return;
         // }
 
-        if (item.ruleTypeId == '10115') {
-            $("#luckysheet-dataVerification-dropdown-btn").show().css({
+        console.log('weCellValidationCtrl::cellFocus item => ', item);
+
+        if (item.ruleType == 'inSet') {
+            $("#luckysheet-cellValidation-dropdown-btn").show().css({
                 'max-width': col - col_pre,
                 'max-height': row - row_pre,
                 'left': col - 20,
                 'top': row_pre + (row - row_pre - 20) / 2
             })
 
-            if ($("#luckysheet-dataVerification-dropdown-List").is(":visible")) {
-                let dataIndex = $("#luckysheet-dataVerification-dropdown-List").prop("data-index");
+            if ($("#luckysheet-cellValidation-dropdown-List").is(":visible")) {
+                let dataIndex = $("#luckysheet-cellValidation-dropdown-List").prop("data-index");
 
                 if (dataIndex != (r + '_' + c)) {
-                    $("#luckysheet-dataVerification-dropdown-List").hide();
+                    $("#luckysheet-cellValidation-dropdown-List").hide();
                 }
             }
         } else {
-            $("#luckysheet-dataVerification-dropdown-List").hide();
+            $("#luckysheet-cellValidation-dropdown-List").hide();
         }
     },
     dropdownListShow: function() {
-        $("#luckysheet-dataVerification-showHintBox").hide();
+        $("#luckysheet-cellError-showErrorMsg").hide();
 
-        // console.log('weDropdown::dropdownListShow');
+        console.log('weDropdown::dropdownListShow');
 
         const self = this;
 
@@ -128,13 +130,13 @@ const weCellValidationCtrl = {
         let col = Store.visibledatacolumn[colIndex],
             col_pre = colIndex == 0 ? 0 : Store.visibledatacolumn[colIndex - 1];
 
-        let margeset = menuButton.mergeborer(Store.flowdata, rowIndex, colIndex);
-        if (!!margeset) {
-            row = margeset.row[1];
-            row_pre = margeset.row[0];
+        let mergeset = menuButton.mergeborer(Store.flowdata, rowIndex, colIndex);
+        if (!!mergeset) {
+            row = mergeset.row[1];
+            row_pre = mergeset.row[0];
 
-            col = margeset.column[1];
-            col_pre = margeset.column[0];
+            col = mergeset.column[1];
+            col_pre = mergeset.column[0];
         }
 
         let item = self.cellValidation[rowIndex + '_' + colIndex];
@@ -145,7 +147,7 @@ const weCellValidationCtrl = {
             optionHtml += `<div class="dropdown-List-item luckysheet-mousedown-cancel">${i}</div>`;
         })
 
-        $("#luckysheet-dataVerification-dropdown-List")
+        $("#luckysheet-cellValidation-dropdown-List")
             .html(optionHtml)
             .prop("data-index", rowIndex + '_' + colIndex)
             .show()

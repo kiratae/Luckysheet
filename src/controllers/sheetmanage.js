@@ -32,6 +32,7 @@ import menuButton from './menuButton';
 import weCellValidationCtrl from '../custom/cellvalidation';
 import weCellTagCtrl from '../custom/celltag';
 import method from '../global/method';
+import weCellErrorCtrl from '../custom/cellerror';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -699,6 +700,8 @@ const sheetmanage = {
         // Store.flowdata = data;
 
         luckysheetcreatedom(colwidth, rowheight, data, menu, title);
+
+
 
         setTimeout(function() {
             tooltip.createHoverTip("#luckysheet_info_detail", ".luckysheet_info_detail_title, .luckysheet_info_detail_input, .luckysheet_info_detail_update");

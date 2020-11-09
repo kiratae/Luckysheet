@@ -20,6 +20,8 @@ import { replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
 import weConfigsetting from '../custom/configsetting';
+import weCellErrorCtrl from '../custom/cellerror';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 export default function luckysheetcreatedom(colwidth, rowheight, data, menu, title) {
     // //最少30行
@@ -35,6 +37,10 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     let gh = gridHTML();
     gh = replaceHtml(gh, { "logotitle": title }); //设置title
     gh = replaceHtml(gh, { "menu": menuToolBar() }); //设置需要显示的菜单
+
+    // [TK] custom
+    weCellErrorCtrl.createdom();
+    weCellValidationCtrl.createdom();
 
     // if (data.length == 0) {
     //     Store.flowdata = datagridgrowth(data, rowheight, colwidth);
