@@ -7,19 +7,19 @@ const weDropdownCtrl = {
         return this.dropdownStorage.slice();
     },
     getData: function(id) {
-        return this.dropdownStorage.find(item => item.id === id);
+        return this.dropdownStorage.find(item => item.dropdownId === id);
     },
     saveData: function(data) {
-        if (!data.id) {
+        if (!data.dropdownId) {
             // insert
-            data.id = getUUID();
+            data.dropdownId = getUUID();
             this.dropdownStorage.push(data);
             return data;
         } else {
             // update
-            let index = this.dropdownStorage.findIndex(item => item === id);
+            let index = this.dropdownStorage.findIndex(item => item.dropdownId === id);
             if (index >= 0) {
-                delete this.dropdownStorage[index];
+                this.dropdownStorage[index] = data;
                 return data;
             }
         }
@@ -27,7 +27,7 @@ const weDropdownCtrl = {
     deteleData: function(id) {
         const func = 'deteleData';
         try {
-            let index = this.dropdownStorage.findIndex(item => item === id);
+            let index = this.dropdownStorage.findIndex(item => item.dropdownId === id);
             if (index >= 0) {
                 delete this.dropdownStorage[index];
                 return true;
