@@ -639,7 +639,7 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
                     }
                 }
             } else {
-                //空单元格渲染前
+                //空单元格渲染前 (Empty cells before rendering)
                 if (!method.createHookFunction("cellRenderBefore", Store.flowdata[r][c], {
                         r: r,
                         c: c,

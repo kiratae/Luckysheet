@@ -188,8 +188,8 @@ const gridHTML = function() {
                                                     </div>
                                                     <div id="luckysheet-dataVerification-dropdown-btn"></div>
                                                     <div id="luckysheet-dataVerification-dropdown-List" class="luckysheet-mousedown-cancel"></div>
-                                                    <div id="luckysheet-cellValidation-dropdown-btn"></div>
-                                                    <div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>
+                                                    \${cellValidation}
+                                                    \${cellError}
                                                     <div id="luckysheet-dataVerification-showHintBox" class="luckysheet-mousedown-cancel"></div>
                                                     <div class="luckysheet-cell-copy"></div>  
                                                     <div class="luckysheet-grdblkflowpush"></div>  \${flow} 

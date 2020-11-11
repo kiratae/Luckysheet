@@ -50,6 +50,11 @@ const weCore = {
                 // return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
             }
         }
+
+        libCore.formulaInputHanddler = function($to, $input, kcode) {
+            console.log('formulaInputHanddler', $to, $input, kcode);
+            luckysheetformula.functionInputHanddler($to, $input, kcode);
+        }
     }
 }
 

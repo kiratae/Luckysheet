@@ -4,8 +4,8 @@ import weConfigsetting from './configsetting';
 import menuButton from '../controllers/menuButton';
 
 const weCellErrorCtrl = {
-    createdom: function() {
-        $('#luckysheet-cell-main').append('<div id="luckysheet-cellError-showErrorMsg" class="luckysheet-mousedown-cancel"></div>');
+    getDOM: function() {
+        return `<div id="luckysheet-cellError-showErrorMsg" class="luckysheet-mousedown-cancel"></div>`;
     },
     cellFocus: function(r, c, clickMode) {
         if (weConfigsetting.formEditor)

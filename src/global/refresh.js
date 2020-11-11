@@ -411,8 +411,8 @@ function jfrefreshrange(data, range, cdformat) {
     }
 }
 
-//删除、增加行列 刷新表格
-function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf, af, freezen, dataVerification, hyperlink) {
+//删除、增加行列 刷新表格 (Delete, add rows and columns Refresh the table)
+function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf, af, freezen, dataVerification, hyperlink, cellValidation, cellTag) {
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
 
     //merge改变对应的单元格值改变
@@ -627,7 +627,7 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
 }
 
 //删除单元格 刷新表格
-function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVerification, hyperlink) {
+function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVerification, hyperlink, cellValidation, cellTag) {
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
     clearTimeout(refreshCanvasTimeOut);
     //merge改变对应的单元格值改变
@@ -708,7 +708,14 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
             "dataVerification": $.extend(true, {}, file.dataVerification),
             "curDataVerification": dataVerification,
             "hyperlink": $.extend(true, {}, file.hyperlink),
-            "curHyperlink": hyperlink
+            "curHyperlink": hyperlink,
+
+            // [TK] custom
+            "cellValidation": $.extend(true, {}, file.cellValidation),
+            "curCellValidation": cellValidation,
+            "cellTag": $.extend(true, {}, file.cellTag),
+            "curCellTag": cellTag,
+            // [TK] custom
         });
     }
 

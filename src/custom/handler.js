@@ -9,10 +9,10 @@ import {
 import { getObjType } from '../utils/util';
 
 const weHandler = {
-    registerMouseOverAndOut: function () {
+    registerMouseOverAndOut: function() {
         let tempRow = -1,
             tempCol = -1;
-        $('#luckysheet-cell-main').mousemove(function (event) {
+        $('#luckysheet-cell-main').mousemove(function(event) {
             let mouse = mouseposition(event.pageX, event.pageY);
             if (mouse[0] >= Store.cellmainWidth - Store.cellMainSrollBarSize || mouse[1] >= Store.cellmainHeight - Store.cellMainSrollBarSize) {
                 return;
@@ -47,7 +47,7 @@ const weHandler = {
             } else if (tempRow == row_index && tempCol == col_index) {
                 return false;
             }
-        }).mouseout(function () {
+        }).mouseout(function() {
             if (weConfigsetting.onSheetMouseOut != null && getObjType(weConfigsetting.onSheetMouseOut) == "function") {
                 weConfigsetting.onSheetMouseOut();
             }
@@ -56,14 +56,14 @@ const weHandler = {
             tempCol = -1;
         });
     },
-    registerMouseDbClick: function (r, c) {
+    registerMouseDbClick: function(r, c) {
         if (Store.flowdata[r] != null && Store.flowdata[r][c] != null) {
             if (weConfigsetting.onCellMouseDbClick != null && getObjType(weConfigsetting.onCellMouseDbClick) == "function") {
                 weConfigsetting.onCellMouseDbClick(r, c, Store.flowdata[r][c]);
             }
         }
     },
-    registerCellClick: function (r1, c1, r2, c2) {
+    registerCellClick: function(r1, c1, r2, c2) {
         if (r1 == r2 && c1 == c2) {
             if (Store.flowdata[r1][c1]) {
                 if (weConfigsetting.onCellClick != null && getObjType(weConfigsetting.onCellClick) == "function") {
@@ -72,7 +72,7 @@ const weHandler = {
             }
         }
     },
-    registerSelectHightlightShow: function () {
+    registerSelectHightlightShow: function() {
         if (weConfigsetting.onSelectHightlightShow != null && getObjType(weConfigsetting.onSelectHightlightShow) == "function") {
             weConfigsetting.onSelectHightlightShow();
         }

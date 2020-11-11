@@ -3,6 +3,10 @@ import Store from '../store';
 import weConfigsetting from './configsetting';
 import menuButton from '../controllers/menuButton';
 import formula from '../global/formula';
+import editor from '../global/editor';
+import { setcellvalue } from '../global/setdata';
+import { getcellvalue } from '../global/getdata';
+import { luckysheetrefreshgrid } from '../global/refresh';
 
 const weCellValidationCtrl = {
     cellValidation: {},
@@ -29,10 +33,10 @@ const weCellValidationCtrl = {
             e.stopPropagation();
         });
     },
-    createdom: function() {
-        // $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-btn"></div>');
-        // $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>');
-        // $('#luckysheet-cell-main').append('<div id="luckysheet-cellValidation-showHintBox" class="luckysheet-mousedown-cancel"></div>');
+    getDOM: function() {
+        return `
+            <div id="luckysheet-cellValidation-dropdown-btn"></div>
+            <div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>`;
     },
     renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)
@@ -64,7 +68,6 @@ const weCellValidationCtrl = {
     cellFocus: function(r, c, clickMode) {
         $("#luckysheet-cellValidation-dropdown-btn").hide();
 
-        console.log('weCellValidationCtrl::cellFocus');
         const self = this;
 
         if (self.cellValidation == null || self.cellValidation[r + '_' + c] == null) {
@@ -92,8 +95,6 @@ const weCellValidationCtrl = {
         //     _this.checkboxChange(r, c);
         //     return;
         // }
-
-        console.log('weCellValidationCtrl::cellFocus item => ', item);
 
         if (item.ruleType == 'inSet') {
             $("#luckysheet-cellValidation-dropdown-btn").show().css({
@@ -185,12 +186,131 @@ const weCellValidationCtrl = {
         this.cellValidation[r + '_' + c] = Object.assign({}, obj);
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
     },
+    setCellValidations: function(range, obj) {
+        if (range.length == 0)
+            return;
+
+        let str = range[range.length - 1].row[0],
+            edr = range[range.length - 1].row[1],
+            stc = range[range.length - 1].column[0],
+            edc = range[range.length - 1].column[1];
+        let d = editor.deepCopyFlowData(Store.flowdata);
+
+        if (str < 0) {
+            str = 0;
+        }
+
+        if (edr > d.length - 1) {
+            edr = d.length - 1;
+        }
+
+        if (stc < 0) {
+            stc = 0;
+        }
+
+        if (edc > d[0].length - 1) {
+            edc = d[0].length - 1;
+        }
+
+        let historyCellValidation = $.extend(true, {}, this.cellValidation);
+        let currentCellValidation = $.extend(true, {}, this.cellValidation);
+
+        for (let r = str; r <= edr; r++) {
+            for (let c = stc; c <= edc; c++) {
+                currentCellValidation[r + '_' + c] = obj;
+
+                if (obj.isReadonly) {
+                    setcellvalue(r, c, d, { ro: true });
+                }
+            }
+        }
+
+        if (obj.isReadonly) {
+            this.refOfReadonly(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
+        } else {
+            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+        }
+
+    },
     getCellValidation: function(r, c) {
         return this.cellValidation[r + '_' + c] ? this.cellValidation[r + '_' + c] : null;
     },
     deleteCellValidation: function(r, c) {
         delete this.cellValidation[r + '_' + c];
-    }
+    },
+    deleteCellValidations: function(range) {
+        if (range.length == 0)
+            return;
+
+        let historyCellValidation = $.extend(true, {}, this.cellValidation);
+        let currentCellValidation = $.extend(true, {}, this.cellValidation);
+
+        let str = range[range.length - 1].row[0],
+            edr = range[range.length - 1].row[1],
+            stc = range[range.length - 1].column[0],
+            edc = range[range.length - 1].column[1];
+
+        for (let r = str; r <= edr; r++) {
+            for (let c = stc; c <= edc; c++) {
+                if (currentCellValidation[r + '_' + c].isReadonly) {
+                    delete d[r][c]['ro'];
+                }
+
+                delete currentCellValidation[r + '_' + c];
+            }
+        }
+
+        this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+    },
+    ref: function(historyCellValidation, currentCellValidation, sheetIndex) {
+        let _this = this;
+
+        if (Store.clearjfundo) {
+            Store.jfundo = [];
+
+            let redo = {};
+            redo["type"] = "updateCellValidation";
+            redo["sheetIndex"] = sheetIndex;
+            redo["historyCellValidation"] = historyCellValidation;
+            redo["currentCellValidation"] = currentCellValidation;
+            Store.jfredo.push(redo);
+        }
+
+        _this.cellValidation = currentCellValidation;
+        Store.luckysheetfile[getSheetIndex(sheetIndex)].cellValidation = currentCellValidation;
+
+        setTimeout(function() {
+            luckysheetrefreshgrid();
+        }, 1);
+    },
+    refOfReadonly: function(historyCellValidation, currentCellValidation, sheetIndex, d, range) {
+        let _this = this;
+
+        if (Store.clearjfundo) {
+            Store.jfundo = [];
+
+            let redo = {};
+            redo["type"] = "updateDataVerificationOfCheckbox";
+            redo["sheetIndex"] = sheetIndex;
+            redo["historyCellValidation"] = historyCellValidation;
+            redo["currentCellValidation"] = currentCellValidation;
+            redo["data"] = Store.flowdata;
+            redo["curData"] = d;
+            redo["range"] = range;
+            Store.jfredo.push(redo);
+        }
+
+        _this.cellValidation = currentCellValidation;
+        Store.luckysheetfile[getSheetIndex(sheetIndex)].cellValidation = currentCellValidation;
+
+        Store.flowdata = d;
+        editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
+        Store.luckysheetfile[getSheetIndex(sheetIndex)].data = Store.flowdata;
+
+        setTimeout(function() {
+            luckysheetrefreshgrid();
+        }, 1);
+    },
 }
 
 export default weCellValidationCtrl;

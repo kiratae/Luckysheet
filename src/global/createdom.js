@@ -39,8 +39,8 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     gh = replaceHtml(gh, { "menu": menuToolBar() }); //设置需要显示的菜单
 
     // [TK] custom
-    weCellErrorCtrl.createdom();
-    weCellValidationCtrl.createdom();
+    gh = replaceHtml(gh, { "cellValidation": weCellValidationCtrl.getDOM() });
+    gh = replaceHtml(gh, { "cellError": weCellErrorCtrl.getDOM() });
 
     // if (data.length == 0) {
     //     Store.flowdata = datagridgrowth(data, rowheight, colwidth);
