@@ -16,6 +16,7 @@ import cleargridelement from '../global/cleargridelement';
 import { isInlineStringCell } from './inlineString';
 import Store from '../store';
 import weVariable from '../custom/variable';
+import weDynamicRow from '../custom/dynamicRow';
 
 export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocus) {
     if (!checkProtectionLocked(row_index1, col_index1, Store.currentSheetIndex)) {
@@ -90,6 +91,9 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     if (!isnotfocus) {
         $("#luckysheet-rich-text-editor").focus().select();
     }
+
+    // [TK] custom
+    weDynamicRow.generateNextRow(row_index);
 
     $("#luckysheet-input-box").removeAttr("style").css({
         "background-color": "rgb(255, 255, 255)",

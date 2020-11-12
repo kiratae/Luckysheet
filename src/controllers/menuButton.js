@@ -2811,7 +2811,7 @@ const menuButton = {
             if (e.type === "mouseover") {
                 let $con = $t.parent();
                 let winW = $(window).width(),
-                    winH = $(window).height();
+                    winH = $('body').height(); // [TK] custom winH = $(window).height();
                 let menuW = $con.width(),
                     attrH = $attr.height() + 25,
                     attrW = $attr.width() + 5;

@@ -1157,6 +1157,9 @@ export default function luckysheetHandler() {
             $("#luckysheet-cols-rows-handleincell").show();
             $("#luckysheet-cols-rows-add, #luckysheet-cols-rows-shift").hide();
 
+            // [TK] custom
+            $("#luckysheet-dynamic-row").hide();
+
             $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'block';
             $$('#luckysheet-cols-rows-handleincell .luckysheet-menuseparator').style.display = 'block';
 
@@ -3935,7 +3938,7 @@ export default function luckysheetHandler() {
             Store.chart_selection.rangeResizeDragged();
         }
 
-        //选区下拉
+        //选区下拉 (Selection drop down) [TK] custom (It's clone cell)
         if (Store.luckysheet_cell_selected_extend) {
 
 
@@ -4175,7 +4178,7 @@ export default function luckysheetHandler() {
         event.stopPropagation();
     });
 
-    //选区下拉
+    //选区下拉 (Selection drop down)
     $("#luckysheet-cell-main div.luckysheet-cs-fillhandle").mousedown(function(event) {
         if (isEditMode() || Store.allowEdit === false) { //此模式下禁用选区下拉
             return;

@@ -24,6 +24,7 @@ import sheetmanage from '../controllers/sheetmanage';
 import weCellErrorCtrl from '../custom/cellerror';
 import weCellValidationCtrl from '../custom/cellvalidation';
 import weCellTagCtrl from '../custom/celltag';
+import weDynamicRow from '../custom/dynamicRow';
 
 function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
     if (scrollHeight == null) {
@@ -110,13 +111,17 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
             //行标题栏序列号
             luckysheetTableContent.save(); //save scale before draw text
             luckysheetTableContent.scale(Store.zoomRatio, Store.zoomRatio);
-            let textMetrics = getMeasureText(r + 1, luckysheetTableContent);
+
+            let rowText = r + 1;
+            rowText = weDynamicRow.rowTextRender(r, rowText); // [TK] custom
+
+            let textMetrics = getMeasureText(rowText, luckysheetTableContent);
             //luckysheetTableContent.measureText(r + 1);
 
             let horizonAlignPos = (Store.rowHeaderWidth - textMetrics.width) / 2;
             let verticalAlignPos = (start_r + (end_r - start_r) / 2 + offsetTop);
 
-            luckysheetTableContent.fillText(r + 1, horizonAlignPos / Store.zoomRatio, verticalAlignPos / Store.zoomRatio);
+            luckysheetTableContent.fillText(rowText, horizonAlignPos / Store.zoomRatio, verticalAlignPos / Store.zoomRatio);
             luckysheetTableContent.restore(); //restore scale after draw text
         }
 

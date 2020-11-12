@@ -3,7 +3,7 @@ import menuButton from '../controllers/menuButton';
 import { isdatatype, isdatatypemulti } from '../global/datecontroll';
 import { hasChinaword } from '../global/validate';
 import Store from '../store';
-import locale from '../locale/locale'; 
+import locale from '../locale/locale';
 
 /**
  * Common tool methods
@@ -18,8 +18,7 @@ function isJsonString(str) {
         if (typeof JSON.parse(str) == "object") {
             return true;
         }
-    }
-    catch (e) { }
+    } catch (e) {}
     return false;
 }
 
@@ -46,7 +45,7 @@ function common_extend(jsonbject1, jsonbject2) {
 // 替换temp中的${xxx}为指定内容 ,temp:字符串，这里指html代码，dataarry：一个对象{"xxx":"替换的内容"}
 // 例：luckysheet.replaceHtml("${image}",{"image":"abc","jskdjslf":"abc"})   ==>  abc
 function replaceHtml(temp, dataarry) {
-    return temp.replace(/\$\{([\w]+)\}/g, function (s1, s2) { let s = dataarry[s2]; if (typeof (s) != "undefined") { return s; } else { return s1; } });
+    return temp.replace(/\$\{([\w]+)\}/g, function(s1, s2) { let s = dataarry[s2]; if (typeof(s) != "undefined") { return s; } else { return s1; } });
 };
 
 //获取数据类型
@@ -75,7 +74,8 @@ function getObjType(obj) {
 
 //颜色 16进制转rgb
 function hexToRgb(hex) {
-    let color = [], rgb = [];
+    let color = [],
+        rgb = [];
     hex = hex.replace(/#/, "");
 
     if (hex.length == 3) { // 处理 "#abc" 成 "#aabbcc"
@@ -102,8 +102,7 @@ function rgbTohex(color) {
 
     if (color.indexOf("rgba") > -1) {
         rgb = color.replace("rgba(", "").replace(")", "").split(',');
-    }
-    else {
+    } else {
         rgb = color.replace("rgb(", "").replace(")", "").split(',');
     }
 
@@ -139,26 +138,26 @@ function ABCatNum(a) {
     // }
 
     // return ret;
-    if(a==null || a.length==0){
+    if (a == null || a.length == 0) {
         return NaN;
     }
-    var str=a.toLowerCase().split("");
-    var num=0;
+    var str = a.toLowerCase().split("");
+    var num = 0;
     var al = str.length;
-    var getCharNumber = function(charx){
-        return charx.charCodeAt() -96;
+    var getCharNumber = function(charx) {
+        return charx.charCodeAt() - 96;
     };
     var numout = 0;
     var charnum = 0;
-    for(var i = 0; i < al; i++){
+    for (var i = 0; i < al; i++) {
         charnum = getCharNumber(str[i]);
-        numout += charnum * Math.pow(26, al-i-1);
+        numout += charnum * Math.pow(26, al - i - 1);
     };
     // console.log(a, numout-1);
-    if(numout==0){
+    if (numout == 0) {
         return NaN;
     }
-    return numout-1;
+    return numout - 1;
 };
 
 //列下标  数字转字母
@@ -202,23 +201,23 @@ function chatatABC(n) {
     //     }
     // }
 
-    var orda = 'a'.charCodeAt(0); 
-   
-    var ordz = 'z'.charCodeAt(0); 
-   
-    var len = ordz - orda + 1; 
-   
-    var s = ""; 
-   
-    while( n >= 0 ) { 
-   
-        s = String.fromCharCode(n % len + orda) + s; 
-   
-        n = Math.floor(n / len) - 1; 
-   
-    } 
-   
-    return s.toUpperCase(); 
+    var orda = 'a'.charCodeAt(0);
+
+    var ordz = 'z'.charCodeAt(0);
+
+    var len = ordz - orda + 1;
+
+    var s = "";
+
+    while (n >= 0) {
+
+        s = String.fromCharCode(n % len + orda) + s;
+
+        n = Math.floor(n / len) - 1;
+
+    }
+
+    return s.toUpperCase();
 };
 
 function ceateABC(index) {
@@ -226,10 +225,10 @@ function ceateABC(index) {
 
     if (index < wordlen) {
         return columeHeader_word;
-    }
-    else {
+    } else {
         let relist = [];
-        let i = 2, n = 0;
+        let i = 2,
+            n = 0;
 
         while (index < (wordlen / (wordlen - 1)) * (Math.pow(wordlen, i) - 1)) {
             n = i;
@@ -240,8 +239,7 @@ function ceateABC(index) {
 
             if (x == 0) {
                 relist = relist.concat(columeHeader_word);
-            }
-            else {
+            } else {
                 relist = relist.concat(createABCdim(x), index);
             }
         }
@@ -253,7 +251,8 @@ function createABCdim(x, count) {
 
     if (x == 1) {
         let ret = [];
-        let c = 0, con = true;
+        let c = 0,
+            con = true;
 
         for (let i = 0; i < chwl; i++) {
             let b = columeHeader_word[i];
@@ -268,10 +267,10 @@ function createABCdim(x, count) {
                 }
             }
         }
-    }
-    else if (x == 2) {
+    } else if (x == 2) {
         let ret = [];
-        let c = 0, con = true;
+        let c = 0,
+            con = true;
 
         for (let i = 0; i < chwl; i++) {
             let bb = columeHeader_word[i];
@@ -305,8 +304,7 @@ function getByteLen(val) {
 
         if (a.match(/[^\x00-\xff]/ig) != null) {
             len += 2;
-        }
-        else {
+        } else {
             len += 1;
         }
     }
@@ -339,8 +337,7 @@ function luckysheetfontformat(format) {
         //font-style
         if (format.it == "0" || format.it == null) {
             font += "normal ";
-        }
-        else {
+        } else {
             font += "italic ";
         }
 
@@ -350,41 +347,37 @@ function luckysheetfontformat(format) {
         //font-weight
         if (format.bl == "0" || format.bl == null) {
             font += "normal ";
-        }
-        else {
+        } else {
             font += "bold ";
         }
 
         //font-size/line-height
         if (!format.fs) {
             font += Store.defaultFontSize + "pt ";
-        }
-        else {
+        } else {
             font += Math.ceil(format.fs) + "pt ";
         }
 
         if (!format.ff) {
-            
+
             font += fontarray[0] + ', "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif';
-        }
-        else {
+        } else {
             let fontfamily = null;
             let fontjson = locale().fontjson;
             if (isdatatypemulti(format.ff)["num"]) {
                 fontfamily = fontarray[parseInt(format.ff)];
-            }
-            else {
+            } else {
 
                 // fontfamily = fontarray[fontjson[format.ff]];
                 fontfamily = format.ff;
 
                 fontfamily = fontfamily.replace(/"/g, "").replace(/'/g, "");
 
-                if(fontfamily.indexOf(" ")>-1){
+                if (fontfamily.indexOf(" ") > -1) {
                     fontfamily = '"' + fontfamily + '"';
                 }
 
-                if(fontfamily!=null && document.fonts && !document.fonts.check("12px "+fontfamily)){
+                if (fontfamily != null && document.fonts && !document.fonts.check("12px " + fontfamily)) {
                     menuButton.addFontTolist(fontfamily);
                 }
             }
@@ -397,17 +390,19 @@ function luckysheetfontformat(format) {
         }
 
         return font;
-    }
-    else {
+    } else {
         return luckysheetdefaultFont();
     }
 }
 
 //右键菜单
 function showrightclickmenu($menu, x, y) {
-    let winH = $(window).height(), winW = $(window).width();
-    let menuW = $menu.width(), menuH = $menu.height();
-    let top = y, left = x;
+    let winH = $('body').height(), // [TK] custom $(window).height()
+        winW = $(window).width();
+    let menuW = $menu.width(),
+        menuH = $menu.height();
+    let top = y,
+        left = x;
 
     if (x + menuW > winW) {
         left = x - menuW;
@@ -427,7 +422,7 @@ function showrightclickmenu($menu, x, y) {
 //单元格编辑聚焦
 function luckysheetactiveCell() {
     if (!!Store.fullscreenmode) {
-        setTimeout(function () {
+        setTimeout(function() {
             $("#luckysheet-rich-text-editor").focus().select();
         }, 50);
     }
@@ -438,7 +433,7 @@ function luckysheetContainerFocus() {
     // $("#" + Store.container).focus({ 
     //     preventScroll: true 
     // });
-    
+
     // fix jquery error: Uncaught TypeError: ((n.event.special[g.origType] || {}).handle || g.handler).apply is not a function
     // console.log('[TK] luckysheetContainerFocus');
     $("#" + Store.container).attr("tabindex", 0).focus();
@@ -450,26 +445,25 @@ function numFormat(num, type) {
         return null;
     }
 
-    let floatlen = 6, ismustfloat = false;
+    let floatlen = 6,
+        ismustfloat = false;
     if (type == null || type == "auto") {
         if (num < 1) {
             floatlen = 6;
-        }
-        else {
+        } else {
             floatlen = 1;
         }
-    }
-    else {
+    } else {
         if (isdatatype(type) == "num") {
             floatlen = parseInt(type);
             ismustfloat = true;
-        }
-        else {
+        } else {
             floatlen = 6;
         }
     }
 
-    let format = "", value = null;
+    let format = "",
+        value = null;
     for (let i = 0; i < floatlen; i++) {
         format += "0";
     }
@@ -480,8 +474,7 @@ function numFormat(num, type) {
 
     if (num >= 1e+21) {
         value = parseFloat(numeral(num).value());
-    }
-    else {
+    } else {
         value = parseFloat(numeral(num).format("0." + format));
     }
 
@@ -495,23 +488,24 @@ function numfloatlen(n) {
 
         if (lens.length == 1) {
             lens = 0;
-        }
-        else {
+        } else {
             lens = lens[1].length;
         }
 
         return lens;
-    }
-    else {
+    } else {
         return null;
     }
 }
 
 //二级菜单显示位置
 function mouseclickposition($menu, x, y, p) {
-    let winH = $(window).height(), winW = $(window).width();
-    let menuW = $menu.width(), menuH = $menu.height();
-    let top = y, left = x;
+    let winH = $('body').height(), // [TK] custom $(window).height(),
+        winW = $(window).width();
+    let menuW = $menu.width(),
+        menuH = $menu.height();
+    let top = y,
+        left = x;
 
     if (p == null) {
         p = "lefttop";
@@ -519,14 +513,11 @@ function mouseclickposition($menu, x, y, p) {
 
     if (p == "lefttop") {
         $menu.css({ "top": y, "left": x }).show();
-    }
-    else if (p == "righttop") {
+    } else if (p == "righttop") {
         $menu.css({ "top": y, "left": x - menuW }).show();
-    }
-    else if (p == "leftbottom") {
+    } else if (p == "leftbottom") {
         $menu.css({ "bottom": winH - y - 12, "left": x }).show();
-    }
-    else if (p == "rightbottom") {
+    } else if (p == "rightbottom") {
         $menu.css({ "bottom": winH - y - 12, "left": x - menuW }).show();
     }
 }
@@ -539,9 +530,9 @@ function mouseclickposition($menu, x, y, p) {
 function $$(selector, context) {
     context = context || document
     var elements = context.querySelectorAll(selector)
-    return elements.length == 1
-        ? Array.prototype.slice.call(elements)[0]
-        : Array.prototype.slice.call(elements)
+    return elements.length == 1 ?
+        Array.prototype.slice.call(elements)[0] :
+        Array.prototype.slice.call(elements)
 }
 
 /** 
@@ -555,30 +546,30 @@ function $$(selector, context) {
  */
 
 function seriesLoadScripts(scripts, options, callback) {
-    if (typeof (scripts) !== 'object') {
+    if (typeof(scripts) !== 'object') {
         var scripts = [scripts];
     }
     var HEAD = document.getElementsByTagName('head')[0] || document.documentElement;
     var s = [];
     var last = scripts.length - 1;
     //递归
-    var recursiveLoad = function (i) {
+    var recursiveLoad = function(i) {
         s[i] = document.createElement('script');
         s[i].setAttribute('type', 'text/javascript');
         // Attach handlers for all browsers
         // 异步
-        s[i].onload = s[i].onreadystatechange = function () {
-            if (!/*@cc_on!@*/0 || this.readyState === 'loaded' || this.readyState === 'complete') {
-                this.onload = this.onreadystatechange = null;
-                this.parentNode.removeChild(this);
-                if (i !== last) {
-                    recursiveLoad(i + 1);
-                } else if (typeof (callback) === 'function') {
-                    callback()
-                };
+        s[i].onload = s[i].onreadystatechange = function() {
+                if (! /*@cc_on!@*/ 0 || this.readyState === 'loaded' || this.readyState === 'complete') {
+                    this.onload = this.onreadystatechange = null;
+                    this.parentNode.removeChild(this);
+                    if (i !== last) {
+                        recursiveLoad(i + 1);
+                    } else if (typeof(callback) === 'function') {
+                        callback()
+                    };
+                }
             }
-        }
-        // 同步
+            // 同步
         s[i].setAttribute('src', scripts[i]);
 
         // 设置属性
@@ -605,7 +596,7 @@ function seriesLoadScripts(scripts, options, callback) {
  */
 
 function parallelLoadScripts(scripts, options, callback) {
-    if (typeof (scripts) !== 'object') {
+    if (typeof(scripts) !== 'object') {
         var scripts = [scripts];
     }
     var HEAD = document.getElementsByTagName('head')[0] || document.documentElement;
@@ -616,12 +607,12 @@ function parallelLoadScripts(scripts, options, callback) {
         s[i].setAttribute('type', 'text/javascript');
         // Attach handlers for all browsers
         // 异步
-        s[i].onload = s[i].onreadystatechange = function () {
-            if (!/*@cc_on!@*/0 || this.readyState === 'loaded' || this.readyState === 'complete') {
+        s[i].onload = s[i].onreadystatechange = function() {
+            if (! /*@cc_on!@*/ 0 || this.readyState === 'loaded' || this.readyState === 'complete') {
                 loaded++;
                 this.onload = this.onreadystatechange = null;
                 this.parentNode.removeChild(this);
-                if (loaded === scripts.length && typeof (callback) === 'function') callback();
+                if (loaded === scripts.length && typeof(callback) === 'function') callback();
             }
         };
         // 同步
@@ -639,9 +630,9 @@ function parallelLoadScripts(scripts, options, callback) {
 }
 
 /**
-* 动态添加css
-* @param {String}  url 指定要加载的css地址
-*/
+ * 动态添加css
+ * @param {String}  url 指定要加载的css地址
+ */
 function loadLink(url) {
     var doc = document;
     var link = doc.createElement("link");
@@ -652,18 +643,17 @@ function loadLink(url) {
     var heads = doc.getElementsByTagName("head");
     if (heads.length) {
         heads[0].appendChild(link);
-    }
-    else {
+    } else {
         doc.documentElement.appendChild(link);
     }
 }
 
 /**
-* 动态添加一组css
-* @param {String}  url 指定要加载的css地址
-*/
+ * 动态添加一组css
+ * @param {String}  url 指定要加载的css地址
+ */
 function loadLinks(urls) {
-    if (typeof (urls) !== 'object') {
+    if (typeof(urls) !== 'object') {
         urls = [urls];
     }
     if (urls.length) {
@@ -673,67 +663,70 @@ function loadLinks(urls) {
     }
 }
 
-function transformRangeToAbsolute(txt1){
-    if(txt1 ==null ||txt1.length==0){
+function transformRangeToAbsolute(txt1) {
+    if (txt1 == null || txt1.length == 0) {
         return null;
     }
 
     let txtArray = txt1.split(",");
     let ret = "";
-    for(let i=0;i<txtArray.length;i++){
+    for (let i = 0; i < txtArray.length; i++) {
         let txt = txtArray[i];
-        let txtSplit = txt.split("!"), sheetName="", rangeTxt="";
-        if(txtSplit.length>1){
+        let txtSplit = txt.split("!"),
+            sheetName = "",
+            rangeTxt = "";
+        if (txtSplit.length > 1) {
             sheetName = txtSplit[0];
             rangeTxt = txtSplit[1];
-        }
-        else{
+        } else {
             rangeTxt = txtSplit[0];
         }
 
         let rangeTxtArray = rangeTxt.split(":");
 
         let rangeRet = "";
-        for(let a=0;a<rangeTxtArray.length;a++){
+        for (let a = 0; a < rangeTxtArray.length; a++) {
             let t = rangeTxtArray[a];
 
             let row = t.replace(/[^0-9]/g, "");
             let col = t.replace(/[^A-Za-z]/g, "");
             let rangeTT = ""
-            if(col!=""){
+            if (col != "") {
                 rangeTT += "$" + col;
             }
 
-            if(row!=""){
+            if (row != "") {
                 rangeTT += "$" + row;
             }
 
-            rangeRet+=rangeTT+":";
+            rangeRet += rangeTT + ":";
         }
 
-        rangeRet = rangeRet.substr(0, rangeRet.length-1);
+        rangeRet = rangeRet.substr(0, rangeRet.length - 1);
 
         ret += sheetName + rangeRet + ",";
     }
 
-    return ret.substr(0, ret.length-1); 
+    return ret.substr(0, ret.length - 1);
 }
 
-function openSelfModel(id, isshowMask=true){
-    let $t = $("#"+id)
-            .find(".luckysheet-modal-dialog-content")
-            .css("min-width", 300)
-            .end(), 
-        myh = $t.outerHeight(), 
+function openSelfModel(id, isshowMask = true) {
+    let $t = $("#" + id)
+        .find(".luckysheet-modal-dialog-content")
+        .css("min-width", 300)
+        .end(),
+        myh = $t.outerHeight(),
         myw = $t.outerWidth();
-    let winw = $(window).width(), winh = $(window).height();
-    let scrollLeft = $(document).scrollLeft(), scrollTop = $(document).scrollTop();
-    $t.css({ 
-    "left": (winw + scrollLeft - myw) / 2, 
-    "top": (winh + scrollTop - myh) / 3 
+    let winw = $(window).width(),
+        winh = $(window).height();
+    let scrollLeft = $(document).scrollLeft(),
+        scrollTop = $(document).scrollTop();
+    $t.css({
+        "left": (winw + scrollLeft - myw) / 2,
+        "top": (winh + scrollTop - myh) / 3
     }).show();
 
-    if(isshowMask){
+    if (isshowMask) {
         $("#luckysheet-modal-dialog-mask").show();
     }
 }

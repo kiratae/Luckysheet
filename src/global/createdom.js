@@ -22,6 +22,7 @@ import locale from '../locale/locale';
 import weConfigsetting from '../custom/configsetting';
 import weCellErrorCtrl from '../custom/cellerror';
 import weCellValidationCtrl from '../custom/cellvalidation';
+import weDynamicRow from '../custom/dynamicRow';
 
 export default function luckysheetcreatedom(colwidth, rowheight, data, menu, title) {
     // //最少30行
@@ -118,6 +119,9 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
         $("body").append(replaceHtml(filtermenuHTML(), { "menuid": "filter" }));
         $("body").append(replaceHtml(filtersubmenuHTML(), { "menuid": "filter" }));
         $("body").append(sheetconfigHTML());
+
+        // [TK] custom
+        weDynamicRow.createDOM();
     }
 
     $("#luckysheet-rows-h").width((Store.rowHeaderWidth - 1.5));

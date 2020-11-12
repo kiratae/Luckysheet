@@ -337,7 +337,7 @@ const luckysheetDropCell = {
 
             let left = $(this).offset().left;
             let top = $(this).offset().top + 25;
-            let winH = $(window).height(),
+            let winH = $('body').height(), // [TK] custom $(window).height()
                 winW = $(window).width();
             let menuW = $("#luckysheet-dropCell-typeList").width(),
                 menuH = $("#luckysheet-dropCell-typeList").height();
@@ -424,7 +424,7 @@ const luckysheetDropCell = {
 
         return [hasNumber, hasExtendNumber, hasDate, hasChn, hasChnWeek1, hasChnWeek2, hasChnWeek3];
     },
-    update: function() {
+    update: function(isCopyValue = true) {
         let _this = this;
 
         if (!checkProtectionLockedRangeList([_this.applyRange], Store.currentSheetIndex)) {
@@ -434,6 +434,8 @@ const luckysheetDropCell = {
         if (Store.allowEdit === false) {
             return;
         }
+
+        console.log('[TK] custom dropCell::update');
 
         let d = editor.deepCopyFlowData(Store.flowdata);
         let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
@@ -489,7 +491,11 @@ const luckysheetDropCell = {
                             formula.execFunctionGroup(j, i, v[1], undefined, d);
 
                             cell.f = v[2];
-                            cell.v = v[1];
+                            // [TK] custom
+                            if (isCopyValue) {
+                                cell.v = v[1];
+                            }
+
 
                             if (cell.spl != null) {
                                 cell.spl = v[3].data;
@@ -578,7 +584,10 @@ const luckysheetDropCell = {
                             formula.execFunctionGroup(j, i, v[1], undefined, d);
 
                             cell.f = v[2];
-                            cell.v = v[1];
+                            // [TK] custom
+                            if (isCopyValue) {
+                                cell.v = v[1];
+                            }
 
                             if (cell.spl != null) {
                                 cell.spl = v[3].data;
@@ -676,7 +685,10 @@ const luckysheetDropCell = {
                             formula.execFunctionGroup(j, i, v[1], undefined, d);
 
                             cell.f = v[2];
-                            cell.v = v[1];
+                            // [TK] custom
+                            if (isCopyValue) {
+                                cell.v = v[1];
+                            }
 
                             if (cell.spl != null) {
                                 cell.spl = v[3].data;
@@ -765,7 +777,10 @@ const luckysheetDropCell = {
                             formula.execFunctionGroup(j, i, v[1], undefined, d);
 
                             cell.f = v[2];
-                            cell.v = v[1];
+                            // [TK] custom
+                            if (isCopyValue) {
+                                cell.v = v[1];
+                            }
 
                             if (cell.spl != null) {
                                 cell.spl = v[3].data;
