@@ -3937,8 +3937,9 @@ const menuButton = {
         let _this = this;
 
         let f = '=' + formula.toUpperCase() + '(' + getRangetxt(Store.currentSheetIndex, { "row": rowh, "column": columnh }, Store.currentSheetIndex) + ')';
-        let v = luckysheetformula.execfunction(f, r, c);
-        let value = { "v": v[1], "f": v[2] };
+        let tf = weVariable.transformFormula(f); // [TK] custom
+        let v = luckysheetformula.execfunction(tf[0], r, c); // [TK] custom
+        let value = { "v": v[1], "f": v[2], "df": tf[1] };
         setcellvalue(r, c, d, value);
         luckysheetformula.execFunctionExist.push({ "r": r, "c": c, "i": Store.currentSheetIndex });
 

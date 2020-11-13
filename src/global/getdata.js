@@ -255,7 +255,8 @@ export function getcellFormula(r, c, i, data) {
         return null;
     }
 
-    return cell.f;
+    // [TK] custom return cell.f;
+    return cell.df;
 }
 
 

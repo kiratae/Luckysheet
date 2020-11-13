@@ -42,7 +42,7 @@ import weDynamicRow from '../custom/dynamicRow';
 
 export function rowColumnOperationInitial() {
 
-    weDynamicRow.init();
+    // weDynamicRow.init();
 
     //表格行标题 mouse事件
     $("#luckysheet-rows-h").mousedown(function(event) {
@@ -391,7 +391,7 @@ export function rowColumnOperationInitial() {
             $("#luckysheet-cols-rows-handleincell").hide();
 
             // [TK] custom
-            $("#luckysheet-dynamic-row").show();
+            weDynamicRow.openMenu();
 
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
             $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'block';

@@ -24,7 +24,7 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         return;
     }
 
-    if (isEditMode() || Store.allowEdit === false) { //此模式下禁用单元格编辑
+    if (isEditMode() || Store.allowEdit === false) { //此模式下禁用单元格编辑 (Cell editing is disabled in this mode)
         return;
     }
 

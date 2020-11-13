@@ -1234,6 +1234,7 @@ let nullCellRender = function(r, c, start_r, start_c, end_r, end_c, luckysheetTa
     weCellErrorCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellTagCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weDynamicRow.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
 }
 
 
@@ -1283,6 +1284,7 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
     weCellErrorCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellTagCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weDynamicRow.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
 
     let dataVerification = dataVerificationCtrl.dataVerification;
 

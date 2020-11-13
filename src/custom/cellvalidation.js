@@ -249,6 +249,7 @@ const weCellValidationCtrl = {
             edr = range[range.length - 1].row[1],
             stc = range[range.length - 1].column[0],
             edc = range[range.length - 1].column[1];
+        let d = Store.flowdata;
 
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {

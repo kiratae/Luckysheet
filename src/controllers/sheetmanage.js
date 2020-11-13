@@ -33,6 +33,7 @@ import weCellValidationCtrl from '../custom/cellvalidation';
 import weCellTagCtrl from '../custom/celltag';
 import method from '../global/method';
 import weCellErrorCtrl from '../custom/cellerror';
+import weDynamicRow from '../custom/dynamicRow';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -921,6 +922,11 @@ const sheetmanage = {
 
         weCellTagCtrl.cellTag = file.cellTag;
         weCellTagCtrl.init();
+
+        weDynamicRow.dynamicRow = file.dynamicRow;
+        weDynamicRow.init();
+        // [TK] custom
+
         //链接
         hyperlinkCtrl.hyperlink = file.hyperlink;
         hyperlinkCtrl.init();
