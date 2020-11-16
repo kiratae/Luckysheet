@@ -6,6 +6,7 @@ const weConfigsetting = {
     bodyContainer: null,
     topOffset: 0,
     formEditor: true,
+    canDynamicRow: true,
     toolbars: [],
     contextMenus: [],
     onCellClick: null,

@@ -19,6 +19,7 @@ const weCore = {
         weConfigsetting.contextMenus = config.contextMenus;
         weConfigsetting.formEditor = config.formEditor;
         weConfigsetting.bodyContainer = config.bodyContainer;
+        weConfigsetting.canDynamicRow = config.canDynamicRow;
         // hooks
         weConfigsetting.onCellClick = config.onCellClick;
         weConfigsetting.onCellMouseDown = config.onCellMouseDown;

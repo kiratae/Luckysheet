@@ -8,12 +8,13 @@ import { insertRow } from '../global/api';
 const weDynamicRow = {
     dynamicRow: null,
     init: function() {
+        if (!weConfigsetting.canDynamicRow) {
+            return;
+        }
         const self = this;
         $("#luckysheetDynamicRowRightClickMenu").click(function(event) {
-            // console.log('weDynamicRow::luckysheetDynamicRowRightClickMenu::click', Store.luckysheet_select_save);
             $("#luckysheet-rightclick-menu").hide();
 
-            // let target = $(this).data('x-target');
             if (self.dynamicRow == null) {
                 self.setData({
                     row: Store.luckysheet_select_save[0].row[0],
@@ -30,24 +31,27 @@ const weDynamicRow = {
         });
     },
     openMenu: function() {
+        if (!weConfigsetting.canDynamicRow) {
+            return;
+        }
 
         if (this.dynamicRow == null) {
             $("#luckysheet-dynamic-row").find('.luckysheet-cols-menuitem-content').text('สร้างเป็นแถวแบบ Dynamic');
+            $("#luckysheet-dynamic-row").show();
         } else {
             $("#luckysheet-dynamic-row").find('.luckysheet-cols-menuitem-content').text('นำแถวแบบ Dynamic ออก');
-        }
-        setTimeout(function() {
-            if (this.dynamicRow == null) {
-                $("#luckysheet-dynamic-row").show();
-            } else if (this.dynamicRow != null && this.dynamicRow.row == Store.luckysheet_select_save[0].row[0]) {
+            if (this.dynamicRow.row == Store.luckysheet_select_save[0].row[0]) {
                 $("#luckysheet-dynamic-row").show();
             } else {
                 $("#luckysheet-dynamic-row").hide();
             }
-
-        }, 1);
+        }
     },
     createDOM: function() {
+        if (!weConfigsetting.canDynamicRow) {
+            return;
+        }
+
         let html = `<div id="luckysheet-dynamic-row">
             <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
             <div id="luckysheetDynamicRowRightClickMenu" data-x-target="add" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
@@ -64,9 +68,6 @@ const weDynamicRow = {
         this.dynamicRow = null;
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].dynamicRow = this.dynamicRow;
     },
-    addRow: function(row) {
-
-    },
     rowTextRender: function(row, rowText) {
         if (this.dynamicRow != null && this.dynamicRow.row != null && this.dynamicRow.row == row) {
             rowText = weConfigsetting.formEditor ? "DYN" : "Auto";
@@ -74,8 +75,9 @@ const weDynamicRow = {
         return rowText;
     },
     renderCell: function(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent) {
-        // if (!weConfigsetting.formEditor)
-        //     return;
+        if (!weConfigsetting.canDynamicRow) {
+            return;
+        }
 
         if (this.dynamicRow != null && this.dynamicRow.row && r == this.dynamicRow.row) {
             luckysheetTableContent.beginPath();
@@ -101,9 +103,7 @@ const weDynamicRow = {
         }
     },
     generateNextRow: function(curRow) {
-        console.log('weDynamicRow::generateNextRow curRow => ', curRow);
-
-        if (weConfigsetting.formEditor) {
+        if (weConfigsetting.formEditor || !weConfigsetting.canDynamicRow) {
             return;
         }
 

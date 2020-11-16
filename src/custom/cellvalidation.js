@@ -96,7 +96,7 @@ const weCellValidationCtrl = {
         //     return;
         // }
 
-        if (item.ruleType == 'inSet') {
+        if (item.ruleType == 'inSet' || item.ruleType == 'inSetSystem') {
             $("#luckysheet-cellValidation-dropdown-btn").show().css({
                 'max-width': col - col_pre,
                 'max-height': row - row_pre,
@@ -175,7 +175,7 @@ const weCellValidationCtrl = {
                     list.push(v);
                 }
             }
-        } else if (value.inSet != null) {
+        } else if (value.inSetSystem != null) {
 
         }
         console.log('weCellValidationCtrl::getDropdownList', list);
