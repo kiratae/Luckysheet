@@ -14,6 +14,7 @@ const weCore = {
         weConfigsetting.slientMode = config.slientMode;
         weConfigsetting.fillErrorInCell = config.fillErrorInCell;
         weConfigsetting.formApi = config.formApi;
+        weConfigsetting.masterDataApi = config.masterDataApi;
         weConfigsetting.formReportSetId = config.formReportSetId;
         weConfigsetting.toolbars = config.toolbars;
         weConfigsetting.contextMenus = config.contextMenus;

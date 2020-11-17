@@ -7,9 +7,15 @@ import editor from '../global/editor';
 import { setcellvalue } from '../global/setdata';
 import { getcellvalue } from '../global/getdata';
 import { luckysheetrefreshgrid } from '../global/refresh';
+import luckysheetConfigsetting from '../controllers/luckysheetConfigsetting';
+import { luckysheetlodingHTML } from '../controllers/constant';
 
 const weCellValidationCtrl = {
     cellValidation: {},
+    error: {
+        ce: "#CLIENT!",
+        se: "#SERVER!",
+    },
     init: function() {
         console.log('weCellValidationCtrl::init');
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
@@ -176,7 +182,7 @@ const weCellValidationCtrl = {
                 }
             }
         } else if (value.inSetSystem != null) {
-
+            list = this.getSetSystem(value.inSetSystem);
         }
         console.log('weCellValidationCtrl::getDropdownList', list);
         return list;
@@ -312,6 +318,40 @@ const weCellValidationCtrl = {
             luckysheetrefreshgrid();
         }, 1);
     },
+    getSetSystem: function(id) {
+        let list = [];
+        let removeLoading = function(ex) {
+            setTimeout(function() {
+                $("#luckysheetloadingdata").fadeOut().remove();
+            }, 500);
+            if (ex)
+                throw ex;
+        }
+        const self = this;
+        $.ajax({
+            url: weConfigsetting.masterDataApi,
+            type: 'post',
+            dataType: 'json',
+            data: { id: id },
+            beforeSend: function() {
+                console.log(`calling: "${weConfigsetting.masterDataApi}" with id "${id}".`);
+                $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML());
+            },
+            success: function(res, textStatus, jqXHR) {
+                if (res.statusCode == "0" && res.data) {
+                    list = res.data.slice();
+                    removeLoading();
+                } else {
+                    removeLoading(self.error.se);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('error', textStatus);
+                removeLoading(self.error.ce);
+            }
+        });
+        return list;
+    }
 }
 
 export default weCellValidationCtrl;

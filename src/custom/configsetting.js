@@ -2,6 +2,7 @@ const weConfigsetting = {
     slientMode: false,
     fillErrorInCell: false,
     formApi: null,
+    masterDataApi: null,
     formReportSetId: null,
     bodyContainer: null,
     topOffset: 0,
