@@ -11,14 +11,13 @@ import luckysheetConfigsetting from '../controllers/luckysheetConfigsetting';
 import { luckysheetlodingHTML } from '../controllers/constant';
 
 const weCellValidationCtrl = {
-    cellValidation: {},
+    cellValidation: null,
     error: {
         ce: "#CLIENT!",
         se: "#SERVER!",
     },
     init: function() {
         console.log('weCellValidationCtrl::init');
-        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
         const self = this;
 
         $(document).off("click.dropdownBtn").on("click.dropdownBtn", "#luckysheet-cellValidation-dropdown-btn", function(e) {
@@ -184,7 +183,7 @@ const weCellValidationCtrl = {
         } else if (value.inSetSystem != null) {
             list = this.getSetSystem(value.inSetSystem);
         }
-        console.log('weCellValidationCtrl::getDropdownList', list);
+        // console.log('weCellValidationCtrl::getDropdownList', list);
         return list;
         // let ddl = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdown"];
     },
@@ -221,17 +220,28 @@ const weCellValidationCtrl = {
         let historyCellValidation = $.extend(true, {}, this.cellValidation);
         let currentCellValidation = $.extend(true, {}, this.cellValidation);
 
+        let isHasReadonly = false;
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {
                 currentCellValidation[r + '_' + c] = obj;
 
-                if (obj.isReadonly) {
-                    setcellvalue(r, c, d, { ro: true });
+                if (obj.isReadonly != null) {
+                    if (d[r][c] != null && typeof d[r][c] == 'object') {
+                        if (obj.isReadonly) {
+                            d[r][c].ro = true;
+                            isHasReadonly = true;
+                        } else if (typeof d[r][c]['ro'] !== 'undefined') {
+                            delete d[r][c]['ro'];
+                        }
+                    } else if (typeof d[r][c] == null) {
+                        d[r][c] = { ro: true };
+                        isHasReadonly = true;
+                    }
                 }
             }
         }
 
-        if (obj.isReadonly) {
+        if (isHasReadonly) {
             this.refOfReadonly(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         } else {
             this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
@@ -257,17 +267,23 @@ const weCellValidationCtrl = {
             edc = range[range.length - 1].column[1];
         let d = Store.flowdata;
 
+        let isHasReadonly = false;
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {
-                if (currentCellValidation[r + '_' + c].isReadonly) {
+                if (currentCellValidation[r + '_' + c].isReadonly != null && d[r][c]['ro']) {
                     delete d[r][c]['ro'];
+                    isHasReadonly = true;
                 }
 
                 delete currentCellValidation[r + '_' + c];
             }
         }
 
-        this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+        if (isHasReadonly) {
+            this.refOfReadonly(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
+        } else {
+            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+        }
     },
     ref: function(historyCellValidation, currentCellValidation, sheetIndex) {
         let _this = this;
@@ -297,7 +313,7 @@ const weCellValidationCtrl = {
             Store.jfundo = [];
 
             let redo = {};
-            redo["type"] = "updateDataVerificationOfCheckbox";
+            redo["type"] = "updateCellValidation";
             redo["sheetIndex"] = sheetIndex;
             redo["historyCellValidation"] = historyCellValidation;
             redo["currentCellValidation"] = currentCellValidation;
@@ -311,7 +327,7 @@ const weCellValidationCtrl = {
         Store.luckysheetfile[getSheetIndex(sheetIndex)].cellValidation = currentCellValidation;
 
         Store.flowdata = d;
-        editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
+        // editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
         Store.luckysheetfile[getSheetIndex(sheetIndex)].data = Store.flowdata;
 
         setTimeout(function() {
@@ -326,30 +342,38 @@ const weCellValidationCtrl = {
             }, 500);
             if (ex)
                 throw ex;
-        }
-        const self = this;
-        $.ajax({
-            url: weConfigsetting.masterDataApi,
-            type: 'post',
-            dataType: 'json',
-            data: { id: id },
-            beforeSend: function() {
-                console.log(`calling: "${weConfigsetting.masterDataApi}" with id "${id}".`);
-                $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML());
-            },
-            success: function(res, textStatus, jqXHR) {
-                if (res.statusCode == "0" && res.data) {
-                    list = res.data.slice();
-                    removeLoading();
-                } else {
-                    removeLoading(self.error.se);
+        };
+        // caching
+        let cacheList = localStorage.getItem('setSystem_' + id);
+        if (cacheList) {
+            list = JSON.parse(cacheList);
+        } else {
+            // new request
+            const self = this;
+            $.ajax({
+                url: weConfigsetting.masterDataApi,
+                type: 'post',
+                dataType: 'json',
+                data: { id: id },
+                beforeSend: function() {
+                    console.log(`calling: "${weConfigsetting.masterDataApi}" with id "${id}".`);
+                    $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML(false));
+                },
+                success: function(res, textStatus, jqXHR) {
+                    if (res.statusCode == "0" && res.data) {
+                        list = res.data.slice();
+                        localStorage.setItem('setSystem_' + id, JSON.stringify(res.data));
+                        removeLoading();
+                    } else {
+                        removeLoading(self.error.se);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('error', textStatus);
+                    removeLoading(self.error.ce);
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('error', textStatus);
-                removeLoading(self.error.ce);
-            }
-        });
+            });
+        }
         return list;
     }
 }

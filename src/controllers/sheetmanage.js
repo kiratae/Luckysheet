@@ -917,6 +917,7 @@ const sheetmanage = {
         dataVerificationCtrl.init();
 
         // [TK] custom
+        console.log('setSheetParam', file.cellValidation);
         weCellValidationCtrl.cellValidation = file.cellValidation;
         weCellValidationCtrl.init();
 

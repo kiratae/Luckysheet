@@ -193,7 +193,7 @@ const weVariable = {
             data: postData,
             beforeSend: function() {
                 console.log(`calling: "${weConfigsetting.formApi}" with code "${sheetName}".`);
-                $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML());
+                $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML(false));
             },
             success: function(res, textStatus, jqXHR) {
                 if (res.data) {

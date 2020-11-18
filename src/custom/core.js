@@ -41,7 +41,7 @@ const weCore = {
         libCore.getSelectedCell = weAPI.getSelectedCell;
         libCore.getRangeByTxt = weAPI.getRangeByTxt;
 
-        libCore.weCellValidationCtrl = weCellValidationCtrl;
+        // libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
         libCore.weDropdownCtrl = weDropdownCtrl;
 

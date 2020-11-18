@@ -440,13 +440,16 @@ const luckysheetDropCell = {
 
         let d = editor.deepCopyFlowData(Store.flowdata);
         let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
+        console.log('Store', Store.luckysheetfile, Store.currentSheetIndex, getSheetIndex(Store.currentSheetIndex));
 
         let cfg = $.extend(true, {}, Store.config);
         let borderInfoCompute = getBorderInfoCompute();
         let dataVerification = $.extend(true, {}, file["dataVerification"]);
 
         // [Tk] custom
-        let cellValidation = $.extend(true, {}, file["cellValidation"]);
+        console.log('file', file.cellValidation)
+        let cellValidation = {};
+        // console.log('cellValidation', cellValidation, Store.luckysheetfile);
 
         let direction = _this.direction;
         let type = _this.applyType;
@@ -574,6 +577,7 @@ const luckysheetDropCell = {
                         }
 
                         // [TK] custom
+                        console.log('drop', cellValidation[bd_r + "_" + bd_c], bd_r + "_" + bd_c);
                         if (cellValidation[bd_r + "_" + bd_c]) {
                             cellValidation[j + "_" + i] = cellValidation[bd_r + "_" + bd_c];
                         }

@@ -7,7 +7,6 @@ const weCellTagCtrl = {
     cellTag: {},
     init: function() {
         console.log('weCellTagCtrl::init');
-        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellTag = this.cellTag;
     },
     renderCell: function(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)

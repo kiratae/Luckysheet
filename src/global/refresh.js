@@ -65,6 +65,7 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
     // [TK] custom
     let cellValidation = allParam["cellValidation"];
     let cellTag = allParam["cellTag"];
+    console.log('jfrefreshgrid', allParam, cellValidation);
     // [TK] end custom
 
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
