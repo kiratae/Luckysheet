@@ -104,14 +104,14 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         // [TK] custom
         let curCellValidation;
         if (cellValidation == null) {
-            curCellValidation = $.extend(true, [], file["cellValidation"]);
+            curCellValidation = $.extend(true, {}, file["cellValidation"]);
         } else {
             curCellValidation = cellValidation;
         }
 
         let curCellTag;
         if (cellTag == null) {
-            curCellTag = $.extend(true, [], file["cellTag"]);
+            curCellTag = $.extend(true, {}, file["cellTag"]);
         } else {
             curCellTag = cellTag;
         }
@@ -133,9 +133,9 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
             "dynamicArray": $.extend(true, [], file["dynamicArray"]),
             "curDynamicArray": curDynamicArray,
             // [TK] custom
-            "cellValidation": $.extend(true, [], file["cellValidation"]),
+            "cellValidation": $.extend(true, {}, file["cellValidation"]),
             "curCellValidation": curCellValidation,
-            "cellTag": $.extend(true, [], file["cellTag"]),
+            "cellTag": $.extend(true, {}, file["cellTag"]),
             "curCellTag": curCellTag,
             // [TK] end custom
         });
@@ -924,6 +924,15 @@ function jfrefreshgrid_pastcut(source, target, RowlChange) {
     Store.luckysheetfile[getSheetIndex(source["sheetIndex"])].dataVerification = source["curDataVerification"];
     Store.luckysheetfile[getSheetIndex(target["sheetIndex"])].dataVerification = target["curDataVerification"];
 
+    // [TK] custom
+    if (Store.currentSheetIndex == source["sheetIndex"]) {
+        weCellValidationCtrl.cellValidation = source["curCellValidation"];
+    } else if (Store.currentSheetIndex == target["sheetIndex"]) {
+        weCellValidationCtrl.cellValidation = target["curCellValidation"]
+    }
+    Store.luckysheetfile[getSheetIndex(source["sheetIndex"])].cellValidation = source["curCellValidation"];
+    Store.luckysheetfile[getSheetIndex(target["sheetIndex"])].cellValidation = target["curCellValidation"];
+    // [TK] custom
 
     formula.execFunctionExist.reverse();
     formula.execFunctionGroup(null, null, null, null, target["curData"]);

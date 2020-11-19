@@ -122,10 +122,10 @@ const controlHistory = {
                 "curDataVerification": ctr.target["dataVerification"],
                 "range": ctr.target["range"],
                 // [TK] custom
-                "cellValidation": ctr.source["curCellValidation"],
-                "curCellValidation": ctr.source["cellValidation"],
-                "cellTag": ctr.source["curCellTag"],
-                "curCellTag": ctr.source["cellTag"],
+                "cellValidation": ctr.target["curCellValidation"],
+                "curCellValidation": ctr.target["cellValidation"],
+                "cellTag": ctr.target["curCellTag"],
+                "curCellTag": ctr.target["cellTag"],
                 // [TK] custom
             }
             jfrefreshgrid_pastcut(s, t, ctr.RowlChange);

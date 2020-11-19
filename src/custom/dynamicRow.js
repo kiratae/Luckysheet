@@ -116,14 +116,14 @@ const weDynamicRow = {
 
                 luckysheetDropCell.applyType = "1";
 
-                this.dynamicRow.row++;
-                insertRow(this.dynamicRow.row);
+                insertRow(this.dynamicRow.row + 1);
 
-                luckysheetDropCell.applyRange = { "row": [this.dynamicRow.row, this.dynamicRow.row], "column": [this.dynamicRow.start_col, this.dynamicRow.end_col] };
+                luckysheetDropCell.applyRange = { "row": [this.dynamicRow.row + 1, this.dynamicRow.row + 1], "column": [this.dynamicRow.start_col, this.dynamicRow.end_col] };
                 luckysheetDropCell.direction = "down";
 
                 luckysheetDropCell.update(false);
 
+                this.dynamicRow.row++;
                 this.setData(this.dynamicRow);
             }
         }

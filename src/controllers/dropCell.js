@@ -14,6 +14,7 @@ import { getObjType, replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
 import weVariable from '../custom/variable';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 //选区下拉
 const luckysheetDropCell = {
@@ -440,16 +441,18 @@ const luckysheetDropCell = {
 
         let d = editor.deepCopyFlowData(Store.flowdata);
         let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
-        console.log('Store', Store.luckysheetfile, Store.currentSheetIndex, getSheetIndex(Store.currentSheetIndex));
 
         let cfg = $.extend(true, {}, Store.config);
         let borderInfoCompute = getBorderInfoCompute();
         let dataVerification = $.extend(true, {}, file["dataVerification"]);
 
         // [Tk] custom
-        console.log('file', file.cellValidation)
-        let cellValidation = {};
-        // console.log('cellValidation', cellValidation, Store.luckysheetfile);
+        let cellValidation = { 'fuck': 'fuck' };
+        // let cellValidation = Object.assign({}, weCellValidationCtrl.cellValidation);
+        console.log('weCellValidationCtrl.cellValidation', weCellValidationCtrl.cellValidation);
+        console.log('file', file);
+
+        return;
 
         let direction = _this.direction;
         let type = _this.applyType;
