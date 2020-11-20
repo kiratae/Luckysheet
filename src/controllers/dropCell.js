@@ -449,6 +449,7 @@ const luckysheetDropCell = {
         // [Tk] custom
         let cellValidation = { 'fuck': 'fuck' };
         // let cellValidation = Object.assign({}, weCellValidationCtrl.cellValidation);
+        console.log('file[cellValidation]', file['cellValidation']);
         console.log('weCellValidationCtrl.cellValidation', weCellValidationCtrl.cellValidation);
         console.log('file', file);
 

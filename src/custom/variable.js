@@ -77,6 +77,7 @@ const weVariable = {
     },
     transformFormula: function(value) {
         const self = this;
+        console.log('transformFormula', value);
         self.resolvedVariables.splice(0, self.resolvedVariables.length);
         if (getObjType(value) == "string") {
             return [self.resolveFormula(value), value]
@@ -105,7 +106,7 @@ const weVariable = {
             if (self.regexTest.test(afterSheetFx)) {
                 return self.resolveVariable(afterSheetFx, isSub, sheetName);
             } else {
-                return `='${sheetName}'!${afterSheetFx}`
+                return `='${sheetName}'!${afterSheetFx}`;
             }
         } else if (self.regexTest.test(fx)) {
 
@@ -162,6 +163,7 @@ const weVariable = {
             return fx;
 
         let resolved = self.execFormula(v.formula);
+        console.log('resolveVariable', resolved, v.formula);
         if (!resolved)
             return '=' + v.formula;
         if (resolved[1] != '#NAME?') { // if fx is not variable

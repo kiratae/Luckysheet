@@ -1224,12 +1224,14 @@ const luckysheetformula = {
 
         if (!isCurInline) {
             if (isRealNull(value) && !isPrevInline) {
-                if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.f == null)) {
+                // if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.f == null)) {
+                if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.df == null)) {
                     _this.cancelNormalSelected();
                     return;
                 }
             } else if (curv != null && curv.qp != 1) {
-                if (getObjType(curv) == "object" && (value == curv.f || value == curv.v || value == curv.m)) {
+                // if (getObjType(curv) == "object" && (value == curv.f || value == curv.v || value == curv.m)) {
+                if (getObjType(curv) == "object" && (value == curv.df || value == curv.v || value == curv.m)) {
                     _this.cancelNormalSelected();
                     return;
                 } else if (value == curv) {
@@ -1242,9 +1244,13 @@ const luckysheetformula = {
 
             } else if (getObjType(curv) == "object" && curv.ct != null && curv.ct.fa != null && curv.ct.fa != "@" && !isRealNull(value)) {
                 delete curv.m; //更新时间m处理 ， 会实际删除单元格数据的参数（flowdata时已删除）
-                if (curv.f != null) { //如果原来是公式，而更新的数据不是公式，则把公式删除
-                    delete curv.f;
-                    delete curv.spl; //删除单元格的sparklines的配置串
+                // if (curv.f != null) { //如果原来是公式，而更新的数据不是公式，则把公式删除
+                //     delete curv.f;
+                //     delete curv.spl; //删除单元格的sparklines的配置串
+                // }
+                if (curv.df != null) { // [TK] custom
+                    delete curv.df;
+                    delete curv.spl;
                 }
             }
         }

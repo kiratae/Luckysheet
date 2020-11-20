@@ -191,7 +191,7 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
     }
     // [TK] end custom
 
-    //更新数据的范围
+    //更新数据的范围 (Update the scope of the data)
     for (let s = 0; s < range.length; s++) {
         let r1 = range[s].row[0];
         let c1 = range[s].column[0];

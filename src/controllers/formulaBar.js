@@ -166,8 +166,8 @@ export function formulaBarInitial() {
         luckysheetupdateCell(row_index, col_index, Store.flowdata);
 
         let cell = Store.flowdata[row_index][col_index];
-        if (cell != null && cell.f != null) {
-            //单元格有计算
+        if (cell != null && cell.df != null) { // cell != null && cell.f != null
+            //单元格有计算 (Cell has calculation)
             let functionStr = formula.getfunctionParam(cell.f);
             if (functionStr.fn != null) {
                 //有函数公式
