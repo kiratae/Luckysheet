@@ -114,12 +114,16 @@ const weDynamicRow = {
                     "column": [this.dynamicRow.start_col, this.dynamicRow.end_col]
                 };
 
-                luckysheetDropCell.applyType = "1";
+                console.log('generateNextRow', Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]['cellValidation'])
 
                 insertRow(this.dynamicRow.row + 1);
 
-                luckysheetDropCell.applyRange = { "row": [this.dynamicRow.row + 1, this.dynamicRow.row + 1], "column": [this.dynamicRow.start_col, this.dynamicRow.end_col] };
+                luckysheetDropCell.applyRange = {
+                    "row": [this.dynamicRow.row + 1, this.dynamicRow.row + 1],
+                    "column": [this.dynamicRow.start_col, this.dynamicRow.end_col]
+                };
                 luckysheetDropCell.direction = "down";
+                luckysheetDropCell.applyType = "0";
 
                 luckysheetDropCell.update(false);
 

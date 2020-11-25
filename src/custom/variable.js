@@ -181,7 +181,7 @@ const weVariable = {
         let v = this.getVariableByName(varName, (typeof sheetName == 'undefined'), sheetName);
         if (!v) {
             this.log.warn(func, `variable "${varName}" is missing!`);
-            return this.error.v;
+            throw this.error.v;
         }
 
         if (this.regex.test(v.formula)) {
