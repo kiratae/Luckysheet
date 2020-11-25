@@ -7,20 +7,25 @@ function getUUID() {
 }
 
 class Log {
-    constructor(name) {
+    constructor(name, isHidden = false) {
         this.name = name;
+        this.isHidden = isHidden;
     }
     debug(func, msg) {
-        console.log(`%cDEBUG::%c${this.name}::%c${func} ${msg}`, 'color: green', 'color: grey', 'color: white');
+        if (!this.isHidden)
+            console.log(`%cDEBUG::%c${this.name}::%c${func} ${msg}`, 'color: green', 'color: grey', 'color: white');
     }
     info(func, msg) {
-        console.log(`%cINFO::%c${this.name}::%c${func} ${msg}`, 'color: cyan', 'color: grey', 'color: white');
+        if (!this.isHidden)
+            console.log(`%cINFO::%c${this.name}::%c${func} ${msg}`, 'color: cyan', 'color: grey', 'color: white');
     }
     warn(func, msg) {
-        console.log(`%cWARN::%c${this.name}::%c${func} ${msg}`, 'color: yellow', 'color: grey', 'color: white');
+        if (!this.isHidden)
+            console.log(`%cWARN::%c${this.name}::%c${func} ${msg}`, 'color: yellow', 'color: grey', 'color: white');
     }
     error(func, msg) {
-        console.log(`%cERROR::%c${this.name}::%c${func} ${msg}`, 'color: red', 'color: grey', 'color: white');
+        if (!this.isHidden)
+            console.log(`%cERROR::%c${this.name}::%c${func} ${msg}`, 'color: red', 'color: grey', 'color: white');
     }
 }
 

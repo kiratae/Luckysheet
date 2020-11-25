@@ -14,7 +14,7 @@ import { Log } from './utils';
 
 const weVariable = {
     variablePrefix: '#',
-    log: new Log("weVariable"),
+    log: new Log("weVariable", true),
     resolvedVariables: [],
     regex: /(?:([a-zA-Zก-ฮ0-9_.]+)\!(\#[a-zA-Zก-ฮ0-9_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Zก-ฮ0-9_.]+))/g,
     regexIsVar: /[^!](\#[a-zA-Zก-ฮ0-9_.]+)/,

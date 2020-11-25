@@ -4878,9 +4878,7 @@ const luckysheetformula = {
         window.luckysheet_getcelldata_cache = null;
         let calc_funcStr = getcellFormula(u.r, u.c, u.index);
 
-        // [TK] custom
-        let tf = weVariable.transformFormula(calc_funcStr);
-        let v = _this.execfunction(tf[1], u.r, u.c, u.index);
+        let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
 
         // let value = _this.execFunctionGroupData[u.r][u.c];
         // if(value == null){
@@ -4909,26 +4907,16 @@ const luckysheetformula = {
         _this.groupValuesRefreshData.push({
             "r": u.r,
             "c": u.c,
-            "v": tf[0],
-            "f": tf[1],
-            "df": tf[2],
-            /* 
             "v": v[1],
             "f": v[2],
-             */
             "spe": v[3],
             "index": u.index
         });
 
         // _this.execFunctionGroupData[u.r][u.c] = value;
         _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
-            /* 
             v: v[1],
             f: v[2]
-             */
-            v: tf[0],
-            f: tf[1],
-            df: tf[2]
         };
     },
     groupValuesRefreshData: [],
@@ -4959,7 +4947,6 @@ const luckysheetformula = {
                 }
                 updateValue.v = item.v;
                 updateValue.f = item.f;
-                updateValue.df = item.df;
                 setcellvalue(item.r, item.c, data, updateValue);
                 server.saveParam("v", item.index, item.v, {
                     "r": item.r,
