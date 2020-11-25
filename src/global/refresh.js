@@ -199,9 +199,9 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         if (Store.flowdata[r1][c1] != null && Store.flowdata[r1][c1].spl != null) {
             window.luckysheetCurrentRow = r1;
             window.luckysheetCurrentColumn = c1;
-            window.luckysheetCurrentFunction = Store.flowdata[r1][c1].df;
+            window.luckysheetCurrentFunction = Store.flowdata[r1][c1].f;
 
-            let fp = $.trim(formula.functionParserExe(Store.flowdata[r1][c1].df));
+            let fp = $.trim(formula.functionParserExe(Store.flowdata[r1][c1].f));
             let sparklines = eval(fp);
             Store.flowdata[r1][c1].spl = sparklines;
         }
@@ -452,7 +452,7 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
             let clc_result = formula.execfunction(clc_funcStr, clc_r, clc_c, clc_i, null, true);
             clc.func = clc_result;
 
-            if (data[clc_r][clc_c].f == clc_funcStr) {
+            if (data[clc_r][clc_c].df == clc_funcStr) { // [TK] custom
                 setcellvalue(clc_r, clc_c, data, clc_result[1]);
                 funcData.push({ "r": clc_r, "c": clc_c });
             }
@@ -680,7 +680,7 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
             let clc_result = formula.execfunction(clc_funcStr, clc_r, clc_c, clc_i, null, true);
             clc.func = clc_result;
 
-            if (data[clc_r][clc_c].f == clc_funcStr) {
+            if (data[clc_r][clc_c].df == clc_funcStr) { // [TK] custom
                 setcellvalue(clc_r, clc_c, data, clc_result[1]);
                 funcData.push({ "r": clc_r, "c": clc_c });
             }
@@ -992,9 +992,9 @@ function jfrefreshgrid_rhcw(rowheight, colwidth, isRefreshCanvas = true) {
             if (index == Store.currentSheetIndex && Store.flowdata[r][c] != null && Store.flowdata[r][c].spl != null && ((r in Store.config["rowlen"]) || (c in Store.config["columnlen"]))) {
                 window.luckysheetCurrentRow = r;
                 window.luckysheetCurrentColumn = c;
-                window.luckysheetCurrentFunction = Store.flowdata[r][c].f;
+                window.luckysheetCurrentFunction = Store.flowdata[r][c].df; // [TK] custom <- Store.flowdata[r][c].f;
 
-                let fp = $.trim(formula.functionParserExe(Store.flowdata[r][c].f));
+                let fp = $.trim(formula.functionParserExe(Store.flowdata[r][c].df)); // [TK] custom <- Store.flowdata[r][c].f;
                 let sparklines = eval(fp);
                 Store.flowdata[r][c].spl = sparklines;
 

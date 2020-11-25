@@ -10,9 +10,11 @@ import sheetmanage from '../controllers/sheetmanage';
 import { luckysheetrefreshgrid, jfrefreshgrid } from '../global/refresh';
 import luckysheetConfigsetting from '../controllers/luckysheetConfigsetting';
 import { luckysheetlodingHTML } from '../controllers/constant';
+import { Log } from './utils';
 
 const weVariable = {
     variablePrefix: '#',
+    log: new Log("weVariable"),
     resolvedVariables: [],
     regex: /(?:([a-zA-Zก-ฮ0-9_.]+)\!(\#[a-zA-Zก-ฮ0-9_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Zก-ฮ0-9_.]+))/g,
     regexIsVar: /[^!](\#[a-zA-Zก-ฮ0-9_.]+)/,
@@ -80,44 +82,55 @@ const weVariable = {
         console.log('transformFormula', value);
         self.resolvedVariables.splice(0, self.resolvedVariables.length);
         if (getObjType(value) == "string") {
-            return [self.resolveFormula(value), value]
+            let resolved = self.resolveFormula(value);
+            console.log('transformFormula resolved', resolved);
+            if (typeof resolved === 'string') {
+                resolved = this.execFormula(resolved);
+            }
+            return [resolved[1], resolved[2], value];
         } else if (getObjType(value) == "object" && value.df != null) {
-            value.f = self.resolveFormula(value.df);
+            let resolved = self.resolveFormula(value.df);
+            console.log('transformFormula resolved', resolved);
+            if (typeof resolved === 'string') {
+                resolved = this.execFormula(resolved);
+            }
+            value.v = resolved[1];
+            value.f = resolved[2];
             return value;
         }
     },
-    resolveFormula: function(fx, isSub) {
-        const self = this;
-        if (self.regex.test(fx) && !isSub) {
-
-            return self.resolveMultiVariable(fx);
-
-        } else if (self.isGlobalFX(fx) && !self.regexIsVar.test(fx)) {
+    resolveFormula: function(fx, isSub = false) {
+        const func = 'resolveFormula';
+        this.log.info(func, `with fx is "${fx}", isSub is "${isSub}".`);
+        if (this.regex.test(fx) && !isSub) {
+            this.log.debug(func, `"${fx}" is first variable not inside variable formula field.`);
+            return this.resolveMultiVariable(fx);
+        } else if (this.isGlobalFX(fx) && !this.regexIsVar.test(fx)) {
             if (!weConfigsetting.formApi)
-                throw self.error.ce;
-            let matched = fx.match(self.regexTestIsGlobal);
+                throw this.error.ce;
+            let matched = fx.match(this.regexTestIsGlobal);
             let sheetName = matched[1].replace(/'/g, '');
             let afterSheetFx = matched[2];
 
             if (!sheetmanage.getSheetByName(sheetName)) {
-                self.addRemoteSheet(sheetName);
+                this.addRemoteSheet(sheetName);
             }
 
-            if (self.regexTest.test(afterSheetFx)) {
-                return self.resolveVariable(afterSheetFx, isSub, sheetName);
+            this.log.debug(func, `in sheet "${sheetName}" with "${afterSheetFx}" is cross-sheet fx.`);
+            if (this.regexTest.test(afterSheetFx)) {
+                return this.resolveVariable(afterSheetFx, isSub, sheetName);
             } else {
                 return `='${sheetName}'!${afterSheetFx}`;
             }
-        } else if (self.regexTest.test(fx)) {
-
-            return self.resolveVariable(fx, isSub);
-
+        } else if (this.regexTest.test(fx)) {
+            this.log.debug(func, `"${fx}" is sub variable inside variable formula field.`);
+            return this.resolveVariable(fx, isSub);
         } else {
+            this.log.debug(func, `"${fx}" is not variable so give it back to luckysheet formula execute.`);
             return fx;
         }
     },
     getVariableByName: function(name, isLocal, sheetName) {
-        const self = this;
         let variables = null;
         if (isLocal)
             variables = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["variable"];
@@ -127,51 +140,65 @@ const weVariable = {
         if (variables)
             return variables.find(item => item.name == name);
         else
-            throw self.error.v;
+            throw this.error.v;
     },
     detectCircular: function(varName) {
-        const self = this;
-        if (self.resolvedVariables.includes(varName))
-            throw self.error.c; // circular error string
-        self.resolvedVariables.push(varName);
+        if (this.resolvedVariables.includes(varName))
+            throw this.error.c; // circular error string
+        this.resolvedVariables.push(varName);
     },
     resolveMultiVariable: function(fx) {
-        const self = this;
-        let variables = fx.match(self.regex);
+        const func = 'resolveMultiVariable';
+        this.log.info(func, `with fx is "${fx}".`);
+        let variables = fx.match(this.regex);
+        this.log.debug(func, `extract fx and got variables "${variables.toString()}".`);
         if (variables) {
             let tempFx = fx;
             for (let varName of variables) {
-                let resolved = self.resolveFormula(varName, true);
+                let resolved = this.resolveVariable(varName, true);
+                this.log.debug(func, `resolved variable "${varName}" and got result is "${resolved.toString()}".`);
+                if (resolved == this.error.v) {
+                    return tempFx.replace(varName, resolved);
+                }
                 if (typeof resolved === 'string' && resolved.substr(0, 1) == '=') {
                     resolved = resolved.replace('=', '');
                 }
                 tempFx = tempFx.replace(varName, resolved);
             }
+            this.log.debug(func, `to retrun fx is "${tempFx}".`);
             return tempFx;
         } else {
             return fx;
         }
     },
     resolveVariable: function(fx, isSub, sheetName) {
-        const self = this;
-        let varName = fx.match(self.regexTest)[1];
+        const func = 'resolveVariable';
+        this.log.info(func, `with fx is "${fx}", isSub is "${isSub}", and sheetName "${sheetName}".`);
+        let varName = fx.match(this.regexTest)[1];
 
-        self.detectCircular(typeof sheetName == 'undefined' ? varName : `${sheetName}!${varName}`);
+        this.detectCircular(typeof sheetName == 'undefined' ? varName : `${sheetName}!${varName}`);
 
-        let v = self.getVariableByName(varName, (typeof sheetName == 'undefined'), sheetName);
-        if (!v)
-            return fx;
+        let v = this.getVariableByName(varName, (typeof sheetName == 'undefined'), sheetName);
+        if (!v) {
+            this.log.warn(func, `variable "${varName}" is missing!`);
+            return this.error.v;
+        }
 
-        let resolved = self.execFormula(v.formula);
-        console.log('resolveVariable', resolved, v.formula);
-        if (!resolved)
-            return '=' + v.formula;
-        if (resolved[1] != '#NAME?') { // if fx is not variable
-            v.value = resolved[1];
-            v.formula = resolved[2];
-            return isSub ? v.value : v.formula;
-        } else { // if fx is variable
-            return self.resolveMultiVariable(v.formula);
+        if (this.regex.test(v.formula)) {
+            let resolved = this.execFormula(v.formula);
+            this.log.debug(func, `resolved formula "${v.formula}" result is "${resolved.toString()}".`);
+            if (!resolved)
+                return '=' + v.formula;
+            if (resolved[1] != '#NAME?') { // if fx is not variable
+                v.value = resolved[1];
+                v.formula = resolved[2];
+                return isSub ? v.value : v.formula;
+                // return resolved;
+            } else { // if fx is variable
+                return this.resolveMultiVariable(v.formula);
+            }
+        } else {
+            return v.formula;
         }
     },
     addRemoteSheet: function(name) {

@@ -1272,12 +1272,12 @@ const luckysheetformula = {
                     try {
                         tf = weVariable.transformFormula(value);
 
-                        let v = _this.execfunction(tf[0], r, c, undefined, true);
+                        let v = _this.execfunction(tf[1], r, c, undefined, true);
                         isRunExecFunction = false;
                         curv = d[r][c];
-                        curv.v = v[1];
-                        curv.f = v[2];
-                        curv.df = tf[1]; // [TK] custom
+                        curv.v = tf[0]; // curv.v = v[1];
+                        curv.f = tf[1]; // curv.f = v[2];
+                        curv.df = tf[2]; // [TK] custom
 
                         //打进单元格的sparklines的配置串， 报错需要单独处理。
                         if (v.length == 4 && v[3].type == "sparklines") {
@@ -1316,8 +1316,8 @@ const luckysheetformula = {
                             // get v/m/ct
 
                             curv = d[r][c];
-                            curv.v = v[1];
-                            curv.f = v[2];
+                            curv.v = tf.v; // curv.v = v[1];
+                            curv.f = tf.f; // curv.f = v[2];
                             curv.df = tf.df; // [TK] custom
 
                             //打进单元格的sparklines的配置串， 报错需要单独处理。
@@ -1381,12 +1381,12 @@ const luckysheetformula = {
                 try {
                     tf = weVariable.transformFormula(value);
 
-                    let v = _this.execfunction(tf[0], r, c, undefined, true);
+                    let v = _this.execfunction(tf[1], r, c, undefined, true);
                     isRunExecFunction = false;
                     value = {
-                        "v": v[1],
-                        "f": v[2],
-                        "df": tf[1] // [TK] custom
+                        "v": tf[0], // "v": v[1],
+                        "f": tf[1], // "f": v[2],
+                        "df": tf[2] // [TK] custom
                     };
 
 
@@ -1428,8 +1428,8 @@ const luckysheetformula = {
                         // };
 
                         // update attribute v
-                        value.v = v[1];
-                        value.f = v[2];
+                        value.v = tf.v; // value.v = v[1];
+                        value.f = tf.f; // value.f = v[2];
                         value.df = tf.df; // [TK] custom
 
                         //打进单元格的sparklines的配置串， 报错需要单独处理。
@@ -4861,7 +4861,7 @@ const luckysheetformula = {
             }
         }
     },
-    //深度优先算法，处理多级调用函数
+    //深度优先算法，处理多级调用函数 (Depth-first algorithm, handling multi-level calling functions)
     functionDFS: function(u) {
         let _this = this;
         u.color = "g";
@@ -4878,7 +4878,9 @@ const luckysheetformula = {
         window.luckysheet_getcelldata_cache = null;
         let calc_funcStr = getcellFormula(u.r, u.c, u.index);
 
-        let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
+        // [TK] custom
+        let tf = weVariable.transformFormula(calc_funcStr);
+        let v = _this.execfunction(tf[1], u.r, u.c, u.index);
 
         // let value = _this.execFunctionGroupData[u.r][u.c];
         // if(value == null){
@@ -4907,16 +4909,26 @@ const luckysheetformula = {
         _this.groupValuesRefreshData.push({
             "r": u.r,
             "c": u.c,
+            "v": tf[0],
+            "f": tf[1],
+            "df": tf[2],
+            /* 
             "v": v[1],
             "f": v[2],
+             */
             "spe": v[3],
             "index": u.index
         });
 
         // _this.execFunctionGroupData[u.r][u.c] = value;
         _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
+            /* 
             v: v[1],
             f: v[2]
+             */
+            v: tf[0],
+            f: tf[1],
+            df: tf[2]
         };
     },
     groupValuesRefreshData: [],
@@ -4947,6 +4959,7 @@ const luckysheetformula = {
                 }
                 updateValue.v = item.v;
                 updateValue.f = item.f;
+                updateValue.df = item.df;
                 setcellvalue(item.r, item.c, data, updateValue);
                 server.saveParam("v", item.index, item.v, {
                     "r": item.r,
