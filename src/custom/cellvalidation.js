@@ -187,10 +187,6 @@ const weCellValidationCtrl = {
         return list;
         // let ddl = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdown"];
     },
-    setCellValidation: function(r, c, obj) {
-        this.cellValidation[r + '_' + c] = Object.assign({}, obj);
-        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation = this.cellValidation;
-    },
     setCellValidations: function(range, obj) {
         if (range.length == 0)
             return;
@@ -249,10 +245,7 @@ const weCellValidationCtrl = {
 
     },
     getCellValidation: function(r, c) {
-        return this.cellValidation[r + '_' + c] ? this.cellValidation[r + '_' + c] : null;
-    },
-    deleteCellValidation: function(r, c) {
-        delete this.cellValidation[r + '_' + c];
+        return this.cellValidation[r + '_' + c] || null;
     },
     deleteCellValidations: function(range) {
         if (range.length == 0)

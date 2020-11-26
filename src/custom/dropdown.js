@@ -2,24 +2,24 @@ import { getUUID, Log } from './utils';
 
 const weDropdownCtrl = {
     log: new Log("weDropdownCtrl"),
-    dropdownStorage: [],
+    dropdownDatas: [],
     getList: function() {
-        return this.dropdownStorage.slice();
+        return this.dropdownDatas.slice();
     },
     getData: function(id) {
-        return this.dropdownStorage.find(item => item.dropdownId === id);
+        return this.dropdownDatas.find(item => item.dropdownDataId === id);
     },
     saveData: function(data) {
-        if (!data.dropdownId) {
+        if (!data.dropdownDataId) {
             // insert
-            data.dropdownId = getUUID();
-            this.dropdownStorage.push(data);
+            data.dropdownDataId = getUUID();
+            this.dropdownDatas.push(data);
             return data;
         } else {
             // update
-            let index = this.dropdownStorage.findIndex(item => item.dropdownId === id);
+            let index = this.dropdownDatas.findIndex(item => item.dropdownDataId === id);
             if (index >= 0) {
-                this.dropdownStorage[index] = data;
+                this.dropdownDatas[index] = data;
                 return data;
             }
         }
@@ -27,15 +27,15 @@ const weDropdownCtrl = {
     deteleData: function(id) {
         const func = 'deteleData';
         try {
-            let index = this.dropdownStorage.findIndex(item => item.dropdownId === id);
+            let index = this.dropdownDatas.findIndex(item => item.dropdownDataId === id);
             if (index >= 0) {
-                delete this.dropdownStorage[index];
+                delete this.dropdownDatas[index];
                 return true;
             } else {
                 return false;
             }
         } catch (error) {
-            this.log.error(func, `with id "${id}"`);
+            this.log.error(func, `with DropdownDataId "${id}"`);
         }
     }
 }

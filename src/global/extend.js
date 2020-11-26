@@ -511,6 +511,112 @@ function luckysheetextendtable(type, index, value, direction, sheetIndex) {
         }
     }
 
+    // [TK] custom
+    let cellValidation = file.cellValidation;
+    let newCellValidation = {};
+    if (cellValidation != null) {
+        for (let key in cellValidation) {
+            let r = Number(key.split('_')[0]),
+                c = Number(key.split('_')[1]);
+            let item = cellValidation[key];
+
+            if (type == "row") {
+                if (index < r) {
+                    newCellValidation[(r + value) + "_" + c] = item;
+                } else if (index == r) {
+                    if (direction == "lefttop") {
+                        newCellValidation[(r + value) + "_" + c] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellValidation[(r + i) + "_" + c] = item;
+                        }
+                    } else {
+                        newCellValidation[r + "_" + c] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellValidation[(r + i + 1) + "_" + c] = item;
+                        }
+                    }
+                } else {
+                    newCellValidation[r + "_" + c] = item;
+                }
+            } else if (type == "column") {
+                if (index < c) {
+                    newCellValidation[r + "_" + (c + value)] = item;
+                } else if (index == c) {
+                    if (direction == "lefttop") {
+                        newCellValidation[r + "_" + (c + value)] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellValidation[r + "_" + (c + i)] = item;
+                        }
+                    } else {
+                        newCellValidation[r + "_" + c] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellValidation[r + "_" + (c + i + 1)] = item;
+                        }
+                    }
+                } else {
+                    newCellValidation[r + "_" + c] = item;
+                }
+            }
+        }
+    }
+
+    // [TK] custom
+    let cellTag = file.cellTag;
+    let newCellTag = {};
+    if (cellTag != null) {
+        for (let key in cellTag) {
+            let r = Number(key.split('_')[0]),
+                c = Number(key.split('_')[1]);
+            let item = cellTag[key];
+
+            if (type == "row") {
+                if (index < r) {
+                    newCellTag[(r + value) + "_" + c] = item;
+                } else if (index == r) {
+                    if (direction == "lefttop") {
+                        newCellTag[(r + value) + "_" + c] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellTag[(r + i) + "_" + c] = item;
+                        }
+                    } else {
+                        newCellTag[r + "_" + c] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellTag[(r + i + 1) + "_" + c] = item;
+                        }
+                    }
+                } else {
+                    newCellTag[r + "_" + c] = item;
+                }
+            } else if (type == "column") {
+                if (index < c) {
+                    newCellTag[r + "_" + (c + value)] = item;
+                } else if (index == c) {
+                    if (direction == "lefttop") {
+                        newCellTag[r + "_" + (c + value)] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellTag[r + "_" + (c + i)] = item;
+                        }
+                    } else {
+                        newCellTag[r + "_" + c] = item;
+
+                        for (let i = 0; i < value; i++) {
+                            newCellTag[r + "_" + (c + i + 1)] = item;
+                        }
+                    }
+                } else {
+                    newCellTag[r + "_" + c] = item;
+                }
+            }
+        }
+    }
+
     let type1;
     if (type == "row") {
         type1 = "r";
@@ -803,7 +909,9 @@ function luckysheetextendtable(type, index, value, direction, sheetIndex) {
             newAFarr,
             newFreezen,
             newDataVerification,
-            newHyperlink
+            newHyperlink,
+            newCellValidation,
+            newCellTag
         );
     } else {
         file.data = d;
@@ -815,6 +923,8 @@ function luckysheetextendtable(type, index, value, direction, sheetIndex) {
         file.luckysheet_alternateformat_save = newAFarr;
         file.dataVerification = newDataVerification;
         file.hyperlink = newHyperlink;
+        file.cellValidation = newCellValidation;
+        file.cellTag = newCellTag;
     }
 
     let range = null;

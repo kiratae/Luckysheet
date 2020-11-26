@@ -17,6 +17,7 @@ import { isInlineStringCell } from './inlineString';
 import Store from '../store';
 import weVariable from '../custom/variable';
 import weDynamicRow from '../custom/dynamicRow';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocus) {
     if (!checkProtectionLocked(row_index1, col_index1, Store.currentSheetIndex)) {
@@ -28,6 +29,9 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         return;
     }
 
+    // [TK] custom
+    weDynamicRow.generateNextRow(row_index1);
+
     //数据验证
     if (dataVerificationCtrl.dataVerification != null && dataVerificationCtrl.dataVerification[row_index1 + '_' + col_index1] != null) {
         let dataVerificationItem = dataVerificationCtrl.dataVerification[row_index1 + '_' + col_index1];
@@ -36,6 +40,16 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         } else if (dataVerificationItem.type == 'checkbox') {
             return;
         }
+    }
+
+    if (weCellValidationCtrl.cellValidation != null && weCellValidationCtrl.cellValidation[row_index1 + '_' + col_index1] != null) {
+        let cellValidationItem = weCellValidationCtrl.cellValidation[row_index1 + '_' + col_index1];
+        if (cellValidationItem.inSet || cellValidationItem.inSetSystem) {
+            weCellValidationCtrl.dropdownListShow();
+        }
+        // else if (dataVerificationItem.type == 'checkbox') {
+        //     return;
+        // }
     }
 
     let size = getColumnAndRowSize(row_index1, col_index1, d);
@@ -91,9 +105,6 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     if (!isnotfocus) {
         $("#luckysheet-rich-text-editor").focus().select();
     }
-
-    // [TK] custom
-    weDynamicRow.generateNextRow(row_index);
 
     $("#luckysheet-input-box").removeAttr("style").css({
         "background-color": "rgb(255, 255, 255)",

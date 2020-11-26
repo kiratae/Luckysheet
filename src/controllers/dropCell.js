@@ -437,8 +437,6 @@ const luckysheetDropCell = {
             return;
         }
 
-        console.log('[TK] custom dropCell::update');
-
         let d = editor.deepCopyFlowData(Store.flowdata);
         let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
 
@@ -448,9 +446,6 @@ const luckysheetDropCell = {
 
         // [Tk] custom
         let cellValidation = $.extend(true, {}, file["cellValidation"]);
-        console.log('file["cellValidation"]', file["cellValidation"]);
-        console.log('weCellValidationCtrl.cellValidation', weCellValidationCtrl.cellValidation);
-        console.log('dropCell update ', Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]['cellValidation']);
 
         let direction = _this.direction;
         let type = _this.applyType;
@@ -581,7 +576,6 @@ const luckysheetDropCell = {
                         }
 
                         // [TK] custom
-                        console.log('drop', cellValidation[bd_r + "_" + bd_c], bd_r + "_" + bd_c);
                         if (cellValidation[bd_r + "_" + bd_c]) {
                             cellValidation[j + "_" + i] = cellValidation[bd_r + "_" + bd_c];
                         }
