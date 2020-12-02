@@ -1706,12 +1706,17 @@ export default function luckysheetHandler() {
                 Store.luckysheet_sheet_move_data.curindex = $("#luckysheet-sheet-area div.luckysheet-sheets-item:visible").index($("#luckysheet-sheets-item-clone"));
             }
         } else if (Store.luckysheet_model_move_state) {
-            let scrollTop = $(document).scrollTop(),
-                scrollLeft = $(document).scrollLeft();
-            let y = event.pageY + scrollTop,
-                x = event.pageX + scrollLeft;
-            let winH = $(window).height(),
-                winW = $(window).width();
+            // let scrollTop = $(document).scrollTop(),
+            //     scrollLeft = $(document).scrollLeft();
+            // let y = event.pageY + topOffset,
+            //     x = event.pageX + scrollLeft;
+            let y = event.pageY,
+                x = event.pageX;
+            // let winH = $(window).height(),
+            //     winW = $(window).width();
+            let bodyH = $('body').height();
+            let winH = $(weConfigsetting.bodyContainer).height(),
+                winW = $(weConfigsetting.bodyContainer).width();
             let myh = Store.luckysheet_model_move_obj.height(),
                 myw = Store.luckysheet_model_move_obj.width();
             let top = y - Store.luckysheet_model_xy[1],
@@ -1721,8 +1726,8 @@ export default function luckysheetHandler() {
                 top = 0;
             }
 
-            if (top + myh + 62 > winH) {
-                top = winH - myh - 62;
+            if (top + myh + 62 > bodyH) {
+                top = bodyH - myh - 62;
             }
 
             if (left < 0) {
@@ -1733,6 +1738,7 @@ export default function luckysheetHandler() {
                 left = winW - myw - 86;
             }
 
+            console.log('Store.luckysheet_model_move_obj', top, left);
             Store.luckysheet_model_move_obj.css({ "top": top, "left": left });
             event.preventDefault();
         } else if (!!Store.luckysheet_scroll_status || !!Store.luckysheet_select_status || !!Store.luckysheet_rows_selected_status || !!Store.luckysheet_cols_selected_status || !!Store.luckysheet_cell_selected_move || !!Store.luckysheet_cell_selected_extend || !!Store.luckysheet_cols_change_size || !!Store.luckysheet_rows_change_size || !!Store.chartparam.luckysheetCurrentChartMove || !!Store.chartparam.luckysheetCurrentChartResize || !!formula.rangeResize || !!formula.rangeMove) {

@@ -18,6 +18,7 @@ import Store from '../store';
 import weVariable from '../custom/variable';
 import weDynamicRow from '../custom/dynamicRow';
 import weCellValidationCtrl from '../custom/cellvalidation';
+import weConfigsetting from '../custom/configsetting';
 
 export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocus) {
     if (!checkProtectionLocked(row_index1, col_index1, Store.currentSheetIndex)) {
@@ -64,8 +65,10 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         $("#luckysheet-dropCell-icon").remove();
     }
 
-    let winH = $(window).height(),
-        winW = $(window).width();
+    // let winH = $(window).height(),
+    //     winW = $(window).width();
+    let winH = $(weConfigsetting.bodyContainer).height(),
+        winW = $(weConfigsetting.bodyContainer).width();
     let container_offset = $("#" + Store.container).offset();
     let scrollLeft = $("#luckysheet-cell-main").scrollLeft();
     let scrollTop = $("#luckysheet-cell-main").scrollTop();

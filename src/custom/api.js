@@ -3,9 +3,10 @@ import formula from '../global/formula';
 import Store from '../store';
 import { setAccuracy, setcellvalue } from "../global/setdata";
 import { getSheetIndex, getRangetxt } from '../methods/get';
+import weHandler from './handler';
 
 const weAPI = {
-    setCellValue: function (row, column, data, value) {
+    setCellValue: function(row, column, data, value) {
         console.log('weAPI::setCellValue', value);
         let curv = {};
 
@@ -24,9 +25,8 @@ const weAPI = {
             if (value.ct != null) {
                 curv.ct = value.ct;
             }
-            data = luckysheetformula.updatecell(row, column, curv, false).data;//update formula value
-        }
-        else {
+            data = luckysheetformula.updatecell(row, column, curv, false).data; //update formula value
+        } else {
             if (value.ct != null) {
                 curv.ct = value.ct;
             }
@@ -40,57 +40,74 @@ const weAPI = {
                 curv.m = value.m;
             }
             formula.delFunctionGroup(row, column);
-            setcellvalue(row, column, data, curv);//update text value
+            setcellvalue(row, column, data, curv); //update text value
         }
         return data;
     },
-    clearCell: function (cell) {
+    clearCell: function(cell) {
         console.log('weAPI::clearCell', cell);
         delete cell["ro"];
         delete cell["iv"];
         delete cell["tp"];
         delete cell["df"];
     },
-    getSelectedCell: function () {
+    getSelectedCell: function() {
         // [ range, txt, isMerge ]
         let range = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
-        let rf = range["row_focus"], cf = range["column_focus"];
+        let rf = range["row_focus"],
+            cf = range["column_focus"];
         if (Store.config["merge"] != null && (rf + "_" + cf) in Store.config["merge"]) {
             return [
-                range, 
+                range,
                 getRangetxt(Store.currentSheetIndex, {
                     column: [cf, cf],
                     row: [rf, rf],
                 }),
                 true
             ];
-        }
-        else {
-            return [ range , getRangetxt(Store.currentSheetIndex, range), false ]
+        } else {
+            return [range, getRangetxt(Store.currentSheetIndex, range), false]
         }
     },
-    getRangeByTxt: function(txt){
+    getTxtByRange: function(range) {
+        if (range.length > 0) {
+            let txt = [];
+
+            for (let s = 0; s < range.length; s++) {
+                let r1 = range[s].row[0],
+                    r2 = range[s].row[1];
+                let c1 = range[s].column[0],
+                    c2 = range[s].column[1];
+
+                txt.push(getRangetxt(Store.currentSheetIndex, { "row": [r1, r2], "column": [c1, c2] }, Store.currentSheetIndex));
+            }
+
+            return txt.join(",");
+        }
+    },
+    getRangeByTxt: function(txt) {
         let range = [];
 
-        if(txt.indexOf(",") != -1){
+        if (txt.indexOf(",") != -1) {
             let arr = txt.split(",");
-            for(let i = 0; i < arr.length; i++){
-                if(formula.iscelldata(arr[i])){
+            for (let i = 0; i < arr.length; i++) {
+                if (formula.iscelldata(arr[i])) {
                     range.push(formula.getcellrange(arr[i]));
-                }
-                else{
+                } else {
                     range = [];
-                    break;    
+                    break;
                 }
             }
-        }
-        else{
-            if(formula.iscelldata(txt)){
+        } else {
+            if (formula.iscelldata(txt)) {
                 range.push(formula.getcellrange(txt));
             }
         }
 
         return range;
+    },
+    openCellRange: function(cellRangeTxt) {
+        weHandler.openCellRange(cellRangeTxt);
     }
 }
 

@@ -34,6 +34,7 @@ import weCellTagCtrl from '../custom/celltag';
 import method from '../global/method';
 import weCellErrorCtrl from '../custom/cellerror';
 import weDynamicRow from '../custom/dynamicRow';
+import weHandler from '../custom/handler';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -925,6 +926,8 @@ const sheetmanage = {
 
         weDynamicRow.dynamicRow = file.dynamicRow;
         weDynamicRow.init();
+
+        weHandler.initCellRangeEvent();
         // [TK] custom
 
         //链接

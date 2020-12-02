@@ -29,6 +29,11 @@ const weCore = {
         weConfigsetting.onSheetMouseOut = config.onSheetMouseOut;
         weConfigsetting.onSelectHightlightShow = config.onSelectHightlightShow;
 
+        // cell range dialog
+        weConfigsetting.onOpenCellRange = config.onOpenCellRange;
+        weConfigsetting.onCloseCellRange = config.onCloseCellRange;
+        weConfigsetting.onConfirmCellRange = config.onConfirmCellRange;
+
         weVariable.init(config.variablePrefix);
     },
     setAPI: function(libCore) {
@@ -40,6 +45,8 @@ const weCore = {
 
         libCore.getSelectedCell = weAPI.getSelectedCell;
         libCore.getRangeByTxt = weAPI.getRangeByTxt;
+
+        libCore.openCellRange = weAPI.openCellRange;
 
         libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
