@@ -762,7 +762,9 @@ export default function luckysheetHandler() {
             return;
         }
 
-        // [TK] TODO: custom cell range select
+        // [TK] custom cell range select
+        weHandler.selectCellHandler(event, row, row_pre, row_index, row_index_ed, col, col_pre, col_index, col_index_ed);
+
         //数据验证 单元格范围选择
         if ($("#luckysheet-dataVerificationRange-dialog").is(":visible")) {
             dataVerificationCtrl.selectStatus = true;

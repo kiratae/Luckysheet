@@ -106,8 +106,8 @@ const weAPI = {
 
         return range;
     },
-    openCellRange: function(cellRangeTxt) {
-        weHandler.openCellRange(cellRangeTxt);
+    openCellRange: function(cellRangeTxt, key, isSingle = false) {
+        weHandler.openCellRange(cellRangeTxt, key, isSingle);
     }
 }
 

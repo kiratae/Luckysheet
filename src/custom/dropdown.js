@@ -17,7 +17,7 @@ const weDropdownCtrl = {
             return data;
         } else {
             // update
-            let index = this.dropdownDatas.findIndex(item => item.dropdownDataId === id);
+            let index = this.dropdownDatas.findIndex(item => item.dropdownDataId === data.dropdownDataId);
             if (index >= 0) {
                 this.dropdownDatas[index] = data;
                 return data;
