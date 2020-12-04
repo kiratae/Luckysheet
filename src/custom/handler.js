@@ -311,7 +311,7 @@ const weHandler = {
             );
             $("#luckysheet-cellSingleRange-dialog input").val(range);
 
-            return;
+            return true;
         }
 
         if ($("#luckysheet-cellRange-dialog").is(":visible")) {
@@ -432,7 +432,7 @@ const weHandler = {
             let range = weAPI.getTxtByRange(this.selectRange);
             $("#luckysheet-cellRange-dialog input").val(range);
 
-            return;
+            return true;
         } else {
             this.selectStatus = false;
             this.selectRange = [];

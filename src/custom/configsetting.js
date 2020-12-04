@@ -1,4 +1,5 @@
 const weConfigsetting = {
+    formApi: null,
     slientMode: false,
     fillErrorInCell: false,
     formApi: null,
@@ -15,7 +16,11 @@ const weConfigsetting = {
     onCellMouseOver: null,
     onCellMouseOut: null,
     onSheetMouseOut: null,
-    onSelectHightlightShow: null
+    onSelectHightlightShow: null,
+    onOpenCellRange: null,
+    onCloseCellRange: null,
+    onConfirmCellRange: null,
+    isLog: false
 }
 
 export default weConfigsetting;

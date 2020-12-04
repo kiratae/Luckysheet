@@ -34,6 +34,8 @@ const weCore = {
         weConfigsetting.onCloseCellRange = config.onCloseCellRange;
         weConfigsetting.onConfirmCellRange = config.onConfirmCellRange;
 
+        weConfigsetting.isLog = config.isLog;
+
         weVariable.init(config.variablePrefix);
     },
     setAPI: function(libCore) {

@@ -7,24 +7,24 @@ function getUUID() {
 }
 
 class Log {
-    constructor(name, isHidden = false) {
+    constructor(name, isLog = false) {
         this.name = name;
-        this.isHidden = isHidden;
+        this.isLog = isLog;
     }
     debug(func, msg) {
-        if (!this.isHidden)
+        if (this.isLog)
             console.log(`%cDEBUG::%c${this.name}::%c${func} ${msg}`, 'color: green', 'color: grey', 'color: white');
     }
     info(func, msg) {
-        if (!this.isHidden)
+        if (this.isLog)
             console.log(`%cINFO::%c${this.name}::%c${func} ${msg}`, 'color: cyan', 'color: grey', 'color: white');
     }
     warn(func, msg) {
-        if (!this.isHidden)
+        if (this.isLog)
             console.log(`%cWARN::%c${this.name}::%c${func} ${msg}`, 'color: yellow', 'color: grey', 'color: white');
     }
     error(func, msg) {
-        if (!this.isHidden)
+        if (this.isLog)
             console.log(`%cERROR::%c${this.name}::%c${func} ${msg}`, 'color: red', 'color: grey', 'color: white');
     }
 }

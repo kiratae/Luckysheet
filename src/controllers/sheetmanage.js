@@ -35,6 +35,7 @@ import method from '../global/method';
 import weCellErrorCtrl from '../custom/cellerror';
 import weDynamicRow from '../custom/dynamicRow';
 import weHandler from '../custom/handler';
+import weDropdownCtrl from '../custom/dropdown';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -928,6 +929,9 @@ const sheetmanage = {
         weDynamicRow.init();
 
         weHandler.initCellRangeEvent();
+
+        weDropdownCtrl.dropdownDatas = file.dropdownDatas;
+        weDropdownCtrl.init();
         // [TK] custom
 
         //链接

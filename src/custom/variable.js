@@ -14,12 +14,12 @@ import { Log } from './utils';
 
 const weVariable = {
     variablePrefix: '#',
-    log: new Log("weVariable", true),
+    log: new Log("weVariable", weConfigsetting.isLog),
     resolvedVariables: [],
-    regex: /(?:([a-zA-Zก-ฮ0-9_.]+)\!(\#[a-zA-Zก-ฮ0-9_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Zก-ฮ0-9_.]+))/g,
-    regexIsVar: /[^!](\#[a-zA-Zก-ฮ0-9_.]+)/,
-    regexTest: /\#([a-zA-Zก-ฮ0-9_.]+)/,
-    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Zก-ฮ0-9_.]+|[A-Z]+[0-9]+)/,
+    regex: /(?:([a-zA-Z0-9ก-ํ๐-๙_.]+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+))/g,
+    regexIsVar: /[^!](\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/,
+    regexTest: /\#([a-zA-Z0-9ก-ํ๐-๙_.]+)/,
+    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)/,
     error: {
         c: "#CIRCULAR!",
         ce: "#CLIENT!",
@@ -120,7 +120,7 @@ const weVariable = {
             if (this.regexTest.test(afterSheetFx)) {
                 return this.resolveVariable(afterSheetFx, isSub, sheetName);
             } else {
-                return `='${sheetName}'!${afterSheetFx}`;
+                return `=${sheetName}!${afterSheetFx}`;
             }
         } else if (this.regexTest.test(fx)) {
             this.log.debug(func, `"${fx}" is sub variable inside variable formula field.`);
@@ -155,7 +155,7 @@ const weVariable = {
         if (variables) {
             let tempFx = fx;
             for (let varName of variables) {
-                let resolved = this.resolveVariable(varName, true);
+                let resolved = this.resolveFormula(varName, true);
                 this.log.debug(func, `resolved variable "${varName}" and got result is "${resolved.toString()}".`);
                 if (resolved == this.error.v) {
                     return tempFx.replace(varName, resolved);

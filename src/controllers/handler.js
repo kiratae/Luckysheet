@@ -763,7 +763,9 @@ export default function luckysheetHandler() {
         }
 
         // [TK] custom cell range select
-        weHandler.selectCellHandler(event, row, row_pre, row_index, row_index_ed, col, col_pre, col_index, col_index_ed);
+        if (weHandler.selectCellHandler(event, row, row_pre, row_index, row_index_ed, col, col_pre, col_index, col_index_ed)) {
+            return;
+        }
 
         //数据验证 单元格范围选择
         if ($("#luckysheet-dataVerificationRange-dialog").is(":visible")) {

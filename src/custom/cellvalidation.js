@@ -9,9 +9,12 @@ import { getcellvalue } from '../global/getdata';
 import { luckysheetrefreshgrid } from '../global/refresh';
 import luckysheetConfigsetting from '../controllers/luckysheetConfigsetting';
 import { luckysheetlodingHTML } from '../controllers/constant';
+import weAPI from './api';
+import weDropdownCtrl from './dropdown';
 
 const weCellValidationCtrl = {
     cellValidation: null,
+    cache: {},
     error: {
         ce: "#CLIENT!",
         se: "#SERVER!",
@@ -101,7 +104,7 @@ const weCellValidationCtrl = {
         //     return;
         // }
 
-        if (item.ruleType == 'inSet' || item.ruleType == 'inSetSystem') {
+        if (item.ruleType == 'inSet' || item.ruleType == 'inSetSystem' || item.ruleType == 'inSetCustom') {
             $("#luckysheet-cellValidation-dropdown-btn").show().css({
                 'max-width': col - col_pre,
                 'max-height': row - row_pre,
@@ -182,10 +185,11 @@ const weCellValidationCtrl = {
             }
         } else if (value.inSetSystem != null) {
             list = this.getSetSystem(value.inSetSystem);
+        } else if (value.inSetCustom != null) {
+            list = this.getSetCustom(value.inSetCustom, value.inSetCustomLevel, value.inSetCustomTarget);
         }
         // console.log('weCellValidationCtrl::getDropdownList', list);
         return list;
-        // let ddl = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdown"];
     },
     setCellValidations: function(range, obj) {
         if (range.length == 0)
@@ -337,7 +341,7 @@ const weCellValidationCtrl = {
                 throw ex;
         };
         // caching
-        let cacheList = localStorage.getItem('setSystem_' + id);
+        let cacheList = this.cache['setSystem_' + id]
         if (cacheList) {
             list = JSON.parse(cacheList);
         } else {
@@ -355,7 +359,7 @@ const weCellValidationCtrl = {
                 success: function(res, textStatus, jqXHR) {
                     if (res.statusCode == "0" && res.data) {
                         list = res.data.slice();
-                        localStorage.setItem('setSystem_' + id, JSON.stringify(res.data));
+                        self.cache['setSystem_' + id] = JSON.stringify(res.data);
                         removeLoading();
                     } else {
                         removeLoading(self.error.se);
@@ -368,6 +372,28 @@ const weCellValidationCtrl = {
             });
         }
         return list;
+    },
+    getSetCustom: function(id, lvl, target = null) {
+        let mdGroup = weDropdownCtrl.getData(id);
+        let list = mdGroup.dropdowns.filter(x => x.level == lvl).map(x => x.name);
+        if (target != null && target != '') {
+            let range = weAPI.getRangeByTxt(target);
+            let cell = getcellvalue(range[0].row[0], range[0].column[0], Store.flowdata);
+            if (cell) {
+                console.log('getSetCustom', cell);
+            }
+        }
+        return list;
+    },
+    dropCellHandler: function(cellVld, r, c) {
+        if (cellVld.inSetCustomLevel > 1 && cellVld.inSetCustomTarget) {
+            let range = weAPI.getRangeByTxt(cellVld.inSetCustomTarget);
+            for (let s = 0; s < range.length; s++) {
+                range[s].row[0] = r;
+                range[s].row[1] = r;
+            }
+            cellVld.inSetCustomTarget = weAPI.getTxtByRange(range);
+        }
     }
 }
 
