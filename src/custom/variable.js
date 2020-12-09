@@ -1,6 +1,6 @@
 import { getObjType } from '../utils/util';
 import { isInlineStringCell } from '../controllers/inlineString';
-import { getcellvalue, getcellFormula, getInlineStringNoStyle, getOrigincell } from '../global/getdata';
+import { getcellvalue, getcellFormula, getInlineStringNoStyle, getInlineStringStyle, getOrigincell } from '../global/getdata';
 import { genarate, valueShowEs } from '../global/format';
 import Store from '../store';
 import { getSheetIndex, getRangetxt } from '../methods/get';

@@ -39,6 +39,8 @@ const weCellTagCtrl = {
         }
     },
     setCellTag: function(r, c, obj) {
+        if (this.cellTag == null)
+            this.cellTag = {};
         this.cellTag[r + '_' + c] = Object.assign({}, obj);
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellTag = this.cellTag;
     },

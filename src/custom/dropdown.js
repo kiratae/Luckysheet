@@ -11,7 +11,11 @@ const weDropdownCtrl = {
         this.log.info(func, 'has been called.');
     },
     getList: function() {
-        return this.dropdownDatas.slice();
+        if (this.dropdownDatas) {
+            return this.dropdownDatas.slice();
+        } else {
+            return [];
+        }
     },
     getData: function(id) {
         return this.dropdownDatas.find(item => item.dropdownDataId == id);
