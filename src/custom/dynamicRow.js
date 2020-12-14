@@ -4,6 +4,7 @@ import weConfigsetting from "./configsetting";
 import { luckysheetrefreshgrid } from '../global/refresh';
 import luckysheetDropCell from "../controllers/dropCell";
 import { insertRow } from '../global/api';
+import locale from "../locale/locale";
 
 const weDynamicRow = {
     dynamicRow: null,
@@ -35,11 +36,13 @@ const weDynamicRow = {
             return;
         }
 
+        const _locale = locale();
+
         if (this.dynamicRow == null) {
-            $("#luckysheet-dynamic-row").find('.luckysheet-cols-menuitem-content').text('สร้างเป็นแถวแบบ Dynamic');
+            $("#luckysheet-dynamic-row").find('.luckysheet-cols-menuitem-content').text(_locale.rightclick.addDynamicRow);
             $("#luckysheet-dynamic-row").show();
         } else {
-            $("#luckysheet-dynamic-row").find('.luckysheet-cols-menuitem-content').text('นำแถวแบบ Dynamic ออก');
+            $("#luckysheet-dynamic-row").find('.luckysheet-cols-menuitem-content').text(_locale.rightclick.removeDynamicRow);
             if (this.dynamicRow.row == Store.luckysheet_select_save[0].row[0]) {
                 $("#luckysheet-dynamic-row").show();
             } else {
@@ -52,10 +55,12 @@ const weDynamicRow = {
             return;
         }
 
+        const _locale = locale();
+
         let html = `<div id="luckysheet-dynamic-row">
             <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
             <div id="luckysheetDynamicRowRightClickMenu" data-x-target="add" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">สร้างเป็นแถวแบบ Dynamic</div>
+                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${_locale.rightclick.addDynamicRow}</div>
             </div>
         </div>`;
         return $('#luckysheet-rightclick-menu').append(html);
