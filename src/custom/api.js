@@ -20,6 +20,10 @@ const weAPI = {
             curv.tp = value.tp;
         }
 
+        if (value.sv != null) {
+            curv.sv = value.sv;
+        }
+
         if (value.df != null && value.v == null) {
             curv.df = value.df;
             if (value.ct != null) {
@@ -42,6 +46,7 @@ const weAPI = {
             formula.delFunctionGroup(row, column);
             setcellvalue(row, column, data, curv); //update text value
         }
+
         return data;
     },
     clearCell: function(cell) {

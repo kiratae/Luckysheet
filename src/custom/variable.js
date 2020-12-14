@@ -27,7 +27,8 @@ const weVariable = {
         v: "#VAR!",
     },
     init: function(vPrefix) {
-        console.log('weVariable::init');
+        let func = 'init';
+        this.log.info(func, 'has been initialized.');
         this.variablePrefix = vPrefix ? vPrefix : this.variablePrefix;
     },
     functionboxshow: function(r, c, d, cell) {

@@ -11,16 +11,20 @@ import luckysheetConfigsetting from '../controllers/luckysheetConfigsetting';
 import { luckysheetlodingHTML } from '../controllers/constant';
 import weAPI from './api';
 import weDropdownCtrl from './dropdown';
+import { Log } from './utils';
+import { setCellValue } from '../global/api';
 
 const weCellValidationCtrl = {
     cellValidation: null,
+    log: new Log("weCellValidationCtrl", weConfigsetting.isLog),
     cache: {},
     error: {
         ce: "#CLIENT!",
         se: "#SERVER!",
     },
     init: function() {
-        console.log('weCellValidationCtrl::init');
+        let func = 'init';
+        this.log.info(func, 'has been called.');
         const self = this;
 
         $(document).off("click.dropdownBtn").on("click.dropdownBtn", "#luckysheet-cellValidation-dropdown-btn", function(e) {
@@ -30,13 +34,16 @@ const weCellValidationCtrl = {
         $(document).off("click.dropdownListItem").on("click.dropdownListItem", "#luckysheet-cellValidation-dropdown-List .dropdown-List-item", function(e) {
             $("#luckysheet-cellValidation-dropdown-List").hide();
 
-            let value = e.target.innerText;
+            let text = e.target.innerText;
+            let mdValue = e.target.dataset.mdValue;
+            let value = e.target.dataset.value;
             let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
             let rowIndex = last.row_focus;
             let colIndex = last.column_focus;
 
             $("#luckysheet-rich-text-editor").text(value);
-            formula.updatecell(rowIndex, colIndex);
+            // formula.updatecell(rowIndex, colIndex);
+            setCellValue(rowIndex, colIndex, { m: text, v: text, sv: { v: value, md_v: mdValue } });
 
             e.stopPropagation();
         });
@@ -124,9 +131,10 @@ const weCellValidationCtrl = {
         }
     },
     dropdownListShow: function() {
-        $("#luckysheet-cellError-showErrorMsg").hide();
+        let func = 'dropdownListShow';
+        this.log.info(func, 'has been called.');
 
-        console.log('weDropdown::dropdownListShow');
+        $("#luckysheet-cellError-showErrorMsg").hide();
 
         const self = this;
 
@@ -150,10 +158,18 @@ const weCellValidationCtrl = {
 
         let item = self.cellValidation[rowIndex + '_' + colIndex];
         let list = self.getDropdownList(item);
+        let mdValue = '';
+
+        if (item.inSet != null)
+            mdValue = item.inSet;
+        else if (item.inSetSystem != null)
+            mdValue = item.inSetSystem;
+        else if (item.inSetCustom != null)
+            mdValue = item.inSetCustom;
 
         let optionHtml = '';
-        list.forEach(i => {
-            optionHtml += `<div class="dropdown-List-item luckysheet-mousedown-cancel">${i}</div>`;
+        list.forEach(item => {
+            optionHtml += `<div class="dropdown-List-item luckysheet-mousedown-cancel" data-value="${item.value}" data-md-value="${mdValue}">${item.text}</div>`;
         })
 
         $("#luckysheet-cellValidation-dropdown-List")
@@ -180,7 +196,7 @@ const weCellValidationCtrl = {
                 }
 
                 if (!list.includes(v)) {
-                    list.push(v);
+                    list.push({ value: v, text: v });
                 }
             }
         } else if (value.inSetSystem != null) {
@@ -375,7 +391,7 @@ const weCellValidationCtrl = {
     },
     getSetCustom: function(id, lvl, target = null) {
         let mdGroup = weDropdownCtrl.getData(id);
-        let list = mdGroup.dropdowns.filter(x => x.level == lvl).map(x => x.name);
+        let list = mdGroup.dropdowns.filter(x => x.level == lvl).map(x => { return { value: x.dropdownId, text: x.name } });
         if (target != null && target != '') {
             let range = weAPI.getRangeByTxt(target);
             let cell = getcellvalue(range[0].row[0], range[0].column[0], Store.flowdata);
