@@ -49,9 +49,8 @@ const weCellValidationCtrl = {
         });
     },
     getDOM: function() {
-        return `
-            <div id="luckysheet-cellValidation-dropdown-btn"></div>
-            <div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>`;
+        return `<div id="luckysheet-cellValidation-dropdown-btn"></div>
+                <div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>`;
     },
     renderCell: function(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)
@@ -395,7 +394,7 @@ const weCellValidationCtrl = {
         if (target != null && target != '') {
             let range = weAPI.getRangeByTxt(target);
             let cell = getcellvalue(range[0].row[0], range[0].column[0], Store.flowdata);
-            if (cell) {
+            if (cell && cell.sv) {
                 console.log('getSetCustom', cell);
             }
         }
