@@ -164,7 +164,7 @@ const weCellValidationCtrl = {
         else if (item.inSetSystem != null)
             mdValue = item.inSetSystem;
         else if (item.inSetCustom != null)
-            mdValue = item.inSetCustom;
+            mdValue = item.inSetCustom.split('|')[0];
 
         let optionHtml = '';
         list.forEach(item => {
@@ -201,7 +201,9 @@ const weCellValidationCtrl = {
         } else if (value.inSetSystem != null) {
             list = this.getSetSystem(value.inSetSystem);
         } else if (value.inSetCustom != null) {
-            list = this.getSetCustom(value.inSetCustom, value.inSetCustomLevel, value.inSetCustomTarget);
+            // inSetCustom = inSetCustom (value1) | inSetCustomLevel (value2) | inSetCustomTarget (ddlTarget)
+            let inSetCustom = value.inSetCustom.split('|');
+            list = this.getSetCustom(inSetCustom[0], inSetCustom[1], inSetCustom[2]);
         }
         // console.log('weCellValidationCtrl::getDropdownList', list);
         return list;
@@ -401,13 +403,15 @@ const weCellValidationCtrl = {
         return list;
     },
     dropCellHandler: function(cellVld, r, c) {
-        if (cellVld.inSetCustomLevel > 1 && cellVld.inSetCustomTarget) {
-            let range = weAPI.getRangeByTxt(cellVld.inSetCustomTarget);
+        // inSetCustom = inSetCustom (value1) | inSetCustomLevel (value2) | inSetCustomTarget (ddlTarget)
+        let inSetCustom = cellVld.inSetCustom.split('|');
+        if (inSetCustom[1] > 1 && inSetCustom[2]) {
+            let range = weAPI.getRangeByTxt(inSetCustom[2]);
             for (let s = 0; s < range.length; s++) {
                 range[s].row[0] = r;
                 range[s].row[1] = r;
             }
-            cellVld.inSetCustomTarget = weAPI.getTxtByRange(range);
+            cellVld.inSetCustom = `${inSetCustom[0]}|${inSetCustom[1]}|${weAPI.getTxtByRange(range)}`;
         }
     }
 }
