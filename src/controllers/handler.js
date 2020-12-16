@@ -1742,7 +1742,7 @@ export default function luckysheetHandler() {
                 left = winW - myw - 86;
             }
 
-            console.log('Store.luckysheet_model_move_obj', top, left);
+            // console.log('Store.luckysheet_model_move_obj', top, left);
             Store.luckysheet_model_move_obj.css({ "top": top, "left": left });
             event.preventDefault();
         } else if (!!Store.luckysheet_scroll_status || !!Store.luckysheet_select_status || !!Store.luckysheet_rows_selected_status || !!Store.luckysheet_cols_selected_status || !!Store.luckysheet_cell_selected_move || !!Store.luckysheet_cell_selected_extend || !!Store.luckysheet_cols_change_size || !!Store.luckysheet_rows_change_size || !!Store.chartparam.luckysheetCurrentChartMove || !!Store.chartparam.luckysheetCurrentChartResize || !!formula.rangeResize || !!formula.rangeMove) {

@@ -295,15 +295,8 @@ const weHandler = {
 
         if ($("#luckysheet-cellSingleRange-dialog").is(":visible")) {
             Store.luckysheet_select_status = false;
-            formula.rangestart = false;
 
-            $("#luckysheet-formula-functionrange-select").css({
-                "left": col_pre,
-                "width": col - col_pre - 1,
-                "top": row_pre,
-                "height": row - row_pre - 1
-            }).show();
-            $("#luckysheet-formula-help-c").hide();
+            selectionCopyShow([{ "row": [row_index, row_index], "column": [col_index, col_index] }]);
 
             let range = getRangetxt(
                 Store.currentSheetIndex, { "row": [row_index, row_index], "column": [col_index, col_index] },
@@ -312,6 +305,24 @@ const weHandler = {
             $("#luckysheet-cellSingleRange-dialog input").val(range);
 
             return true;
+            // Store.luckysheet_select_status = false;
+            // formula.rangestart = false;
+
+            // $("#luckysheet-formula-functionrange-select").css({
+            //     "left": col_pre,
+            //     "width": col - col_pre - 1,
+            //     "top": row_pre,
+            //     "height": row - row_pre - 1
+            // }).show();
+            // $("#luckysheet-formula-help-c").hide();
+
+            // let range = getRangetxt(
+            //     Store.currentSheetIndex, { "row": [row_index, row_index], "column": [col_index, col_index] },
+            //     Store.currentSheetIndex
+            // );
+            // $("#luckysheet-cellSingleRange-dialog input").val(range);
+
+            // return true;
         }
 
         if ($("#luckysheet-cellRange-dialog").is(":visible")) {

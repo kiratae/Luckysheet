@@ -29,13 +29,8 @@ import { renderChartShow } from '../expendPlugins/chart/plugin';
 import { changeSheetContainerSize, menuToolBarWidth } from './resize';
 import { zoomNumberDomBind } from './zoom';
 import menuButton from './menuButton';
-import weCellValidationCtrl from '../custom/cellvalidation';
-import weCellTagCtrl from '../custom/celltag';
 import method from '../global/method';
-import weCellErrorCtrl from '../custom/cellerror';
-import weDynamicRow from '../custom/dynamicRow';
-import weHandler from '../custom/handler';
-import weDropdownCtrl from '../custom/dropdown';
+import weSheetManage from '../custom/sheetmanage';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -919,20 +914,7 @@ const sheetmanage = {
         dataVerificationCtrl.init();
 
         // [TK] custom
-        weCellValidationCtrl.cellValidation = file.cellValidation;
-        weCellValidationCtrl.init();
-
-        weCellTagCtrl.cellTag = file.cellTag;
-        weCellTagCtrl.init();
-
-        weDynamicRow.dynamicRow = file.dynamicRow;
-        weDynamicRow.init();
-
-        weHandler.initCellRangeEvent();
-
-        weDropdownCtrl.dropdownDatas = file.dropdownDatas;
-        weDropdownCtrl.init();
-        // [TK] custom
+        weSheetManage.setSheetParam(file);
 
         //链接
         hyperlinkCtrl.hyperlink = file.hyperlink;

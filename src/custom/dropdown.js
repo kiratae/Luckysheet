@@ -18,18 +18,18 @@ const weDropdownCtrl = {
         }
     },
     getData: function(id) {
-        return this.dropdownDatas.find(item => item.dropdownDataId == id);
+        return this.dropdownDatas.find(item => item.formMDGroupId == id);
     },
     saveData: function(data) {
-        if (!data.dropdownDataId) {
+        if (!data.formMDGroupId) {
             // insert
-            data.dropdownDataId = getUUID();
+            data.formMDGroupId = getUUID();
             this.dropdownDatas.push(data);
             Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdownDatas"] = this.dropdownDatas;
             return data;
         } else {
             // update
-            let index = this.dropdownDatas.findIndex(item => item.dropdownDataId === data.dropdownDataId);
+            let index = this.dropdownDatas.findIndex(item => item.formMDGroupId === data.formMDGroupId);
             if (index >= 0) {
                 this.dropdownDatas[index] = data;
                 Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdownDatas"] = this.dropdownDatas;
@@ -40,7 +40,7 @@ const weDropdownCtrl = {
     deteleData: function(id) {
         const func = 'deteleData';
         try {
-            let index = this.dropdownDatas.findIndex(item => item.dropdownDataId === id);
+            let index = this.dropdownDatas.findIndex(item => item.formMDGroupId === id);
             if (index >= 0) {
                 delete this.dropdownDatas[index];
                 Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdownDatas"] = this.dropdownDatas;
@@ -49,7 +49,7 @@ const weDropdownCtrl = {
                 return false;
             }
         } catch (error) {
-            this.log.error(func, `with DropdownDataId "${id}"`);
+            this.log.error(func, `with FormMDGroupId "${id}"`);
         }
     }
 }
