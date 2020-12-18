@@ -391,16 +391,47 @@ const weCellValidationCtrl = {
         return list;
     },
     getSetCustom: function(id, lvl, target = null) {
+        console.log('getSetCustom', id, lvl, target, target != null && target != '');
         let mdGroup = weDropdownCtrl.getData(id);
-        let list = mdGroup.dropdowns.filter(x => x.level == lvl).map(x => { return { value: x.dropdownId, text: x.name } });
+        let list = this.getSetCustomByLevel(mdGroup.formMDs, lvl);
+        list = list.map(x => { return { value: x.formMDId, text: x.name } });
+        console.log('getSetCustom list', list);
         if (target != null && target != '') {
             let range = weAPI.getRangeByTxt(target);
-            let cell = getcellvalue(range[0].row[0], range[0].column[0], Store.flowdata);
+            let cell = Store.flowdata[range[0].row[0]][range[0].column[0]];
+            console.log('getSetCustom cell', cell);
             if (cell && cell.sv) {
-                console.log('getSetCustom', cell);
+                mdGroup = weDropdownCtrl.getData(id);
+                let formMD = this.getSetCustomById(mdGroup.formMDs, cell.sv.v);
+                console.log('getSetCustom formMD', formMD);
+                list = formMD.childrens.map(x => { return { value: x.formMDId, text: x.name } });
+                console.log('getSetCustom cell list', list);
             }
         }
         return list;
+    },
+    getSetCustomByLevel: function(data, level, list = []) {
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].level == level) {
+                list.push(data[i]);
+            }
+            if (data[i].childrens && data[i].childrens.length && typeof data[i].childrens === 'object') {
+                this.getSetCustomByLevel(data[i].childrens, level, list);
+            }
+        }
+        return list;
+    },
+    getSetCustomById: function(data, id) {
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].formMDId == id) {
+                return data[i];
+            }
+            if (data[i].childrens && data[i].childrens.length && typeof data[i].childrens === 'object') {
+                let res = this.getSetCustomById(data[i].childrens, id);
+                if (res)
+                    return data[i];
+            }
+        }
     },
     dropCellHandler: function(cellVld, r, c) {
         // inSetCustom = inSetCustom (value1) | inSetCustomLevel (value2) | inSetCustomTarget (ddlTarget)
