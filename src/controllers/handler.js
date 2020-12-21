@@ -1176,10 +1176,12 @@ export default function luckysheetHandler() {
 
                 Store.luckysheetRightHeadClickIs = "column";
 
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(locale().rightclick.column);
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(locale().rightclick.width);
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(locale().rightclick.left);
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(locale().rightclick.right);
+                // [TK] custom
+                let _locale = locale();
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(Store.lang == 'th' ? `${_locale.rightclick.column}${_locale.rightclick.to}` : `${_locale.rightclick.column}`);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(_locale.rightclick.width);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(_locale.rightclick.left);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(_locale.rightclick.right);
 
                 $("#luckysheet-cols-rows-add").show();
                 // $("#luckysheet-cols-rows-data").show();
@@ -1250,10 +1252,12 @@ export default function luckysheetHandler() {
 
                 Store.luckysheetRightHeadClickIs = "row";
 
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(locale().rightclick.row);
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(locale().rightclick.height);
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(locale().rightclick.top);
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(locale().rightclick.bottom);
+                // [TK] custom
+                let _locale = locale();
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(Store.lang == 'th' ? `${_locale.rightclick.row}${_locale.rightclick.to}` : `${_locale.rightclick.row}`);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(_locale.rightclick.height);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(_locale.rightclick.top);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(_locale.rightclick.bottom);
                 $("#luckysheet-cols-rows-add").show();
                 // $("#luckysheet-cols-rows-data").show();
                 $("#luckysheet-cols-rows-shift").hide();

@@ -1273,7 +1273,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "merge-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
-                $menuButton = $("#" + menuButtonId).width(110);
+                $menuButton = $("#" + menuButtonId).width(125);
                 _this.focus($menuButton);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function() {
@@ -1481,7 +1481,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "textwrap-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
-                $menuButton = $("#" + menuButtonId).width(120);
+                $menuButton = $("#" + menuButtonId).width(205);
                 _this.focus($menuButton, "clip");
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function() {
@@ -2025,9 +2025,11 @@ const menuButton = {
                     { "text": locale_formula.count, "value": "COUNT", "example": 'COUNT' },
                     { "text": locale_formula.max, "value": "MAX", "example": 'MAX' },
                     { "text": locale_formula.min, "value": "MIN", "example": 'MIN' },
-                    { "text": "", "value": "split", "example": "" },
-                    { "text": locale_formula.ifGenerate, "value": "if", "example": 'IF' },
-                    { "text": locale_formula.find + " ...", "value": "formula", "example": "" }
+                    // [TK] custom disable this feature for now.
+                    // { "text": "", "value": "split", "example": "" },
+                    // { "text": locale_formula.ifGenerate, "value": "if", "example": 'IF' },
+                    // { "text": locale_formula.find + " ...", "value": "formula", "example": "" }
+                    // end [TK] custom
                 ];
 
                 let itemset = _this.createButtonMenu(itemdata);

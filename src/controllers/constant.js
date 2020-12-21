@@ -303,12 +303,12 @@ function rightclickHTML() {
                     </div>
                     <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.deleteSelected}${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${Store.lang == 'th' /* [TK] custom */ ? rightclick.deleteSelectedRow : rightclick.deleteSelected + rightclick.row }<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteColumn ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.deleteSelected}${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${Store.lang == 'th' /* [TK] custom */ ? rightclick.deleteSelectedColumn : rightclick.deleteSelected + rightclick.column }<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <!-- cell right click remove hide button
@@ -328,26 +328,33 @@ function rightclickHTML() {
                     <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
                     <div id="luckysheet-top-left-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.to}
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.add}` : 
+                            `${rightclick.to}
                             <span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
-                            ${rightclick.add}
+                            ${rightclick.add}` }
                             <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align:center;margin-left:5px;"/>
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.column}${rightclick.to}` : `${rightclick.column}` }</span>
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `<span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>` : '' }
                         </div>
                     </div>
                     <div id="luckysheet-bottom-right-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.to}
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.add}` : 
+                            `${rightclick.to}
                             <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
-                            ${rightclick.add}
+                            ${rightclick.add}` }
                             <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.column}${rightclick.to}` : `${rightclick.column}` }</span>
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `<span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>` : '' }
                         </div>
                     </div>
                     <div id="luckysheet-del-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.deleteSelected}
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                            ${  /* [TK] custom */
+                                Store.lang == 'th' ? 
+                                rightclick.deleteSelectedColumn : 
+                                `${rightclick.deleteSelected}<span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>` 
+                            }
                         </div>
                     </div>
                     <div id="luckysheet-hide-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
@@ -364,8 +371,9 @@ function rightclickHTML() {
                     </div>
                     <div id="luckysheet-column-row-width-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                            <span class="luckysheet-cols-rows-shift-size luckysheet-mousedown-cancel">${rightclick.width}</span>
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.width}${rightclick.column}` : 
+                            `<span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                            <span class="luckysheet-cols-rows-shift-size luckysheet-mousedown-cancel">${rightclick.width}</span>` }
                             <input type="number" class="luckysheet-mousedown-cancel rcsize" min="0" max="255" placeholder="${rightclick.number}" value="" style="width:50px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;">
                             px
                         </div>
@@ -458,30 +466,30 @@ function rightclickHTML() {
             <div id="luckysheetColsRowsHandleAdd_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
                 <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.top}${rightclick.add}
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.top}${rightclick.add}` }
                         <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.row}${rightclick.to}${rightclick.top}` : `${rightclick.row}` }</span>
                     </div>
                 </div>
                 <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.bottom}${rightclick.add}
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.bottom}${rightclick.add}` }
                         <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.row}${rightclick.to}${rightclick.top}` : `${rightclick.row}` }</span>
                     </div>
                 </div>
                 <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.left}${rightclick.add}
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.left}${rightclick.add}` }
                         <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.column}${rightclick.to}${rightclick.left}` : `${rightclick.column}` }</span>
                     </div>
                 </div>
                 <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.to}${rightclick.right}${rightclick.add}
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.right}${rightclick.add}` }
                         <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.column}${rightclick.to}${rightclick.right}` : `${rightclick.column}` }</span>
                     </div>
                 </div>
             </div>
@@ -493,12 +501,12 @@ function rightclickHTML() {
             <div id="luckysheetColsRowsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
                 <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.deleteSelected}${rightclick.row}
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.deleteSelectedRow}` : `${rightclick.deleteSelected}${rightclick.row}` }
                     </div>
                 </div>
                 <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.deleteSelected}${rightclick.column}
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.deleteSelectedColumn}` : `${rightclick.deleteSelected}${rightclick.column}` }
                     </div>
                 </div>
             </div>

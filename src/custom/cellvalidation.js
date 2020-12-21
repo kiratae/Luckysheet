@@ -205,7 +205,6 @@ const weCellValidationCtrl = {
             let inSetCustom = value.inSetCustom.split('|');
             list = this.getSetCustom(inSetCustom[0], inSetCustom[1], inSetCustom[2]);
         }
-        // console.log('weCellValidationCtrl::getDropdownList', list);
         return list;
     },
     setCellValidations: function(range, obj) {
@@ -349,6 +348,7 @@ const weCellValidationCtrl = {
         }, 1);
     },
     getSetSystem: function(id) {
+        const func = 'getSetSystem';
         let list = [];
         let removeLoading = function(ex) {
             setTimeout(function() {
@@ -370,7 +370,7 @@ const weCellValidationCtrl = {
                 dataType: 'json',
                 data: { id: id },
                 beforeSend: function() {
-                    console.log(`calling: "${weConfigsetting.masterDataApi}" with id "${id}".`);
+                    self.log.info(func, `calling: "${weConfigsetting.masterDataApi}" with id "${id}".`);
                     $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML(false));
                 },
                 success: function(res, textStatus, jqXHR) {
@@ -383,7 +383,7 @@ const weCellValidationCtrl = {
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('error', textStatus);
+                    self.log.error(func, 'error', textStatus);
                     removeLoading(self.error.ce);
                 }
             });
@@ -391,21 +391,16 @@ const weCellValidationCtrl = {
         return list;
     },
     getSetCustom: function(id, lvl, target = null) {
-        console.log('getSetCustom', id, lvl, target, target != null && target != '');
         let mdGroup = weDropdownCtrl.getData(id);
         let list = this.getSetCustomByLevel(mdGroup.formMDs, lvl);
         list = list.map(x => { return { value: x.formMDId, text: x.name } });
-        console.log('getSetCustom list', list);
         if (target != null && target != '') {
             let range = weAPI.getRangeByTxt(target);
             let cell = Store.flowdata[range[0].row[0]][range[0].column[0]];
-            console.log('getSetCustom cell', cell);
             if (cell && cell.sv) {
                 mdGroup = weDropdownCtrl.getData(id);
                 let formMD = this.getSetCustomById(mdGroup.formMDs, cell.sv.v);
-                console.log('getSetCustom formMD', formMD);
                 list = formMD.childrens.map(x => { return { value: x.formMDId, text: x.name } });
-                console.log('getSetCustom cell list', list);
             }
         }
         return list;
@@ -436,14 +431,16 @@ const weCellValidationCtrl = {
     dropCellHandler: function(cellVld, r, c) {
         // inSetCustom = inSetCustom (value1) | inSetCustomLevel (value2) | inSetCustomTarget (ddlTarget)
         let inSetCustom = cellVld.inSetCustom.split('|');
+        let obj = Object.assign({}, cellVld);
         if (inSetCustom[1] > 1 && inSetCustom[2]) {
             let range = weAPI.getRangeByTxt(inSetCustom[2]);
             for (let s = 0; s < range.length; s++) {
                 range[s].row[0] = r;
                 range[s].row[1] = r;
             }
-            cellVld.inSetCustom = `${inSetCustom[0]}|${inSetCustom[1]}|${weAPI.getTxtByRange(range)}`;
+            obj.inSetCustom = `${inSetCustom[0]}|${inSetCustom[1]}|${weAPI.getTxtByRange(range)}`;
         }
+        return obj;
     }
 }
 
