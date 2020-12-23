@@ -83,21 +83,32 @@ const weVariable = {
         console.log('transformFormula', value);
         self.resolvedVariables.splice(0, self.resolvedVariables.length);
         if (getObjType(value) == "string") {
-            let resolved = self.resolveFormula(value);
-            console.log('transformFormula resolved', resolved);
-            if (typeof resolved === 'string') {
-                resolved = this.execFormula(resolved);
+            try {
+                let resolved = self.resolveFormula(value);
+                console.log('transformFormula resolved', resolved);
+                if (typeof resolved === 'string') {
+                    resolved = this.execFormula(resolved);
+                }
+                return [resolved[1], resolved[2], value];
+            } catch (error) {
+                return [error, '', value];
             }
-            return [resolved[1], resolved[2], value];
         } else if (getObjType(value) == "object" && value.df != null) {
-            let resolved = self.resolveFormula(value.df);
-            console.log('transformFormula resolved', resolved);
-            if (typeof resolved === 'string') {
-                resolved = this.execFormula(resolved);
+            try {
+                let resolved = self.resolveFormula(value.df);
+                console.log('transformFormula resolved', resolved);
+                if (typeof resolved === 'string') {
+                    resolved = this.execFormula(resolved);
+                }
+                value.v = resolved[1];
+                value.f = resolved[2];
+                return value;
+            } catch (error) {
+                value.v = error;
+                value.f = '';
+                return value;
             }
-            value.v = resolved[1];
-            value.f = resolved[2];
-            return value;
+
         }
     },
     resolveFormula: function(fx, isSub = false) {
@@ -114,7 +125,11 @@ const weVariable = {
             let afterSheetFx = matched[2];
 
             if (!sheetmanage.getSheetByName(sheetName)) {
-                this.addRemoteSheet(sheetName);
+                try {
+                    this.addRemoteSheet(sheetName);
+                } catch (ex) {
+                    throw ex;
+                }
             }
 
             this.log.debug(func, `in sheet "${sheetName}" with "${afterSheetFx}" is cross-sheet fx.`);
@@ -132,16 +147,20 @@ const weVariable = {
         }
     },
     getVariableByName: function(name, isLocal, sheetName) {
-        let variables = null;
-        if (isLocal)
-            variables = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["variable"];
-        else
-            variables = sheetmanage.getSheetByName(sheetName)["variable"];
+        try {
+            let variables = null;
+            if (isLocal)
+                variables = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["variable"];
+            else
+                variables = sheetmanage.getSheetByName(sheetName)["variable"];
 
-        if (variables)
-            return variables.find(item => item.name == name);
-        else
+            if (variables)
+                return variables.find(item => item.name == name);
+            else
+                return null;
+        } catch (ex) {
             throw this.error.v;
+        }
     },
     detectCircular: function(varName) {
         if (this.resolvedVariables.includes(varName))
@@ -203,7 +222,7 @@ const weVariable = {
         }
     },
     addRemoteSheet: function(name) {
-        let sheetName = name.replace('_', '-')
+        let sheetName = name.replace('_', '-');
         let removeLoading = function(ex) {
             setTimeout(function() {
                 $("#luckysheetloadingdata").fadeOut().remove();
