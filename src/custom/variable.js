@@ -16,7 +16,7 @@ const weVariable = {
     variablePrefix: '#',
     log: new Log("weVariable", weConfigsetting.isLog),
     resolvedVariables: [],
-    regex: /(?:([a-zA-Z0-9ก-ํ๐-๙_.]+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+))/g,
+    regex: /(?:([a-zA-Z0-9ก-ํ๐-๙_.']+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+))/g,
     regexIsVar: /[^!](\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/,
     regexTest: /\#([a-zA-Z0-9ก-ํ๐-๙_.]+)/,
     regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)/,
@@ -25,6 +25,8 @@ const weVariable = {
         ce: "#CLIENT!",
         se: "#SERVER!",
         v: "#VAR!",
+        arg: "#ARG!",
+        d: "#DATA!",
     },
     init: function(vPrefix) {
         let func = 'init';
@@ -83,32 +85,21 @@ const weVariable = {
         console.log('transformFormula', value);
         self.resolvedVariables.splice(0, self.resolvedVariables.length);
         if (getObjType(value) == "string") {
-            try {
-                let resolved = self.resolveFormula(value);
-                console.log('transformFormula resolved', resolved);
-                if (typeof resolved === 'string') {
-                    resolved = this.execFormula(resolved);
-                }
-                return [resolved[1], resolved[2], value];
-            } catch (error) {
-                return [error, '', value];
+            let resolved = self.resolveFormula(value);
+            console.log('transformFormula resolved', resolved);
+            if (typeof resolved === 'string') {
+                resolved = this.execFormula(resolved);
             }
+            return [resolved[1], resolved[2], value];
         } else if (getObjType(value) == "object" && value.df != null) {
-            try {
-                let resolved = self.resolveFormula(value.df);
-                console.log('transformFormula resolved', resolved);
-                if (typeof resolved === 'string') {
-                    resolved = this.execFormula(resolved);
-                }
-                value.v = resolved[1];
-                value.f = resolved[2];
-                return value;
-            } catch (error) {
-                value.v = error;
-                value.f = '';
-                return value;
+            let resolved = self.resolveFormula(value.df);
+            console.log('transformFormula resolved', resolved);
+            if (typeof resolved === 'string') {
+                resolved = this.execFormula(resolved);
             }
-
+            value.v = resolved[1];
+            value.f = resolved[2];
+            return value;
         }
     },
     resolveFormula: function(fx, isSub = false) {
@@ -125,11 +116,7 @@ const weVariable = {
             let afterSheetFx = matched[2];
 
             if (!sheetmanage.getSheetByName(sheetName)) {
-                try {
-                    this.addRemoteSheet(sheetName);
-                } catch (ex) {
-                    throw ex;
-                }
+                this.addRemoteSheet(sheetName);
             }
 
             this.log.debug(func, `in sheet "${sheetName}" with "${afterSheetFx}" is cross-sheet fx.`);
@@ -172,8 +159,8 @@ const weVariable = {
         this.log.info(func, `with fx is "${fx}".`);
         let variables = fx.match(this.regex);
         this.log.debug(func, `extract fx and got variables "${variables.toString()}".`);
+        let tempFx = fx;
         if (variables) {
-            let tempFx = fx;
             for (let varName of variables) {
                 let resolved = this.resolveFormula(varName, true);
                 this.log.debug(func, `resolved variable "${varName}" and got result is "${resolved.toString()}".`);
@@ -185,10 +172,10 @@ const weVariable = {
                 }
                 tempFx = tempFx.replace(varName, resolved);
             }
-            this.log.debug(func, `to retrun fx is "${tempFx}".`);
+            this.log.debug(func, `to return fx is "${tempFx}".`);
             return tempFx;
         } else {
-            return fx;
+            return tempFx;
         }
     },
     resolveVariable: function(fx, isSub, sheetName) {
@@ -196,7 +183,9 @@ const weVariable = {
         this.log.info(func, `with fx is "${fx}", isSub is "${isSub}", and sheetName "${sheetName}".`);
         let varName = fx.match(this.regexTest)[1];
 
-        this.detectCircular(typeof sheetName == 'undefined' ? varName : `${sheetName}!${varName}`);
+        let formula = typeof sheetName == 'undefined' ? varName : `${sheetName}!#${varName}`;
+
+        this.detectCircular(formula);
 
         let v = this.getVariableByName(varName, (typeof sheetName == 'undefined'), sheetName);
         if (!v) {
@@ -204,31 +193,56 @@ const weVariable = {
             throw this.error.v;
         }
 
+        // if v.formula have variable
         if (this.regex.test(v.formula)) {
-            let resolved = this.execFormula(v.formula);
+            console.log(func, `${v.formula} have a variable`);
+            console.log(func, 'v.formula', v.formula);
+            console.log(func, 'formula', formula);
+            // let resolved = this.execFormula(v.formula);
+            let resolved = this.resolveFormula(v.formula, isSub);
             this.log.debug(func, `resolved formula "${v.formula}" result is "${resolved.toString()}".`);
-            if (!resolved)
-                return '=' + v.formula;
-            if (resolved[1] != '#NAME?') { // if fx is not variable
-                v.value = resolved[1];
-                v.formula = resolved[2];
-                return isSub ? v.value : v.formula;
-                // return resolved;
-            } else { // if fx is variable
-                return this.resolveMultiVariable(v.formula);
+
+            if (typeof sheetName == 'undefined') {
+                let varName2 = v.formula.match(this.regexTest)[1];
+                console.log('varName2', varName2);
+            } else {
+                let varName2 = v.formula.match(this.regexTestIsGlobal);
+                console.log('varName2', varName2);
             }
+            // if (typeof resolved === 'string' && resolved.substr(0, 1) == '=') {
+            //     resolved = resolved.replace('=', '');
+            // }
+            // let tempFormula = v.formula.replace(varName, resolved);
+
+            return resolved;
+            // if (!resolved)
+            //     return '=' + v.formula;
+            // if (resolved[1] != '#NAME?') { // if fx is not variable
+            //     v.value = resolved[1];
+            //     // replace varName with resolved
+            //     // if (typeof resolved[2] === 'string' && resolved[2].substr(0, 1) == '=') {
+            //     //     resolved[2] = resolved[2].replace('=', '');
+            //     // }
+            //     let tempFx = v.formula.replace(formula, resolved[2]);
+            //     console.log(func, 'tempFx', tempFx);
+            //     return isSub ? v.value : resolved[2];
+            //     // return resolved;
+            // } else { // if fx is variable
+            //     return this.resolveMultiVariable(v.formula);
+            // }
         } else {
+            console.log(func, `${v.formula} not have a variable`);
             return v.formula;
         }
     },
     addRemoteSheet: function(name) {
         let sheetName = name.replace('_', '-');
-        let removeLoading = function(ex) {
-            setTimeout(function() {
+        let removeLoading = function() {
+            setTimeout(function(ex) {
                 $("#luckysheetloadingdata").fadeOut().remove();
+                if (ex)
+                    throw ex;
             }, 500);
-            if (ex)
-                throw ex;
         }
         const self = this;
         let postData = { rptFormCode: sheetName };
@@ -247,21 +261,30 @@ const weVariable = {
             success: function(res, textStatus, jqXHR) {
                 if (res.data) {
                     if (res.statusCode == "0") {
-                        let formData = JSON.parse(res.data.data)[0];
+                        if (weConfigsetting.deserializeHelper != null && getObjType(weConfigsetting.deserializeHelper) == "function") {
+                            try {
+                                let formData = weConfigsetting.deserializeHelper(res.data.data)[0];
 
-                        formData.order = Store.luckysheetfile.length;
-                        formData.index = name;
-                        formData.status = 0;
-                        formData.hide = 1;
-                        formData.allowEdit = false;
-                        formData.isTemp = true; //custom
-                        formData.data = sheetmanage.buildGridData(formData.celldata);
-                        Store.luckysheetfile.push(formData);
-                        // sheetmanage.createSheetbydata(formData);
-                        // sheetmanage.loadOtherFile(formData);
+                                formData.order = Store.luckysheetfile.length;
+                                formData.index = name;
+                                formData.status = 0;
+                                formData.hide = 1;
+                                formData.allowEdit = false;
+                                formData.isTemp = true; //custom
+                                formData.variable = res.data.formVariables;
+                                formData.data = sheetmanage.buildGridData(formData.celldata);
+                                Store.luckysheetfile.push(formData);
+                                // sheetmanage.createSheetbydata(formData);
+                                // sheetmanage.loadOtherFile(formData);
 
-                        jfrefreshgrid();
-                        removeLoading();
+                                jfrefreshgrid();
+                                removeLoading();
+                            } catch (ex) {
+                                removeLoading(self.error.d);
+                            }
+                        } else {
+                            removeLoading(self.error.arg);
+                        }
                     } else {
                         removeLoading(self.error.se);
                     }
@@ -303,6 +326,8 @@ const weVariable = {
     execFormula: function(txt) {
         if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
             return luckysheetformula.execfunction(this.resolveFormula(txt), undefined, undefined, undefined, true);
+        } else {
+            return null;
         }
     },
     isGlobalFX: function(fx) {

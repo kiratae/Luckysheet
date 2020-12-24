@@ -16,14 +16,11 @@ const weCore = {
         weConfigsetting.formApi = config.formApi;
         weConfigsetting.masterDataApi = config.masterDataApi;
         weConfigsetting.formReportSetId = config.formReportSetId;
-        weConfigsetting.toolbars = config.toolbars;
-        weConfigsetting.contextMenus = config.contextMenus;
         weConfigsetting.formEditor = config.formEditor;
         weConfigsetting.bodyContainer = config.bodyContainer;
         weConfigsetting.canDynamicRow = config.canDynamicRow;
         // hooks
         weConfigsetting.onCellClick = config.onCellClick;
-        weConfigsetting.onCellMouseDown = config.onCellMouseDown;
         weConfigsetting.onCellMouseOver = config.onCellMouseOver;
         weConfigsetting.onCellMouseOut = config.onCellMouseOut;
         weConfigsetting.onSheetMouseOut = config.onSheetMouseOut;
@@ -35,6 +32,9 @@ const weCore = {
         weConfigsetting.onConfirmCellRange = config.onConfirmCellRange;
 
         weConfigsetting.isLog = config.isLog;
+
+        // helper
+        weConfigsetting.deserializeHelper = config.deserializeHelper;
 
         weVariable.init(config.variablePrefix);
     },

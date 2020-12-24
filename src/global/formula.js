@@ -1298,7 +1298,7 @@ const luckysheetformula = {
                     } catch (ex) {
                         curv = d[r][c];
                         curv.v = ex;
-                        curv.df = value
+                        curv.df = value;
                     }
                 }
                 // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
@@ -1346,7 +1346,7 @@ const luckysheetformula = {
                     } catch (ex) {
                         curv = d[r][c];
                         curv.v = ex;
-                        curv.df = value;
+                        curv.df = value.df;
                     }
                 } else {
                     _this.delFunctionGroup(r, c);
@@ -1404,10 +1404,7 @@ const luckysheetformula = {
                     }
                 } catch (ex) {
                     // [TK] custom
-                    value = {
-                        "v": ex,
-                        "df": value
-                    };
+                    value['v'] = ex;
                 }
             }
             // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
@@ -1452,8 +1449,8 @@ const luckysheetformula = {
                     }
 
                 } catch (ex) { // [TK] custom
+                    console.log(ex, value);
                     value.v = ex;
-                    value.df = value;
                 }
 
             } else {
