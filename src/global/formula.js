@@ -4875,6 +4875,7 @@ const luckysheetformula = {
         window.luckysheet_getcelldata_cache = null;
         let calc_funcStr = getcellFormula(u.r, u.c, u.index);
 
+        // [TK] custom : to do custom this!
         let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
 
         // let value = _this.execFunctionGroupData[u.r][u.c];

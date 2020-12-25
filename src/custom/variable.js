@@ -20,6 +20,9 @@ const weVariable = {
     regexIsVar: /[^!](\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/,
     regexTest: /\#([a-zA-Z0-9ก-ํ๐-๙_.]+)/,
     regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)/,
+    globalRegex: /(?:(\'?[a-zA-Z0-9ก-ํ๐-๙_.]+\'?\!\#[a-zA-Z0-9ก-ํ๐-๙_.]+)|(\'?[a-zA-Z0-9ก-ํ๐-๙_.']+\'?\![A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+))/g,
+    variableRegex: /\'?([a-zA-Z0-9ก-ํ๐-๙_.]+)\'?|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/g,
+    localVariableRegex: /(?<!\!)(\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/,
     error: {
         c: "#CIRCULAR!",
         ce: "#CLIENT!",
@@ -81,18 +84,17 @@ const weVariable = {
         }
     },
     transformFormula: function(value) {
-        const self = this;
         console.log('transformFormula', value);
-        self.resolvedVariables.splice(0, self.resolvedVariables.length);
+        this.resolvedVariables.splice(0, this.resolvedVariables.length);
         if (getObjType(value) == "string") {
-            let resolved = self.resolveFormula(value);
+            let resolved = this.resolveFormula2(value);
             console.log('transformFormula resolved', resolved);
             if (typeof resolved === 'string') {
                 resolved = this.execFormula(resolved);
             }
             return [resolved[1], resolved[2], value];
         } else if (getObjType(value) == "object" && value.df != null) {
-            let resolved = self.resolveFormula(value.df);
+            let resolved = this.resolveFormula2(value.df);
             console.log('transformFormula resolved', resolved);
             if (typeof resolved === 'string') {
                 resolved = this.execFormula(resolved);
@@ -102,6 +104,7 @@ const weVariable = {
             return value;
         }
     },
+    /* ⛔ DEPRECATED
     resolveFormula: function(fx, isSub = false) {
         const func = 'resolveFormula';
         this.log.info(func, `with fx is "${fx}", isSub is "${isSub}".`);
@@ -133,10 +136,12 @@ const weVariable = {
             return fx;
         }
     },
-    getVariableByName: function(name, isLocal, sheetName) {
+    */
+    getVariableByName: function(name, isLocal = true, sheetName = null) {
+        console.log('getVariableByName', name, isLocal, sheetName);
         try {
             let variables = null;
-            if (isLocal)
+            if (isLocal && sheetName == null)
                 variables = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["variable"];
             else
                 variables = sheetmanage.getSheetByName(sheetName)["variable"];
@@ -149,11 +154,13 @@ const weVariable = {
             throw this.error.v;
         }
     },
+    /* ⛔ DEPRECATED
     detectCircular: function(varName) {
         if (this.resolvedVariables.includes(varName))
             throw this.error.c; // circular error string
         this.resolvedVariables.push(varName);
     },
+    
     resolveMultiVariable: function(fx) {
         const func = 'resolveMultiVariable';
         this.log.info(func, `with fx is "${fx}".`);
@@ -235,6 +242,7 @@ const weVariable = {
             return v.formula;
         }
     },
+    */
     addRemoteSheet: function(name) {
         let sheetName = name.replace('_', '-');
         let removeLoading = function() {
@@ -325,13 +333,84 @@ const weVariable = {
     },
     execFormula: function(txt) {
         if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
-            return luckysheetformula.execfunction(this.resolveFormula(txt), undefined, undefined, undefined, true);
+            return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
         } else {
             return null;
         }
     },
     isGlobalFX: function(fx) {
         return this.regexTestIsGlobal.test(fx);
+    },
+    resolveFormula2: function(fx) {
+        if (this.hasVariable(fx)) {
+            let varContexts = this.getVariableContexts(fx);
+            if (varContexts && varContexts.length && typeof varContexts === 'object') {
+                for (var i = 0; i < varContexts.length; i++) {
+                    var varContext = varContexts[i];
+                    if (this.isLocalVariable(varContext)) {
+                        this.checkCircular(varContext);
+                        var varName = varContext.replace(/#/g, '');
+                        var variable = this.getVariableByName(varName);
+                        if (variable) {
+                            var resolved = this.resolveFormula2(variable.formula);
+                            resolved = resolved.replace(/=/g, '');
+                            fx = fx.replace(new RegExp(varContext), resolved);
+                        } else {
+                            throw this.error.v;
+                        }
+                    } else {
+                        var matched = varContext.match(this.variableRegex);
+                        console.log('matched', matched);
+                        if (matched && matched.length === 2) {
+                            var sheetName = matched[0].replace(/'/g, '');
+                            var afterSheetFx = matched[1];
+
+                            // if not have sheet in current client go to get it from remote
+                            if (!sheetmanage.getSheetByName(sheetName)) {
+                                this.addRemoteSheet(sheetName);
+                            }
+
+                            if (this.isLocalVariable(afterSheetFx)) {
+                                this.checkCircular(varContext);
+                                var varName = afterSheetFx.replace(/#/g, '');
+                                var variable = this.getVariableByName(varName, false, sheetName);
+                                if (variable) {
+                                    var resolved = this.resolveFormula2(variable.formula);
+                                    resolved = resolved.replace(/=/g, '');
+                                    fx = fx.replace(new RegExp(varContext), resolved);
+                                } else {
+                                    throw this.error.v;
+                                }
+                            } else {
+                                continue;
+                            }
+                        } else {
+                            console.error('Global variable has some error.');
+                            throw this.error.ce;
+                        }
+                    }
+                }
+                return fx;
+            } else {
+                return fx;
+            }
+        } else {
+            return fx;
+        }
+    },
+    hasVariable: function(fx) {
+        return this.globalRegex.test(fx);
+    },
+    isLocalVariable: function(fx) {
+        return this.localVariableRegex.test(fx);
+    },
+    getVariableContexts: function(fx) {
+        return fx.match(this.globalRegex);
+    },
+    checkCircular: function(varContext) {
+        if (this.resolvedVariables.includes(varContext))
+            throw this.error.c; // circular error string
+        this.resolvedVariables.push(varContext);
     }
 }
 
