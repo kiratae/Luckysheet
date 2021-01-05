@@ -50,6 +50,8 @@ const weCore = {
 
         libCore.openCellRange = weAPI.openCellRange;
 
+        libCore.insertUpdateVariable = weAPI.insertUpdateVariable;
+
         libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
         libCore.weDropdownCtrl = weDropdownCtrl;
@@ -57,7 +59,7 @@ const weCore = {
         libCore.execFormula = function(txt) {
             // console.log('execFormula', txt);
             if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
-                return weVariable.execFormula(txt);
+                return weVariable.execFormula(txt, true);
                 // return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
             }
         }

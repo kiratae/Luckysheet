@@ -283,12 +283,14 @@ const weCellValidationCtrl = {
         let isHasReadonly = false;
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {
-                if (currentCellValidation[r + '_' + c].isReadonly != null && d[r][c]['ro']) {
-                    delete d[r][c]['ro'];
-                    isHasReadonly = true;
-                }
+                if (currentCellValidation[r + '_' + c]) {
+                    if (currentCellValidation[r + '_' + c].isReadOnly != null && d[r][c]['ro']) {
+                        delete d[r][c]['ro'];
+                        isHasReadonly = true;
+                    }
 
-                delete currentCellValidation[r + '_' + c];
+                    delete currentCellValidation[r + '_' + c];
+                }
             }
         }
 
@@ -430,15 +432,17 @@ const weCellValidationCtrl = {
     },
     dropCellHandler: function(cellVld, r, c) {
         // inSetCustom = inSetCustom (value1) | inSetCustomLevel (value2) | inSetCustomTarget (ddlTarget)
-        let inSetCustom = cellVld.inSetCustom.split('|');
         let obj = Object.assign({}, cellVld);
-        if (inSetCustom[1] > 1 && inSetCustom[2]) {
-            let range = weAPI.getRangeByTxt(inSetCustom[2]);
-            for (let s = 0; s < range.length; s++) {
-                range[s].row[0] = r;
-                range[s].row[1] = r;
+        if (cellVld.inSetCustom && typeof cellVld.inSetCustom === 'string') {
+            let inSetCustom = cellVld.inSetCustom.split('|');
+            if (inSetCustom[1] > 1 && inSetCustom[2]) {
+                let range = weAPI.getRangeByTxt(inSetCustom[2]);
+                for (let s = 0; s < range.length; s++) {
+                    range[s].row[0] = r;
+                    range[s].row[1] = r;
+                }
+                obj.inSetCustom = `${inSetCustom[0]}|${inSetCustom[1]}|${weAPI.getTxtByRange(range)}`;
             }
-            obj.inSetCustom = `${inSetCustom[0]}|${inSetCustom[1]}|${weAPI.getTxtByRange(range)}`;
         }
         return obj;
     }

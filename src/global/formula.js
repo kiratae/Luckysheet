@@ -1404,7 +1404,9 @@ const luckysheetformula = {
                     }
                 } catch (ex) {
                     // [TK] custom
-                    value['v'] = ex;
+                    value = {
+                        "v": ex
+                    };
                 }
             }
             // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value

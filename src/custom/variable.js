@@ -16,13 +16,13 @@ const weVariable = {
     variablePrefix: '#',
     log: new Log("weVariable", weConfigsetting.isLog),
     resolvedVariables: [],
-    regex: /(?:([a-zA-Z0-9ก-ํ๐-๙_.']+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+))/g,
-    regexIsVar: /[^!](\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/,
-    regexTest: /\#([a-zA-Z0-9ก-ํ๐-๙_.]+)/,
-    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-ํ๐-๙_.]+|[A-Z]+[0-9]+)/,
-    globalRegex: /(?:(\'?[a-zA-Z0-9ก-ํ๐-๙_.]+\'?\!\#[a-zA-Z0-9ก-ํ๐-๙_.]+)|(\'?[a-zA-Z0-9ก-ํ๐-๙_.']+\'?\![A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+))/g,
-    variableRegex: /\'?([a-zA-Z0-9ก-ํ๐-๙_.]+)\'?|(\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/g,
-    localVariableRegex: /(?<!\!)(\#[a-zA-Z0-9ก-ํ๐-๙_.]+)/,
+    regex: /(?:([a-zA-Z0-9ก-๙_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-๙_.]+))/g,
+    regexIsVar: /[^!](\#[a-zA-Z0-9ก-๙_.]+)/,
+    regexTest: /\#([a-zA-Z0-9ก-๙_.]+)/,
+    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|[A-Z]+[0-9]+)/,
+    globalRegex: /(?:(\'?[a-zA-Z0-9ก-๙_.]+\'?\!\#[a-zA-Z0-9ก-๙_.]+)|(\'?[a-zA-Z0-9ก-๙_.']+\'?\![A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-๙_.]+))/g,
+    variableRegex: /\'?([a-zA-Z0-9ก-๙_.]+)\'?|(\#[a-zA-Z0-9ก-๙_.]+)/g,
+    localVariableRegex: /(?<!\!)(\#[a-zA-Z0-9ก-๙_.]+)/,
     error: {
         c: "#CIRCULAR!",
         ce: "#CLIENT!",
@@ -37,65 +37,66 @@ const weVariable = {
         this.variablePrefix = vPrefix ? vPrefix : this.variablePrefix;
     },
     functionboxshow: function(r, c, d, cell) {
-        if (weConfigsetting.formEditor) {
-            if (isInlineStringCell(cell)) {
-                return getInlineStringNoStyle(r, c);
-            } else if (cell.df != null) {
-                return getcellvalue(r, c, d, "df");
-            } else {
-                return valueShowEs(r, c, d);
-            }
+        // if (weConfigsetting.formEditor) {
+        if (isInlineStringCell(cell)) {
+            return getInlineStringNoStyle(r, c);
+        } else if (cell.df != null) {
+            return getcellvalue(r, c, d, "df");
         } else {
-            if (isInlineStringCell(cell)) {
-                return getInlineStringNoStyle(r, c);
-            } else if (cell.f != null) {
-                return getcellvalue(r, c, d, "f");
-            } else {
-                return valueShowEs(r, c, d);
-            }
+            return valueShowEs(r, c, d);
         }
+        // } else {
+        //     if (isInlineStringCell(cell)) {
+        //         return getInlineStringNoStyle(r, c);
+        //     } else if (cell.f != null) {
+        //         return getcellvalue(r, c, d, "f");
+        //     } else {
+        //         return valueShowEs(r, c, d);
+        //     }
+        // }
 
     },
     luckysheetupdateCell: function(r, c, d, cell) {
-        if (weConfigsetting.formEditor) {
-            if (isInlineStringCell(cell)) {
-                return getInlineStringStyle(r, c, d);
-            } else if (cell.df != null) {
-                return getcellvalue(r, c, d, "df");
-            } else {
-                let v = valueShowEs(r, c, d);
-                if (cell.qp == "1") {
-                    v = "'" + v;
-                }
-                return v;
-            }
+        // if (weConfigsetting.formEditor) {
+        if (isInlineStringCell(cell)) {
+            return getInlineStringStyle(r, c, d);
+        } else if (cell.df != null) {
+            return getcellvalue(r, c, d, "df");
         } else {
-            if (isInlineStringCell(cell)) {
-                return getInlineStringStyle(r, c, d);
-            } else if (cell.f != null) {
-                return getcellvalue(r, c, d, "f");
-            } else {
-                let v = valueShowEs(r, c, d);
-                if (cell.qp == "1") {
-                    v = "'" + v;
-                }
-                return v;
+            let v = valueShowEs(r, c, d);
+            if (cell.qp == "1") {
+                v = "'" + v;
             }
+            return v;
         }
+        // } else {
+        //     if (isInlineStringCell(cell)) {
+        //         return getInlineStringStyle(r, c, d);
+        //     } else if (cell.f != null) {
+        //         return getcellvalue(r, c, d, "f");
+        //     } else {
+        //         let v = valueShowEs(r, c, d);
+        //         if (cell.qp == "1") {
+        //             v = "'" + v;
+        //         }
+        //         return v;
+        //     }
+        // }
     },
     transformFormula: function(value) {
-        console.log('transformFormula', value);
+        const func = 'transformFormula';
+        this.log.info(func, `has been call with value is "${value}".`);
         this.resolvedVariables.splice(0, this.resolvedVariables.length);
         if (getObjType(value) == "string") {
             let resolved = this.resolveFormula2(value);
-            console.log('transformFormula resolved', resolved);
+            this.log.info(func, `"${value}" has been resolved, and result is "${JSON.stringify(resolved)}".`);
             if (typeof resolved === 'string') {
                 resolved = this.execFormula(resolved);
             }
             return [resolved[1], resolved[2], value];
         } else if (getObjType(value) == "object" && value.df != null) {
             let resolved = this.resolveFormula2(value.df);
-            console.log('transformFormula resolved', resolved);
+            this.log.info(func, `"${value}" has been resolved, and result is "${JSON.stringify(resolved)}".`);
             if (typeof resolved === 'string') {
                 resolved = this.execFormula(resolved);
             }
@@ -138,7 +139,8 @@ const weVariable = {
     },
     */
     getVariableByName: function(name, isLocal = true, sheetName = null) {
-        console.log('getVariableByName', name, isLocal, sheetName);
+        const func = 'getVariableByName';
+        this.log.info(func, `has been call with name is "${name}", isLocal is "${isLocal}", and sheetName is "${sheetName}".`);
         try {
             let variables = null;
             if (isLocal && sheetName == null)
@@ -244,6 +246,8 @@ const weVariable = {
     },
     */
     addRemoteSheet: function(name) {
+        const func = 'addRemoteSheet';
+        this.log.info(func, `has been call with name is "${name}".`);
         let sheetName = name.replace('_', '-');
         let removeLoading = function() {
             setTimeout(function(ex) {
@@ -263,7 +267,7 @@ const weVariable = {
             dataType: 'json',
             data: postData,
             beforeSend: function() {
-                console.log(`calling: "${weConfigsetting.formApi}" with code "${sheetName}".`);
+                self.log.debug(func, `is calling to "${weConfigsetting.formApi}" with data "${JSON.stringify(postData)}".`);
                 $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML(false));
             },
             success: function(res, textStatus, jqXHR) {
@@ -301,7 +305,7 @@ const weVariable = {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.log('error', textStatus);
+                self.log.error(func, `is calling to "${weConfigsetting.formApi}" has been error with text status is "${textStatus}".`);
                 removeLoading(self.error.ce);
             }
         });
@@ -331,9 +335,13 @@ const weVariable = {
         // console.log(var_str);
         return text;
     },
-    execFormula: function(txt) {
+    execFormula: function(txt, outsider = false) {
         if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
-            return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
+            if (outsider) {
+                return luckysheetformula.execfunction(this.resolveFormula2(txt), undefined, undefined, undefined, true);
+            } else {
+                return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
+            }
         } else {
             return null;
         }

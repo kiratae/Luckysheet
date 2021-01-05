@@ -15,7 +15,7 @@ const weConfigsetting = {
     onOpenCellRange: null, // hooker function fire when dialog select cell range is open.
     onCloseCellRange: null, // hooker function fire when dialog select cell range is close.
     onConfirmCellRange: null, // hooker function fire when click cofirm buuton in dialog select cell range.
-    isLog: false, // is show console log with Log util.
+    isLog: true, // is show console log with Log util.
     deserializeHelper: null, // helper from outer to deserialize form or sheet data from api response.
 }
 

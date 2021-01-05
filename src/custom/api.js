@@ -120,6 +120,9 @@ const weAPI = {
     },
     openCellRange: function(cellRangeTxt, key, isSingle = false) {
         weHandler.openCellRange(cellRangeTxt, key, isSingle);
+    },
+    insertUpdateVariable: function(r, c, index) {
+        luckysheetformula.insertUpdateFunctionGroup(r, c, index);
     }
 }
 

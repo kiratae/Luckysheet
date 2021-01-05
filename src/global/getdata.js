@@ -157,23 +157,23 @@ export function getcellvalue(r, c, data, type) {
         retv = d_value[type];
 
         // [TK] custom (type == "f")
-        if (weConfigsetting.formEditor) {
-            if (type == "df" && retv != null) {
-                retv = formula.functionHTMLGenerate(retv);
-            } else if (type == "df") {
-                retv = d_value["v"];
-            } else if (d_value && d_value.ct && d_value.ct.t == 'd') {
-                retv = d_value.m;
-            }
-        } else {
-            if (type == "f" && retv != null) {
-                retv = formula.functionHTMLGenerate(retv);
-            } else if (type == "f") {
-                retv = d_value["v"];
-            } else if (d_value && d_value.ct && d_value.ct.t == 'd') {
-                retv = d_value.m;
-            }
+        // if (weConfigsetting.formEditor) {
+        if (type == "df" && retv != null) {
+            retv = formula.functionHTMLGenerate(retv);
+        } else if (type == "df") {
+            retv = d_value["v"];
+        } else if (d_value && d_value.ct && d_value.ct.t == 'd') {
+            retv = d_value.m;
         }
+        // } else {
+        //     if (type == "f" && retv != null) {
+        //         retv = formula.functionHTMLGenerate(retv);
+        //     } else if (type == "f") {
+        //         retv = d_value["v"];
+        //     } else if (d_value && d_value.ct && d_value.ct.t == 'd') {
+        //         retv = d_value.m;
+        //     }
+        // }
         // if (type == "f" && retv != null) {
         //     retv = formula.functionHTMLGenerate(retv);
         // }
