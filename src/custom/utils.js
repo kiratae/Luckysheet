@@ -9,7 +9,7 @@ function getUUID() {
 class Log {
     constructor(name, isLog = false) {
         this.name = name;
-        this.isLog = !isLog;
+        this.isLog = true;
     }
     debug(func, msg) {
         if (this.isLog)

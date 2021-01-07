@@ -16,13 +16,14 @@ const weVariable = {
     variablePrefix: '#',
     log: new Log("weVariable", weConfigsetting.isLog),
     resolvedVariables: [],
-    regex: /(?:([a-zA-Z0-9ก-๙_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|[A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-๙_.]+))/g,
-    regexIsVar: /[^!](\#[a-zA-Z0-9ก-๙_.]+)/,
-    regexTest: /\#([a-zA-Z0-9ก-๙_.]+)/,
-    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|[A-Z]+[0-9]+)/,
-    globalRegex: /(?:(\'?[a-zA-Z0-9ก-๙_.]+\'?\!\#[a-zA-Z0-9ก-๙_.]+)|(\'?[a-zA-Z0-9ก-๙_.']+\'?\![A-Z]+[0-9]+)|(\#[a-zA-Z0-9ก-๙_.]+))/g,
-    variableRegex: /\'?([a-zA-Z0-9ก-๙_.]+)\'?|(\#[a-zA-Z0-9ก-๙_.]+)/g,
+    // regex: /(?:([a-zA-Z0-9ก-๙_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|[A-Za-z\$]+[0-9\$]+)|(\#[a-zA-Z0-9ก-๙_.]+))/g,
+    // regexIsVar: /[^!](\#[a-zA-Z0-9ก-๙_.]+)/,
+    // regexTest: /\#([a-zA-Z0-9ก-๙_.]+)/,
+    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/,
+    globalRegex: /(?:(\'?[a-zA-Z0-9ก-๙_.]+\'?\!\#[a-zA-Z0-9ก-๙_.]+)|(\'?[a-zA-Z0-9ก-๙_.']+\'?\!(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))|(\#[a-zA-Z0-9ก-๙_.]+))/g,
+    variableRegex: /\'?([a-zA-Z0-9ก-๙_.]+)\'?\!|(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/g,
     localVariableRegex: /(?<!\!)(\#[a-zA-Z0-9ก-๙_.]+)/,
+    cellRefRegex: /(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+))/g,
     error: {
         c: "#CIRCULAR!",
         ce: "#CLIENT!",
@@ -31,6 +32,7 @@ const weVariable = {
         arg: "#ARG!",
         d: "#DATA!",
     },
+    primarySheet: null,
     init: function(vPrefix) {
         let func = 'init';
         this.log.info(func, 'has been initialized.');
@@ -93,6 +95,7 @@ const weVariable = {
             if (typeof resolved === 'string') {
                 resolved = this.execFormula(resolved);
             }
+            this.log.info(func, `final "${value}" has been resolved, and result is "${JSON.stringify(resolved)}".`);
             return [resolved[1], resolved[2], value];
         } else if (getObjType(value) == "object" && value.df != null) {
             let resolved = this.resolveFormula2(value.df);
@@ -100,6 +103,7 @@ const weVariable = {
             if (typeof resolved === 'string') {
                 resolved = this.execFormula(resolved);
             }
+            this.log.info(func, `final "${JSON.stringify(value)}" has been resolved, and result is "${JSON.stringify(resolved)}".`);
             value.v = resolved[1];
             value.f = resolved[2];
             return value;
@@ -284,7 +288,7 @@ const weVariable = {
                                 formData.allowEdit = false;
                                 formData.isTemp = true; //custom
                                 formData.variable = res.data.formVariables;
-                                formData.data = sheetmanage.buildGridData(formData.celldata);
+                                formData.data = sheetmanage.buildGridData(formData);
                                 Store.luckysheetfile.push(formData);
                                 // sheetmanage.createSheetbydata(formData);
                                 // sheetmanage.loadOtherFile(formData);
@@ -350,6 +354,7 @@ const weVariable = {
         return this.regexTestIsGlobal.test(fx);
     },
     resolveFormula2: function(fx) {
+        console.log('resolveFormula2', fx);
         if (this.hasVariable(fx)) {
             let varContexts = this.getVariableContexts(fx);
             if (varContexts && varContexts.length && typeof varContexts === 'object') {
@@ -370,8 +375,10 @@ const weVariable = {
                         var matched = varContext.match(this.variableRegex);
                         console.log('matched', matched);
                         if (matched && matched.length === 2) {
-                            var sheetName = matched[0].replace(/'/g, '');
+                            var sheetName = matched[0].replace(/'|!/g, '');
                             var afterSheetFx = matched[1];
+                            console.log('sheetName', sheetName);
+                            console.log('afterSheetFx', afterSheetFx);
 
                             // if not have sheet in current client go to get it from remote
                             if (!sheetmanage.getSheetByName(sheetName)) {
@@ -383,6 +390,16 @@ const weVariable = {
                                 var varName = afterSheetFx.replace(/#/g, '');
                                 var variable = this.getVariableByName(varName, false, sheetName);
                                 if (variable) {
+                                    console.log('other sheet variable formula before', variable.formula);
+                                    // tranform formula
+                                    let cellRange = variable.formula.match(this.cellRefRegex);
+                                    console.log('other sheet variable cellRange', cellRange);
+                                    if (cellRange && cellRange.length && typeof cellRange === 'object') {
+                                        for (var i = 0; i < cellRange.length; i++) {
+                                            variable.formula = variable.formula.replace(new RegExp(cellRange[i]), `'${sheetName}'!${cellRange[i]}`);
+                                        }
+                                    }
+                                    console.log('other sheet variable formula after', variable.formula);
                                     var resolved = this.resolveFormula2(variable.formula);
                                     resolved = resolved.replace(/=/g, '');
                                     fx = fx.replace(new RegExp(varContext), resolved);
@@ -393,8 +410,9 @@ const weVariable = {
                                 continue;
                             }
                         } else {
-                            console.error('Global variable has some error.');
-                            throw this.error.ce;
+                            continue;
+                            // console.error('Global variable has some error.');
+                            // throw this.error.ce;
                         }
                     }
                 }
