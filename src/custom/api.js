@@ -4,14 +4,14 @@ import Store from '../store';
 import { setAccuracy, setcellvalue } from "../global/setdata";
 import { getSheetIndex, getRangetxt } from '../methods/get';
 import weHandler from './handler';
-import weConfigsetting from './configsetting';
 import { Log } from './utils';
 
+let weAPILogger = new Log("weAPI");
+
 const weAPI = {
-    log: new Log("weAPI", weConfigsetting.isLog),
     setCellValue: function(row, column, data, value) {
         const func = 'setCellValue';
-        this.log.info(func, `at row ${row}, column ${column}, value ${value.toString()}`);
+        weAPILogger.info(func, `at row ${row}, column ${column}, value ${value.toString()}`);
 
         let curv = {};
 
@@ -56,7 +56,7 @@ const weAPI = {
     },
     clearCell: function(cell) {
         const func = 'clearCell';
-        this.log.info(func, `at cell ${cell.toString()}`);
+        weAPILogger.info(func, `at cell ${cell.toString()}`);
         delete cell["ro"];
         delete cell["iv"];
         delete cell["tp"];

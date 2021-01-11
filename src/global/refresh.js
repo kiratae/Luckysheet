@@ -214,7 +214,7 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
             Store.chartparam.jfrefreshchartall(Store.flowdata, range[s].row[0], range[s].row[1], range[s].column[0], range[s].column[1]);
         }
     }
-    //单元格数据更新联动
+    //单元格数据更新联动 (Cell data update linkage)
     if (isRunExecFunction) {
         runExecFunction(range, Store.currentSheetIndex, data);
     }

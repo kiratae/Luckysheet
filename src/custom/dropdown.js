@@ -1,14 +1,14 @@
 import Store from '../store';
-import weConfigsetting from './configsetting';
 import { getUUID, Log } from './utils';
 import { getSheetIndex, getRangetxt } from '../methods/get';
 
+let weDropdownCtrlLogger = new Log("weDropdownCtrl");
+
 const weDropdownCtrl = {
-    log: new Log("weDropdownCtrl", weConfigsetting.isLog),
     dropdownDatas: [],
     init: function() {
         const func = 'init';
-        this.log.info(func, 'has been called.');
+        weDropdownCtrlLogger.info(func, 'has been called.');
     },
     getList: function() {
         if (this.dropdownDatas) {
@@ -49,7 +49,7 @@ const weDropdownCtrl = {
                 return false;
             }
         } catch (error) {
-            this.log.error(func, `with FormMDGroupId "${id}"`);
+            weDropdownCtrlLogger.error(func, `with FormMDGroupId "${id}"`);
         }
     }
 }

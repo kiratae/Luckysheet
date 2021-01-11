@@ -4715,7 +4715,8 @@ const luckysheetformula = {
                 }
                 let cell = file.data[item.r][item.c];
                 let calc_funcStr = getcellFormula(item.r, item.c, item.index);
-                if (cell != null && cell.f != null && cell.f == calc_funcStr) {
+                // [TK] custom if (cell != null && cell.f != null && cell.f == calc_funcStr) {
+                if (cell != null && cell.df != null && cell.df == calc_funcStr) {
                     if (!(item instanceof Object)) {
                         item = eval('(' + item + ')');
                     }
@@ -4781,7 +4782,7 @@ const luckysheetformula = {
         // console.time("1");
         // console.log(group.length);
         // let iii = 0, ii=0;
-        //先进先出法，构建逆向执行结构树
+        //先进先出法，构建逆向执行结构树 (First-in-first-out method to construct a reverse execution structure tree) 
         while (stack.length > 0) {
             let u = stack.shift();
             let excludeList = {};
@@ -4877,8 +4878,42 @@ const luckysheetformula = {
         window.luckysheet_getcelldata_cache = null;
         let calc_funcStr = getcellFormula(u.r, u.c, u.index);
 
-        // [TK] custom : to do custom this!
-        let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
+        // [TK] custom
+        try {
+            let tf = weVariable.transformFormula(calc_funcStr);
+            _this.groupValuesRefreshData.push({
+                "r": u.r,
+                "c": u.c,
+                "v": tf[0],
+                "f": tf[1],
+                "df": tf[2],
+                "index": u.index
+            });
+
+            // _this.execFunctionGroupData[u.r][u.c] = value;
+            _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
+                v: tf[0],
+                f: tf[1],
+                df: tf[2]
+            };
+
+        } catch (ex) {
+            _this.groupValuesRefreshData.push({
+                "r": u.r,
+                "c": u.c,
+                "v": ex,
+                "df": calc_funcStr,
+                "index": u.index
+            });
+
+            // _this.execFunctionGroupData[u.r][u.c] = value;
+            _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
+                v: ex,
+                df: calc_funcStr
+            };
+        }
+
+        // let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
 
         // let value = _this.execFunctionGroupData[u.r][u.c];
         // if(value == null){
@@ -4904,20 +4939,21 @@ const luckysheetformula = {
         //     }
         // }
 
-        _this.groupValuesRefreshData.push({
-            "r": u.r,
-            "c": u.c,
-            "v": v[1],
-            "f": v[2],
-            "spe": v[3],
-            "index": u.index
-        });
+        // [TK] custom old
+        // _this.groupValuesRefreshData.push({
+        //     "r": u.r,
+        //     "c": u.c,
+        //     "v": v[1],
+        //     "f": v[2],
+        //     "spe": v[3],
+        //     "index": u.index
+        // });
 
-        // _this.execFunctionGroupData[u.r][u.c] = value;
-        _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
-            v: v[1],
-            f: v[2]
-        };
+        // // _this.execFunctionGroupData[u.r][u.c] = value;
+        // _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
+        //     v: v[1],
+        //     f: v[2]
+        // };
     },
     groupValuesRefreshData: [],
     groupValuesRefresh: function() {
@@ -5003,7 +5039,7 @@ const luckysheetformula = {
 
         let _locale = locale();
         let locale_formulaMore = _locale.formulaMore;
-        // console.log(txt,r,c)
+
         if (txt.indexOf(_this.error.r) > -1) {
             return [false, _this.error.r, txt];
         }

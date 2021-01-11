@@ -1,3 +1,5 @@
+import weConfigsetting from './configsetting';
+
 function getUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random() * 16 | 0,
@@ -7,24 +9,23 @@ function getUUID() {
 }
 
 class Log {
-    constructor(name, isLog = false) {
+    constructor(name) {
         this.name = name;
-        this.isLog = true;
     }
     debug(func, msg) {
-        if (this.isLog)
+        if (weConfigsetting.isLog)
             console.log(`%cDEBUG::%c${this.name}::%c${func} ${msg}`, 'color: green', 'color: grey', 'color: white');
     }
     info(func, msg) {
-        if (this.isLog)
+        if (weConfigsetting.isLog)
             console.log(`%cINFO::%c${this.name}::%c${func} ${msg}`, 'color: cyan', 'color: grey', 'color: white');
     }
     warn(func, msg) {
-        if (this.isLog)
+        if (weConfigsetting.isLog)
             console.log(`%cWARN::%c${this.name}::%c${func} ${msg}`, 'color: yellow', 'color: grey', 'color: white');
     }
     error(func, msg) {
-        if (this.isLog)
+        if (weConfigsetting.isLog)
             console.log(`%cERROR::%c${this.name}::%c${func} ${msg}`, 'color: red', 'color: grey', 'color: white');
     }
 }

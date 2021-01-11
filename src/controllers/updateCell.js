@@ -45,12 +45,11 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
 
     if (weCellValidationCtrl.cellValidation != null && weCellValidationCtrl.cellValidation[row_index1 + '_' + col_index1] != null) {
         let cellValidationItem = weCellValidationCtrl.cellValidation[row_index1 + '_' + col_index1];
-        if (cellValidationItem.inSet || cellValidationItem.inSetSystem) {
+        if (cellValidationItem.cellType == 'dropdown') {
             weCellValidationCtrl.dropdownListShow();
+        } else if (cellValidationItem.cellType == 'checkbox') {
+            return;
         }
-        // else if (dataVerificationItem.type == 'checkbox') {
-        //     return;
-        // }
     }
 
     let size = getColumnAndRowSize(row_index1, col_index1, d);

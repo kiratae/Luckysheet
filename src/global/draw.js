@@ -1286,6 +1286,8 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
     weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellTagCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
 
+    let cellValidation = weCellValidationCtrl.cellValidation;
+
     let dataVerification = dataVerificationCtrl.dataVerification;
 
     if (dataVerification != null && dataVerification[r + '_' + c] != null && !dataVerificationCtrl.validateCellData(value, dataVerification[r + '_' + c])) {
@@ -1425,6 +1427,76 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
         luckysheetTableContent.strokeRect(horizonAlignPos, verticalAlignPos_checkbox, 10, 10);
 
         if (dataVerification[r + '_' + c].checked) {
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.lineTo(
+                horizonAlignPos + 1,
+                verticalAlignPos_checkbox + 6
+            );
+            luckysheetTableContent.lineTo(
+                horizonAlignPos + 4,
+                verticalAlignPos_checkbox + 9
+            );
+            luckysheetTableContent.lineTo(
+                horizonAlignPos + 9,
+                verticalAlignPos_checkbox + 2
+            );
+            luckysheetTableContent.stroke();
+            luckysheetTableContent.closePath();
+        }
+
+        //文本
+        luckysheetTableContent.fillStyle = menuButton.checkstatus(Store.flowdata, r, c, "fc");
+        luckysheetTableContent.fillText(value == null ? "" : value, horizonAlignPos + 14, verticalAlignPos_text);
+
+        luckysheetTableContent.restore();
+    } else if (cellValidation != null && cellValidation[r + '_' + c] != null && cellValidation[r + '_' + c].cellType == 'checkbox') {
+        // [TK] custom all thi block in if
+        let pos_x = start_c + offsetLeft;
+        let pos_y = start_r + offsetTop + 1;
+
+        luckysheetTableContent.save();
+        luckysheetTableContent.beginPath();
+        luckysheetTableContent.rect(pos_x, pos_y, cellWidth, cellHeight);
+        luckysheetTableContent.clip();
+        luckysheetTableContent.scale(Store.zoomRatio, Store.zoomRatio);
+
+        let measureText = getMeasureText(value, luckysheetTableContent);
+        let textMetrics = measureText.width + 14;
+        let oneLineTextHeight = measureText.actualBoundingBoxDescent + measureText.actualBoundingBoxAscent;
+
+        let horizonAlignPos = (pos_x + space_width); //默认为1，左对齐
+        if (horizonAlign == "0") { //居中对齐
+            horizonAlignPos = (pos_x + cellWidth / 2) - (textMetrics / 2);
+        } else if (horizonAlign == "2") { //右对齐
+            horizonAlignPos = (pos_x + cellWidth - space_width) - textMetrics;
+        }
+
+        let verticalCellHeight = cellHeight > oneLineTextHeight ? cellHeight : oneLineTextHeight;
+
+        let verticalAlignPos_text = (pos_y + verticalCellHeight - space_height); //文本垂直方向基准线
+        luckysheetTableContent.textBaseline = "bottom";
+        let verticalAlignPos_checkbox = verticalAlignPos_text - 13 * Store.zoomRatio;
+
+        if (verticalAlign == "0") { //居中对齐 
+            verticalAlignPos_text = (pos_y + verticalCellHeight / 2);
+            luckysheetTableContent.textBaseline = "middle";
+            verticalAlignPos_checkbox = verticalAlignPos_text - 6 * Store.zoomRatio;
+        } else if (verticalAlign == "1") { //上对齐
+            verticalAlignPos_text = (pos_y + space_height);
+            luckysheetTableContent.textBaseline = "top";
+            verticalAlignPos_checkbox = verticalAlignPos_text + 1 * Store.zoomRatio;
+        }
+
+        horizonAlignPos = horizonAlignPos / Store.zoomRatio;
+        verticalAlignPos_text = verticalAlignPos_text / Store.zoomRatio;
+        verticalAlignPos_checkbox = verticalAlignPos_checkbox / Store.zoomRatio;
+
+        //复选框
+        luckysheetTableContent.lineWidth = 1;
+        luckysheetTableContent.strokeStyle = "#000";
+        luckysheetTableContent.strokeRect(horizonAlignPos, verticalAlignPos_checkbox, 10, 10);
+
+        if (cellValidation[r + '_' + c].checked) {
             luckysheetTableContent.beginPath();
             luckysheetTableContent.lineTo(
                 horizonAlignPos + 1,

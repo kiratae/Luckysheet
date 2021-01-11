@@ -4,12 +4,13 @@ import { luckysheetrefreshgrid } from '../global/refresh';
 import Store from '../store';
 import { Log } from './utils';
 
+let weCellTagCtrlLogger = new Log("weCellTagCtrl");
+
 const weCellTagCtrl = {
     cellTag: {},
-    log: new Log("weCellTagCtrl", weConfigsetting.isLog),
     init: function() {
         const func = 'init';
-        this.log.info(func, `has been called.`);
+        weCellTagCtrlLogger.info(func, `has been called.`);
     },
     renderCell: function(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent) {
         if (!weConfigsetting.formEditor)

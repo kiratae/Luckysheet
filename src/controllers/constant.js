@@ -1735,8 +1735,8 @@ function customCellRightClickConfig() {
     if (JSON.stringify(luckysheetConfigsetting.cellRightClickConfig) !== '{}') {
         Object.assign(config, luckysheetConfigsetting.cellRightClickConfig);
     }
-    console.info('=======cellRightClickConfig======'),
-        luckysheetConfigsetting.cellRightClickConfig = config;
+    // console.info('=======cellRightClickConfig======'),
+    luckysheetConfigsetting.cellRightClickConfig = config;
     return config;
 }
 
