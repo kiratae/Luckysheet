@@ -3,6 +3,7 @@ import browser from './browser';
 import { replaceHtml } from '../utils/util';
 import locale from '../locale/locale';
 import weConfigsetting from '../custom/configsetting';
+import server from '../controllers/server';
 
 const tooltip = {
     info: function(title, content) {
@@ -63,6 +64,7 @@ const tooltip = {
             if (typeof func1 == 'function') {
                 func1();
             }
+            server.keepHighLightBox();
             $("#luckysheet-confirm").hide();
             $("#luckysheet-modal-dialog-mask").hide();
         });

@@ -19,6 +19,8 @@ import weVariable from '../custom/variable';
 import weDynamicRow from '../custom/dynamicRow';
 import weCellValidationCtrl from '../custom/cellvalidation';
 import weConfigsetting from '../custom/configsetting';
+import server from './server';
+import method from '../global/method';
 
 export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocus) {
     if (!checkProtectionLocked(row_index1, col_index1, Store.currentSheetIndex)) {
@@ -32,6 +34,12 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
 
     // [TK] custom
     weDynamicRow.generateNextRow(row_index1);
+
+    // 钩子函数
+    method.createHookFunction('cellEditBefore', Store.luckysheet_select_save)
+
+    // 编辑单元格时发送指令到后台，通知其他单元格更新为“正在输入”状态
+    server.saveParam("mv", Store.currentSheetIndex, { op: "enterEdit", range: Store.luckysheet_select_save });
 
     //数据验证
     if (dataVerificationCtrl.dataVerification != null && dataVerificationCtrl.dataVerification[row_index1 + '_' + col_index1] != null) {
@@ -260,7 +268,7 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
 
     //日期
     if (d[row_index1][col_index1] && d[row_index1][col_index1].ct && d[row_index1][col_index1].ct.t == 'd') {
-        cellDatePickerCtrl.cellFocus(row_index1, col_index1, d[row_index1][col_index1].m);
+        cellDatePickerCtrl.cellFocus(row_index1, col_index1, d[row_index1][col_index1]);
     }
 
     formula.rangetosheet = Store.currentSheetIndex;

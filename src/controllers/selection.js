@@ -164,7 +164,7 @@ const selection = {
             d = editor.deepCopyFlowData(Store.flowdata);
         let colgroup = "";
 
-        // rowIndexArr = rowIndexArr.sort(); 
+        // rowIndexArr = rowIndexArr.sort();
         // colIndexArr = colIndexArr.sort();
 
         for (let i = 0; i < rowIndexArr.length; i++) {
@@ -428,7 +428,7 @@ const selection = {
                     }
 
                     if (c_value == null) {
-                        c_value = " ";
+                        c_value = "";
                     }
 
                     column += c_value;
@@ -485,7 +485,7 @@ const selection = {
                     }
 
                     column = replaceHtml(column, { "style": style, "span": "" });
-                    column += " ";
+                    column += "";
                 }
 
                 column += '</td>';
@@ -499,16 +499,26 @@ const selection = {
         Store.iscopyself = true;
 
         if (!clipboardData) {
-            let textarea = $("#luckysheet-copy-content");
-            textarea.html(cpdata);
-            textarea.focus();
-            textarea.select();
-            document.execCommand("selectAll");
-            document.execCommand("Copy");
+            // let textarea = $("#luckysheet-copy-content");
+            // textarea.html(cpdata);
+            // textarea.focus();
+            // textarea.select();
+            // document.execCommand("selectAll");
+            // document.execCommand("Copy");
+
             // 等50毫秒，keyPress事件发生了再去处理数据
-            setTimeout(function() {
-                $("#luckysheet-copy-content").blur();
-            }, 10);
+            // setTimeout(function () {
+            //     $("#luckysheet-copy-content").blur();
+            // }, 10);
+
+            var oInput = document.createElement('input');
+            oInput.setAttribute('readonly', 'readonly');
+            oInput.value = cpdata;
+            document.body.appendChild(oInput);
+            oInput.select(); // 选择对象
+            document.execCommand("Copy");
+            oInput.style.display = 'none';
+            document.body.removeChild(oInput);
         } else {
             clipboardData.setData('Text', cpdata);
             return false; //否则设不生效
@@ -778,18 +788,27 @@ const selection = {
             for (let r = 0; r < rlen; r++) {
                 let x = [].concat(d[r + curR]);
                 for (let c = 0; c < clen; c++) {
-
+                    let originCell = x[c + curC];
                     let value = dataChe[r][c];
                     if (isRealNum(value)) {
-                        value = parseFloat(value);
+                        // 如果单元格设置了纯文本格式，那么就不要转成数值类型了，防止数值过大自动转成科学计数法
+                        if (originCell && originCell.ct && originCell.ct.fa === '@') {
+                            value = String(value);
+                        } else {
+                            value = parseFloat(value);
+                        }
                     }
-                    let originCell = x[c + curC];
                     if (originCell instanceof Object) {
                         originCell.v = value;
                         if (originCell.ct != null && originCell.ct.fa != null) {
                             originCell.m = update(originCell["ct"]["fa"], value);
                         } else {
                             originCell.m = value;
+                        }
+
+                        if (originCell.df != null && originCell.df.length > 0) {
+                            originCell.df = "";
+                            formula.delFunctionGroup(r + curR, c + curC, Store.currentSheetIndex);
                         }
 
                         if (originCell.f != null && originCell.f.length > 0) {
@@ -1153,7 +1172,7 @@ const selection = {
                 target_curCdformat = target_curCdformat.concat(ruleArr);
             }
 
-            //数据验证 
+            //数据验证
             for (let i = c_r1; i <= c_r2; i++) {
                 for (let j = c_c1; j <= c_c2; j++) {
                     delete c_dataVerification[i + "_" + j];

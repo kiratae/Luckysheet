@@ -1,4 +1,5 @@
 import { hasChinaword } from './validate';
+import dayjs from 'dayjs'
 
 function isdatetime(s) {
     if (s == null || s.toString().length < 5) {
@@ -46,7 +47,7 @@ function isdatetime(s) {
 }
 
 function diff(now, then) {
-    return moment(now).diff(moment(then));
+    return dayjs(now).diff(dayjs(then));
 }
 
 function isdatatypemulti(s) {
