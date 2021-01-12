@@ -20,7 +20,7 @@ const luckysheetConfigsetting = {
 
     showConfigWindowResize: true,
     enableAddRow: true,
-    enableAddCol: true,
+    enableAddBackTop: true,
     enablePage: true,
     pageInfo: null,
     

@@ -14,18 +14,27 @@ const weCore = {
         weConfigsetting.slientMode = config.slientMode;
         weConfigsetting.fillErrorInCell = config.fillErrorInCell;
         weConfigsetting.formApi = config.formApi;
+        weConfigsetting.masterDataApi = config.masterDataApi;
         weConfigsetting.formReportSetId = config.formReportSetId;
-        weConfigsetting.toolbars = config.toolbars;
-        weConfigsetting.contextMenus = config.contextMenus;
         weConfigsetting.formEditor = config.formEditor;
         weConfigsetting.bodyContainer = config.bodyContainer;
+        weConfigsetting.canDynamicRow = config.canDynamicRow;
         // hooks
         weConfigsetting.onCellClick = config.onCellClick;
-        weConfigsetting.onCellMouseDown = config.onCellMouseDown;
         weConfigsetting.onCellMouseOver = config.onCellMouseOver;
         weConfigsetting.onCellMouseOut = config.onCellMouseOut;
         weConfigsetting.onSheetMouseOut = config.onSheetMouseOut;
         weConfigsetting.onSelectHightlightShow = config.onSelectHightlightShow;
+
+        // cell range dialog
+        weConfigsetting.onOpenCellRange = config.onOpenCellRange;
+        weConfigsetting.onCloseCellRange = config.onCloseCellRange;
+        weConfigsetting.onConfirmCellRange = config.onConfirmCellRange;
+
+        weConfigsetting.isLog = config.isLog;
+
+        // helper
+        weConfigsetting.deserializeHelper = config.deserializeHelper;
 
         weVariable.init(config.variablePrefix);
     },
@@ -39,6 +48,12 @@ const weCore = {
         libCore.getSelectedCell = weAPI.getSelectedCell;
         libCore.getRangeByTxt = weAPI.getRangeByTxt;
 
+        libCore.openCellRange = weAPI.openCellRange;
+
+        libCore.insertUpdateVariable = weAPI.insertUpdateVariable;
+
+        libCore.execFunctionGroupForce = weAPI.execFunctionGroupForce;
+
         libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
         libCore.weDropdownCtrl = weDropdownCtrl;
@@ -46,9 +61,14 @@ const weCore = {
         libCore.execFormula = function(txt) {
             // console.log('execFormula', txt);
             if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
-                return weVariable.execFormula(txt);
+                return weVariable.execFormula(txt, true);
                 // return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
             }
+        }
+
+        libCore.formulaInputHanddler = function($to, $input, kcode) {
+            console.log('formulaInputHanddler', $to, $input, kcode);
+            luckysheetformula.functionInputHanddler($to, $input, kcode);
         }
     }
 }

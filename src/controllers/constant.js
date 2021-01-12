@@ -1,12 +1,12 @@
 import locale from '../locale/locale';
-import weConfigsetting from '../custom/configsetting';
-import luckysheetConfigsetting from './luckysheetConfigsetting';
 import Store from '../store';
+import luckysheetConfigsetting from './luckysheetConfigsetting';
 
 //dom variable
 const gridHTML = function() {
     const _locale = locale();
     const locale_info = _locale.info;
+    const locale_print = _locale.print;
 
     return `<div class="luckysheet">
                     <canvas id="luckysheetTableContentF" style="display:none;" class="luckysheetTableContent"></canvas> 
@@ -182,14 +182,15 @@ const gridHTML = function() {
                                                             </div>
                                                         </div>
                                                         <div class="img-list"></div>
+                                                        <div class="cell-date-picker">
+                                                            <input id="cellDatePickerBtn" class="formulaInputFocus" readonly="readonly"/>
+                                                        </div>
                                                     </div>
                                                     <div id="luckysheet-dataVerification-dropdown-btn"></div>
                                                     <div id="luckysheet-dataVerification-dropdown-List" class="luckysheet-mousedown-cancel"></div>
+                                                    \${cellValidation}
+                                                    \${cellError}
                                                     <div id="luckysheet-dataVerification-showHintBox" class="luckysheet-mousedown-cancel"></div>
-                                                    <div id="luckysheet-cellValidation-dropdown-btn"></div>
-                                                    <div id="luckysheet-cellValidation-dropdown-List" class="luckysheet-mousedown-cancel"></div>
-                                                    <div id="luckysheet-cellValidation-showHintBox" class="luckysheet-mousedown-cancel"></div>
-                                                    <div id="luckysheet-cellError-showErrorMsg" class="luckysheet-mousedown-cancel"></div>
                                                     <div class="luckysheet-cell-copy"></div>  
                                                     <div class="luckysheet-grdblkflowpush"></div>  \${flow} 
                                                 </div> 
@@ -220,7 +221,7 @@ const gridHTML = function() {
                         </div> 
                         <div class="luckysheet-stat-area"> 
                             <div class="luckysheet-sta-c">
-                                <div class="luckysheet-zoom-content" id="uckysheet-zoom-content">
+                                <div class="luckysheet-zoom-content" id="luckysheet-zoom-content">
                                     <div class="luckysheet-zoom-minus" id="luckysheet-zoom-minus">
                                         <div class="luckysheet-zoom-minus-icon"></div>
                                     </div>
@@ -233,9 +234,14 @@ const gridHTML = function() {
                                         <div class="luckysheet-zoom-plus-icon"></div>
                                     </div>
                                     <div class="luckysheet-zoom-ratioText" id="luckysheet-zoom-ratioText">100%</div>
-                                </div>  
+                                </div>
+                                <div class="luckysheet-print-viewList">
+                                    <div type="viewNormal" class="luckysheet-print-viewBtn luckysheet-print-viewNormal luckysheet-print-viewBtn-active" title="${locale_print.normalBtn}"><i class="icon iconfont icon-putong"></i></div>
+                                    <div type="viewLayout" class="luckysheet-print-viewBtn luckysheet-print-viewLayout" title="${locale_print.layoutBtn}"><i class="icon iconfont icon-yemianbuju"></i></div>
+                                    <div type="viewPage" class="luckysheet-print-viewBtn luckysheet-print-viewPage" title="${locale_print.pageBtn}"><i class="icon iconfont icon-fenyeyulan"></i></div>
+                                </div>
                                 <div class="luckysheet-sta-content" id="luckysheet-sta-content"></div>  
-                                <div class="luckysheet-bottom-content" id="luckysheet-bottom-content-show"></div>  
+                                <!--<div class="luckysheet-bottom-content" id="luckysheet-bottom-content-show"></div> -->
                             </div> 
                         </div> 
                     </div>
@@ -250,370 +256,354 @@ const columeHeader_word = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'
     flow = '<div id="luckysheet-cell-flow_${index}" class="luckysheet-cell-flow luckysheetsheetchange" style="width:${width}px;"><div class="luckysheet-cell-flow-clip"><div class="luckysheet-grdblkpush"></div>${flow}</div></div>',
     colsmenuHTML = '';
 
-//Right click menu DOM
+//右键菜单dom
 function rightclickHTML() {
     const _locale = locale();
     const rightclick = _locale.rightclick;
     const toolbar = _locale.toolbar;
 
-    let html = '<div id="luckysheet-rightclick-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel">';
-    let htmlAppend = '';
-    for (let item of weConfigsetting.contextMenus) {
-        let split = item.split('=');
-        if (split.length == 2) {
-            // is section
-            if (split[0] == 'handle') {
-                html += `<div id="luckysheet-cols-rows-handleincell">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
-                for (let subItem of split[1].split('|')) {
-                    switch (subItem) {
-                        case 'insert':
-                            html += `<div id="luckysheetColsRowsHandleAdd" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.insert}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                                </div>
-                            </div>`;
-                            htmlAppend += `<div id="luckysheetColsRowsHandleAdd_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.to}${rightclick.top}${rightclick.add}
-                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
-                                        <button id="luckysheet-addTopRows" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.to}${rightclick.bottom}${rightclick.add}
-                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                                        <span class="luckysheet-mousedown-cancel">${rightclick.row}</span>
-                                        <button id="luckysheet-addBottomRows" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.to}${rightclick.left}${rightclick.add}
-                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
-                                        <button id="luckysheet-addLeftCols" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.to}${rightclick.right}${rightclick.add}
-                                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                                        <span class="luckysheet-mousedown-cancel">${rightclick.column}</span>
-                                        <button id="luckysheet-addRightCols" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                    </div>
-                                </div>
-                            </div>`;
-                            break;
-                        case 'delete':
-                            html += `<div id="luckysheetColsRowsHandleDel" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.delete}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                                </div>
-                            </div>`;
-                            htmlAppend += `<div id="luckysheetColsRowsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                                <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.deleteSelected}${rightclick.row}
-                                    </div>
-                                </div>
-                                <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.deleteSelected}${rightclick.column}
-                                    </div>
-                                </div>
-                            </div>`;
-                            break;
-                        case 'hide':
-                            html += `<div id="luckysheetColsRowsHandleHid" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.hide}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                                </div>
-                            </div>`;
-                            htmlAppend += `<div id="luckysheetColsRowsHandleHid_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                                <div id="luckysheet-hidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.hideSelected}${rightclick.row}
-                                    </div>
-                                </div>
-                                <div id="luckysheet-showHidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.showHide}${rightclick.row}
-                                    </div>
-                                </div>
-                                <div id="luckysheet-hidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.hideSelected}${rightclick.column}
-                                    </div>
-                                </div>
-                                <div id="luckysheet-showHidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.showHide}${rightclick.column}
-                                    </div>
-                                </div>
-                            </div>`;
-                            break;
-                        case 'delete-cell':
-                            html += `<div id="luckysheetCellsHandleDel" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.deleteCell}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                                </div>
-                            </div>`;
-                            htmlAppend += `<div id="luckysheetCellsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                                <div id="luckysheet-delCellsMoveLeft" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.moveLeft}
-                                    </div>
-                                </div>
-                                <div id="luckysheet-delCellsMoveUp" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.moveUp}
-                                    </div>
-                                </div>
-                            </div>`;
-                            break;
-                    }
-                }
-                html += `</div>`;
-            } else if (split[0] == 'insert') {
-                html += `<div id="luckysheet-cols-rows-add">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
-                for (let subItem of split[1].split('|')) {
-                    switch (subItem) {
-                        case 'above&left':
-                            html += `<div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.to}
-                                    <span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
-                                    ${rightclick.add}
-                                    <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align:center;margin-left:5px;"/>
-                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                                    <button id="luckysheet-add-lefttop" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="min-width: unset !important;margin-left:5px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                </div>
-                            </div>`;
-                            break;
-                        case 'below&right':
-                            html += `<div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.to}
-                                    <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
-                                    ${rightclick.add}
-                                    <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                                    <button id="luckysheet-add-rightbottom" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="min-width: unset !important;margin-left:5px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                </div>
-                            </div>`;
-                            break;
-                        case 'delete-selected':
-                            html += `<div id="luckysheet-del-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.deleteSelected}
-                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                                </div>
-                            </div>`;
-                            break;
-                        case 'height&width':
-                            html += `<div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
-                                    <span class="luckysheet-cols-rows-shift-size luckysheet-mousedown-cancel">${rightclick.width}</span>
-                                    <input type="number" class="luckysheet-mousedown-cancel rcsize" min="0" max="255" placeholder="${rightclick.number}" value="" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;">
-                                    px
-                                    <button id="luckysheet-rows-cols-changesize" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="min-width: unset !important;margin-left:5px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                </div>
-                            </div>`;
-                            break;
-                    }
-                }
-                html += `</div>`;
-            } else if (split[0] == 'ordering') {
-                html += `<div id="luckysheet-cols-rows-shift">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
-                for (let subItem of split[1].split('|')) {
-                    switch (subItem) {
-                        case 'asc':
-                            html += `<div id="luckysheetorderbyasc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderAZ}</div>
-                            </div>`;
-                            break;
-                        case 'desc':
-                            html += `<div id="luckysheetorderbydesc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderZA}</div>
-                            </div>`;
-                            break;
-                    }
-                }
-                html += `</div>`;
-            } else if (split[0] == 'data') {
-                html += `<div id="luckysheet-cols-rows-data">
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>`;
-                for (let subItem of split[1].split('|')) {
-                    switch (subItem) {
-                        case 'clear':
-                            html += `<div id="luckysheet-delete-text" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.clearContent}</div>
-                            </div>`;
-                            break;
-                        case 'matrix':
-                            html += `<div id="luckysheetmatrix" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                    ${rightclick.matrix}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
-                                </div>
-                            </div>`;
-                            htmlAppend += `<div id="luckysheetmatrix_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.flip}
-                                        <button id="luckysheet-matrix-turn-up" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.upAndDown}</button>
-                                        <button id="luckysheet-matrix-turn-left" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.leftAndRight}</button>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.flip}
-                                        <button id="luckysheet-matrix-turn-cw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.clockwise}</button>
-                                        <button id="luckysheet-matrix-turn-anticw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.counterclockwise}</button>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div id="luckysheet-matrix-turn-trans" class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.transpose}</div>
-                                </div>
-                                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        <div class="luckysheet-mousedown-cancel">${rightclick.matrixCalculation}</div>
-                                        <div class="luckysheet-mousedown-cancel">
-                                            <select id="luckysheet-matrix-cal-type" class="luckysheet-mousedown-cancel" style="height:24px;">
-                                                <option value="plus">${rightclick.plus}</option>
-                                                <option value="minus">${rightclick.minus}</option>
-                                                <option value="multiply">${rightclick.multiply}</option>
-                                                <option value="divided">${rightclick.divided}</option>
-                                                <option value="power">${rightclick.power}</option>
-                                                <option value="root">${rightclick.root}</option>
-                                                <option value="log">${rightclick.log}</option>
-                                            </select>
-                                            <input type="number" id="luckysheet-matrix-cal-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="2" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                                            <button id="luckysheet-matrix-cal-confirm" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.delete0}
-                                        <button id="luckysheet-matrix-delezero-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
-                                        <button id="luckysheet-matrix-delezero-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                                        ${rightclick.removeDuplicate}
-                                        <button id="luckysheet-matrix-delerpt-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
-                                        <button id="luckysheet-matrix-delerpt-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
-                                    </div>
-                                </div>
-                                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.generateNewMatrix}</div>
-                                </div>
-                            </div>`;
-                            break;
-                        case 'sort':
-                            html += `<div id="luckysheetorderby" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.sortSelection}</div>
-                            </div>`;
-                            break;
-                        case 'filter':
-                            html += `<div id="luckysheetfilter" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.filterSelection}</div>
-                            </div>`;
-                            break;
-                        case 'chart':
-                            html += `<div id="luckysheetdatavisual" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.chartGeneration}</div>
-                            </div>`;
-                            break;
-                        case 'image':
-                            html += `<div id="luckysheetInsertImage" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertImage}</div>
-                            </div>`;
-                            break;
-                        case 'data-validation':
-                            html += `<div id="luckysheetDataVerification" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.dataVerification}</div>
-                            </div>`;
-                            break;
-                    }
-                }
-                html += `</div>`;
-            }
-        } else {
-            if (item == 'copy') {
-                html += `<div id="luckysheet-copy-btn" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel luckysheet-copy-btn" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content">
+    const config = customCellRightClickConfig();
+
+    // 当一个功能菜单块内所有的按钮都隐藏的时候，它顶部的分割线也需要隐藏掉
+    let handleincellMenuseparator = true;
+
+    if (!config.insertRow && !config.insertColumn && !config.deleteRow && !config.deleteColumn && !config.deleteCell) {
+        handleincellMenuseparator = false;
+    }
+
+    let dataMenuseparator = true;
+
+    if (!config.clear && !config.matrix && !config.sort && !config.filter && !config.chart && !config.image && !config.link && !config.data && !config.cellFormat) {
+        dataMenuseparator = false;
+    }
+
+    const rightclickContainer = `<div id="luckysheet-rightclick-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel">
+                <div id="luckysheet-copy-btn" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel luckysheet-copy-btn" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="display:${config.copy ? 'block' : 'none'};">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.copy}</div>
-                </div>`;
-            } else if (item == 'copy-as') {
-                html += ` <div id="luckysheetcopyfor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+                </div>
+                <div id="luckysheetcopyfor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel"  style="display:${config.copyAs ? 'block' : 'none'};">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${rightclick.copyAs}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
                     </div>
-                </div>`;
-                htmlAppend += `<div id="luckysheetcopyfor_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                </div>
+                <div id="luckysheet-copy-paste" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.paste ? 'block' : 'none'};">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.paste}</div>
+                </div>
+                <div id="luckysheet-cols-rows-handleincell">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator" style="display:${handleincellMenuseparator ? 'block' : 'none'};"></div>
+                    <div id="luckysheetColsRowsHandleAdd_row" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            Json
-                            <button id="luckysheet-copy-json-head" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.firstLineTitle}</button>
-                            <button id="luckysheet-copy-json-nohead" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.untitled}</button>
+                            ${rightclick.insert}${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
-                    <div id="luckysheet-copy-array1" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array1}</div>
+                    <div id="luckysheetColsRowsHandleAdd_column" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertColumn ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                            ${rightclick.insert}${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        </div>
                     </div>
-                    <div id="luckysheet-copy-array2" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array2}</div>
+                    <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteRow ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${Store.lang == 'th' /* [TK] custom */ ? rightclick.deleteSelectedRow : rightclick.deleteSelected + rightclick.row }<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        </div>
+                    </div>
+                    <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteColumn ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${Store.lang == 'th' /* [TK] custom */ ? rightclick.deleteSelectedColumn : rightclick.deleteSelected + rightclick.column }<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        </div>
+                    </div>
+                    <!-- cell right click remove hide button
+                    <div id="luckysheetColsRowsHandleHid" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                            ${rightclick.hide}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
+                        </div>
+                    </div>
+                    -->
+                    <div id="luckysheetCellsHandleDel" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteCell ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                            ${rightclick.deleteCell}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="luckysheet-cols-rows-add">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
+                    <div id="luckysheet-top-left-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.add}` : 
+                            `${rightclick.to}
+                            <span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
+                            ${rightclick.add}` }
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align:center;margin-left:5px;"/>
+                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.column}${rightclick.to}` : `${rightclick.column}` }</span>
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `<span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>` : '' }
+                        </div>
+                    </div>
+                    <div id="luckysheet-bottom-right-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.add}` : 
+                            `${rightclick.to}
+                            <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
+                            ${rightclick.add}` }
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.column}${rightclick.to}` : `${rightclick.column}` }</span>
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `<span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>` : '' }
+                        </div>
+                    </div>
+                    <div id="luckysheet-del-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                            ${  /* [TK] custom */
+                                Store.lang == 'th' ? 
+                                rightclick.deleteSelectedColumn : 
+                                `${rightclick.deleteSelected}<span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>` 
+                            }
+                        </div>
+                    </div>
+                    <div id="luckysheet-hide-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.hideSelected}
+                        <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                        </div>
+                    </div>
+                    <div id="luckysheet-show-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                            ${rightclick.showHide}
+                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                        </div>
                     </div>
                     <div id="luckysheet-column-row-width-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            <div class="luckysheet-mousedown-cancel">${rightclick.array3}</div>
-                            <div>
-                                <input type="number" id="luckysheet-copy-arraymore-row" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.row}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
-                                ×
-                                <input type="number" id="luckysheet-copy-arraymore-col" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.column}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
-                                <button id="luckysheet-copy-arraymore-confirm" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
-                            </div>
+                            ${ Store.lang == 'th' /* [TK] custom */ ? `${rightclick.width}${rightclick.column}` : 
+                            `<span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                            <span class="luckysheet-cols-rows-shift-size luckysheet-mousedown-cancel">${rightclick.width}</span>` }
+                            <input type="number" class="luckysheet-mousedown-cancel rcsize" min="0" max="255" placeholder="${rightclick.number}" value="" style="width:50px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;">
+                            px
                         </div>
                     </div>
-                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
-                    <div id="luckysheet-copy-diagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.diagonal}</div>
+                </div>
+                <div id="luckysheet-cols-rows-shift">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator" style="display:${config.sort ? 'block' : 'none'};"></div>
+                    <div id="luckysheetorderbyasc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.sort ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderAZ}</div>
                     </div>
-                    <div id="luckysheet-copy-antidiagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.antiDiagonal}</div>
+                    <div id="luckysheetorderbydesc" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.sort ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.orderZA}</div>
                     </div>
-                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                </div>
+                <div id="luckysheet-cols-rows-data">
+                    <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator" style="display:${dataMenuseparator ? 'block' : 'none'};"></div>
+                    <div id="luckysheet-delete-text" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.clear ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.clearContent}</div>
+                    </div>
+                    <div id="luckysheetmatrix" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.matrix ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.diagonalOffset}
-                            <input type="number" id="luckysheet-copy-diagonaloffset-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.offset}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
-                            ${rightclick.column}
-                            <button id="luckysheet-copy-diagonaloffset" class="btn btn-primary luckysheet-copy-btn luckysheet-mousedown-cancel" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.confirm}</button>
+                            ${rightclick.matrix}<span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span>
                         </div>
                     </div>
-                    <div id="luckysheet-copy-boolvalue" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.boolean}</div>
+                    <div id="luckysheetorderby" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.sort ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.sortSelection}</div>
                     </div>
-                </div>`;
-            } else if (item == 'paste') {
-                html += `<div id="luckysheet-copy-paste" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.paste}</div>
-                </div>`;
-            }
-        }
-    }
-    html += '</div>';
+                    <div id="luckysheetfilter" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.filter ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.filterSelection}</div>
+                    </div>
+                    <div id="luckysheetdatavisual" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.chart ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.chartGeneration}</div>
+                    </div>
+                    <div id="luckysheetInsertImage" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.image ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertImage}</div>
+                    </div>
+                    <div id="luckysheetInsertLink" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.link ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertLink}</div>
+                    </div>
+                    <div id="luckysheetDataVerification" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.data ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.dataVerification}</div>
+                    </div>
+                    <div id="luckysheetCellFormatRightClickMenu" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.cellFormat ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.cellFormat}</div>
+                    </div>
+                </div>
+            </div>
+            <div id="luckysheetcopyfor_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                <div id="luckysheet-copy-json-head" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">Json ${rightclick.firstLineTitle}</div>
+                </div>
+                <div id="luckysheet-copy-json-nohead" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">Json ${rightclick.untitled}</div>
+                </div>
+                <div id="luckysheet-copy-array1" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array1}</div>
+                </div>
+                <div id="luckysheet-copy-array2" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.array2}</div>
+                </div>
+                <div id="luckysheet-copy-arraymore-confirm" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        <span class="luckysheet-mousedown-cancel">${rightclick.array3}</span>
+                        <input type="number" id="luckysheet-copy-arraymore-row" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.row}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
+                            ×
+                            <input type="number" id="luckysheet-copy-arraymore-col" min="1" class="luckysheet-mousedown-cancel" placeholder="${rightclick.column}" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;"/>
+                    </div>
+                </div>
+                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
+                <div id="luckysheet-copy-diagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.diagonal}</div>
+                </div>
+                <div id="luckysheet-copy-antidiagonal" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.antiDiagonal}</div>
+                </div>
+                <div id="luckysheet-copy-diagonaloffset" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.diagonalOffset}
+                        <input type="number" id="luckysheet-copy-diagonaloffset-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.offset}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                        ${rightclick.column}
+                    </div>
+                </div>
+                <div id="luckysheet-copy-boolvalue" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" class="luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.boolean}</div>
+                </div>
+            </div>
+            
+            <!-- Revision: modeled on google sheet
+            
+            <div id="luckysheetColsRowsHandleAdd_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.top}${rightclick.add}` }
+                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.row}${rightclick.to}${rightclick.top}` : `${rightclick.row}` }</span>
+                    </div>
+                </div>
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.bottom}${rightclick.add}` }
+                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.row}${rightclick.to}${rightclick.top}` : `${rightclick.row}` }</span>
+                    </div>
+                </div>
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.left}${rightclick.add}` }
+                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.column}${rightclick.to}${rightclick.left}` : `${rightclick.column}` }</span>
+                    </div>
+                </div>
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.add}` : `${rightclick.to}${rightclick.right}${rightclick.add}` }
+                        <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                        <span class="luckysheet-mousedown-cancel">${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.column}${rightclick.to}${rightclick.right}` : `${rightclick.column}` }</span>
+                    </div>
+                </div>
+            </div>
+            
+            -->
 
-    html += htmlAppend;
-    return html;
+            <!-- delete row or column
+            
+            <div id="luckysheetColsRowsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.deleteSelectedRow}` : `${rightclick.deleteSelected}${rightclick.row}` }
+                    </div>
+                </div>
+                <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${ Store.lang == 'th' /* [TK] custom */ ?  `${rightclick.deleteSelectedColumn}` : `${rightclick.deleteSelected}${rightclick.column}` }
+                    </div>
+                </div>
+            </div>
+            
+            -->
+
+            <!--
+            <div id="luckysheetColsRowsHandleHid_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                <div id="luckysheet-hidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.hideSelected}${rightclick.row}
+                    </div>
+                </div>
+                <div id="luckysheet-showHidRows" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.showHide}${rightclick.row}
+                    </div>
+                </div>
+                <div id="luckysheet-hidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.hideSelected}${rightclick.column}
+                    </div>
+                </div>
+                <div id="luckysheet-showHidCols" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.showHide}${rightclick.column}
+                    </div>
+                </div>
+            </div>
+
+            -->
+
+            <div id="luckysheetCellsHandleDel_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                <div id="luckysheet-delCellsMoveLeft" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.moveLeft}
+                    </div>
+                </div>
+                <div id="luckysheet-delCellsMoveUp" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.moveUp}
+                    </div>
+                </div>
+            </div>
+            <div id="luckysheetmatrix_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.flip}
+                        <button id="luckysheet-matrix-turn-up" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.upAndDown}</button>
+                        <button id="luckysheet-matrix-turn-left" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.leftAndRight}</button>
+                    </div>
+                </div>
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.flip}
+                        <button id="luckysheet-matrix-turn-cw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.clockwise}</button>
+                        <button id="luckysheet-matrix-turn-anticw" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.counterclockwise}</button>
+                    </div>
+                </div>
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div id="luckysheet-matrix-turn-trans" class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.transpose}</div>
+                </div>
+                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
+                <div id="luckysheet-matrix-cal-confirm" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        <div class="luckysheet-mousedown-cancel">${rightclick.matrixCalculation}</div>
+                        <div class="luckysheet-mousedown-cancel">
+                            <select id="luckysheet-matrix-cal-type" class="luckysheet-mousedown-cancel" style="height:20px;">
+                                <option value="plus">${rightclick.plus}</option>
+                                <option value="minus">${rightclick.minus}</option>
+                                <option value="multiply">${rightclick.multiply}</option>
+                                <option value="divided">${rightclick.divided}</option>
+                                <option value="power">${rightclick.power}</option>
+                                <option value="root">${rightclick.root}</option>
+                                <option value="log">${rightclick.log}</option>
+                            </select>
+                            <input type="number" id="luckysheet-matrix-cal-value" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="2" style="width:40px;height:20px;box-sizing:border-box;text-align: center;;margin-left:5px;"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.delete0}
+                        <button id="luckysheet-matrix-delezero-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
+                        <button id="luckysheet-matrix-delezero-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
+                    </div>
+                </div>
+                <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                        ${rightclick.removeDuplicate}
+                        <button id="luckysheet-matrix-delerpt-row" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byRow}</button>
+                        <button id="luckysheet-matrix-delerpt-column" class="btn btn-primary luckysheet-mousedown-cancel" style="margin-left:5px;padding:2px 3px;line-height:12px;font-size:12px;">${rightclick.byCol}</button>
+                    </div>
+                </div>
+            </div>`;
+
+    return rightclickContainer;
 }
 
 const pivottableconfigHTML = function() {
@@ -643,33 +633,55 @@ const sheetHTML = '<div style="${style}" id="luckysheet-sheets-item${index}" dat
 function sheetconfigHTML() {
     const sheetconfig = locale().sheetconfig;
 
-    return `<div id="luckysheet-rightclick-sheet-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel"> 
-                <div id="luckysheetsheetconfigdelete" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel"> 
+    const config = customSheetRightClickConfig();
+
+    let hideTopMenuseparator = true;
+    let moveTopMenuseparator = true;
+
+    // 1. 当一个功能菜单块上方的功能块按钮都隐藏的时候，下方的功能块的顶部分割线也需要隐藏
+    if (!config.delete && !config.copy && !config.rename && !config.color) {
+        hideTopMenuseparator = false;
+        if (!config.hide) {
+            moveTopMenuseparator = false;
+        }
+    }
+
+    // 2. 当一个功能菜单块内所有的按钮都隐藏的时候，它顶部的分割线也需要隐藏掉
+    if (!config.hide) {
+        hideTopMenuseparator = false;
+    }
+    if (!config.move) {
+        moveTopMenuseparator = false;
+    }
+
+
+    const sheetconfigModel = `<div id="luckysheet-rightclick-sheet-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel"> 
+                <div id="luckysheetsheetconfigdelete" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.delete ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${sheetconfig.delete}</div>
                 </div> 
-                <div id="luckysheetsheetconfigcopy" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel"> 
+                <div id="luckysheetsheetconfigcopy" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.copy ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${sheetconfig.copy}</div> 
                 </div> 
-                <div id="luckysheetsheetconfigrename" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel"> 
+                <div id="luckysheetsheetconfigrename" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.rename ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${sheetconfig.rename}</div> 
                 </div> 
-                <div id="luckysheetsheetconfigcolor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel"> 
+                <div id="luckysheetsheetconfigcolor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.color ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel"> 
                         ${sheetconfig.changeColor} <span class="luckysheet-submenu-arrow iconfont icon-youjiantou" style="user-select: none;"></span> 
                     </div> 
                 </div> 
-                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div> 
-                <div id="luckysheetsheetconfighide" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel"> 
+                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator" style="display:${hideTopMenuseparator ? 'block' : 'none'};"></div> 
+                <div id="luckysheetsheetconfighide" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.hide ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${sheetconfig.hide}</div> 
                 </div> 
-                <div id="luckysheetsheetconfigshow" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel"> 
+                <div id="luckysheetsheetconfigshow" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.hide ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${sheetconfig.unhide}</div> 
                 </div> 
-                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div> 
-                <div id="luckysheetsheetconfigmoveleft" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel"> 
+                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator" style="display:${moveTopMenuseparator ? 'block' : 'none'};"></div> 
+                <div id="luckysheetsheetconfigmoveleft" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.move ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${sheetconfig.moveLeft}</div> 
                 </div> 
-                <div id="luckysheetsheetconfigmoveright" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel"> 
+                <div id="luckysheetsheetconfigmoveright" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.move ? 'block' : 'none'};"> 
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${sheetconfig.moveRight}</div> 
                 </div> 
             </div> 
@@ -683,6 +695,8 @@ function sheetconfigHTML() {
                     </div> 
                 </div> 
             </div>`;
+
+    return sheetconfigModel;
 }
 
 const luckysheetPivotTableHTML = function() {
@@ -803,803 +817,464 @@ const luckysheetToolHTML = '<div id="luckysheet-tooltip-up" class="jfk-tooltip" 
 function menuToolBar() {
     const toolbar = locale().toolbar;
     const fontarray = locale().fontarray;
+    const defaultFmtArray = locale().defaultFmt;
 
-    let html = '';
-    for (let index = 0; index < weConfigsetting.toolbars.length; index++) {
-        switch (weConfigsetting.toolbars[index]) {
-            case 'undo':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.undo}"
-                id="luckysheet-icon-undo" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-undo iconfont icon-qianjin"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'redo':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.redo}"
-                id="luckysheet-icon-redo" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-redo iconfont icon-houtui"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'paintformat':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.paintFormat}"
-                id="luckysheet-icon-paintformat" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont icon-geshishua"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'currency':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.currencyFormat}"
-                id="luckysheet-icon-currency" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont icon-jine"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'percent':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.percentageFormat}"
-                id="luckysheet-icon-percent" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont icon-baifenhao"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'fmt-decimal-decrease':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.numberDecrease}"
-                id="luckysheet-icon-fmt-decimal-decrease" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
-                            style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-decrease iconfont icon-jianxiaoxiaoshuwei"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'fmt-decimal-increase':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.numberIncrease}"
-                id="luckysheet-icon-fmt-decimal-increase" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
-                            style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-increase iconfont icon-zengjiaxiaoshuwei"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'fmt-other':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.moreFormats}"
-                id="luckysheet-icon-fmt-other" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                123
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'font-family':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tooltip="${toolbar.font}" id="luckysheet-icon-font-family" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                ${fontarray[0]}
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'font-size':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-zoom-combobox luckysheet-toolbar-combo-button luckysheet-inline-block"
-                data-tips="${toolbar.fontSize}" id="luckysheet-icon-font-size" style="user-select: none;">
-                    <div class="luckysheet-toolbar-combo-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-combo-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div aria-posinset="4" aria-setsize="7" class="luckysheet-inline-block luckysheet-toolbar-combo-button-caption"
-                            style="user-select: none;">
-                                <input aria-label="${toolbar.fontSize}" class="luckysheet-toolbar-combo-button-input luckysheet-toolbar-textinput"
-                                role="combobox" style="user-select: none;" tabindex="-1" type="text" value="10"
-                                />
-                            </div>
-                            <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'bold':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.bold}"
-                id="luckysheet-icon-bold" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-bold iconfont icon-jiacu"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'italic':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.italic}"
-                id="luckysheet-icon-italic" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-italic iconfont icon-wenbenqingxie1"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'strikethrough':
-                html += `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.strikethrough}"
-                id="luckysheet-icon-strikethrough" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-strikethrough iconfont icon-wenbenshanchuxian"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'text-color':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-text-color"
-                data-tips="${toolbar.textColor}" id="luckysheet-icon-text-color" role="button" style="user-select: none;" color="#000000">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-color-menu-button-indicator" style="border-bottom-color: rgb(0, 0, 0); user-select: none;">
-                                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                        <div class="text-color-bar"></div>
-                                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-text-color iconfont icon-wenbenyanse"
-                                        style="user-select: none;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.chooseColor}..." id="luckysheet-icon-text-color-menu" role="button"
+    // <!-- undo -->
+    return `<div class="luckysheet-toolbar-left-theme">
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.undo}"
+        id="luckysheet-icon-undo" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-undo iconfont icon-qianjin"
                         style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'cell-color':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-cell-color"
-                data-tips="${toolbar.fillColor}" id="luckysheet-icon-cell-color" role="button" style="user-select: none;" color="#ffffff">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-color-menu-button-indicator" style="border-bottom-color: rgb(255, 255, 255); user-select: none;">
-                                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                        <div class="text-color-bar"></div>
-                                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-cell-color iconfont icon-tianchong"
-                                        style="user-select: none;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.chooseColor}..." id="luckysheet-icon-cell-color-menu" role="button"
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.redo}"
+        id="luckysheet-icon-redo" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-redo iconfont icon-houtui"
                         style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'border':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-border-all"
-                data-tips="${toolbar.border}" id="luckysheet-icon-border-all" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-all iconfont icon-quanjiabiankuang"
-                                style="user-select: none;">
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.borderStyle}..." id="luckysheet-icon-border-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.paintFormat}"
+        id="luckysheet-icon-paintformat" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont icon-geshishua"
                         style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'merge':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-merge-button"
-                data-tips="${toolbar.mergeCell}" id="luckysheet-icon-merge-button" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-merge iconfont icon-hebing"
-                                style="user-select: none;">
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.chooseMergeType}..." id="luckysheet-icon-merge-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+            </div>
+        </div>
+        <!--<div class="luckysheet-toolbar-separator luckysheet-inline-block"
+        style="user-select: none;"> </div> <div class="luckysheet-toolbar-zoom-combobox luckysheet-toolbar-combo-button luckysheet-inline-block" data-tips="缩放" id="luckysheet-icon-zoom" style="user-select: none;"> <div class="luckysheet-toolbar-combo-button-outer-box luckysheet-inline-block" style="user-select: none;"> <div class="luckysheet-toolbar-combo-button-inner-box luckysheet-inline-block" style="user-select: none;"> <div aria-posinset="4" aria-setsize="7" class="luckysheet-inline-block luckysheet-toolbar-combo-button-caption" style="user-select: none;"> <input aria-label="缩放比例" class="luckysheet-toolbar-combo-button-input luckysheet-toolbar-textinput luckysheet-mousedown-cancel" role="combobox" style="user-select: none;" tabindex="-1" type="text" value="100%"/> </div> <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block " style="user-select: none;"> </div> </div> </div> </div> -->
+        <div id="toolbar-separator-paint-format" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.currencyFormat}"
+        id="luckysheet-icon-currency" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont icon-jine"
                         style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'align':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-align"
-                data-tips="${toolbar.horizontalAlign}" id="luckysheet-icon-align" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont icon-wenbenzuoduiqi"
-                                    style="user-select: none;">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.alignment}..." id="luckysheet-icon-align-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.percentageFormat}"
+        id="luckysheet-icon-percent" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont icon-baifenhao"
                         style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'valign':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-valign"
-                data-tips="${toolbar.verticalAlign}" id="luckysheet-icon-valign" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-bottom iconfont icon-dibuduiqi"
-                                    style="user-select: none;">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.alignment}..." id="luckysheet-icon-valign-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.numberDecrease}"
+        id="luckysheet-icon-fmt-decimal-decrease" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
                     style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-decrease iconfont icon-jianxiaoxiaoshuwei"
                         style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'textwrap':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-textwrap"
-                data-tips="${toolbar.textWrap}" id="luckysheet-icon-textwrap" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont icon-jieduan"
-                                    style="user-select: none;">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.textWrapMode}..." id="luckysheet-icon-textwrap-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.numberIncrease}"
+        id="luckysheet-icon-fmt-decimal-increase" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
                     style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-increase iconfont icon-zengjiaxiaoshuwei"
                         style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'rotation':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-rotation"
-                data-tips="${toolbar.textRotate}" id="luckysheet-icon-rotation" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-wuxuanzhuang"
-                                    style="user-select: none;">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.textRotateMode}..." id="luckysheet-icon-rotation-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.moreFormats}"
+        id="luckysheet-icon-fmt-other" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
+                        ${defaultFmtArray[0].text}
                     </div>
-                </div>`;
-                break;
-            case 'insert-img':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-                data-tips="${toolbar.insertImage}" id="luckysheet-insertImg-btn-title" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
                     style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-tupian"
-                                    style="user-select: none;">
-                                        <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'chart':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-                data-tips="${toolbar.chart}" id="luckysheet-chart-btn-title" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-tubiao"
-                                    style="user-select: none;">
-                                        <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'postil':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.postil}"
-                id="luckysheet-icon-postil" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon-img-container luckysheet-toolbar-menu-button-caption luckysheet-inline-block iconfont icon-zhushi"
-                            style="user-select: none;">
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'pivot':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-                data-tips="${toolbar.pivotTable}" id="luckysheet-pivot-btn-title" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-shujutoushi"
-                                    style="user-select: none;">
-                                        <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'function':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-function"
-                data-tips="${toolbar.autoSum}" id="luckysheet-icon-function" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-function iconfont icon-jisuan"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                ${toolbar.sum}
-                            </div>
-                        </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.moreFunction}..." id="luckysheet-icon-function-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            </div>
+        </div>
+        <div id="toolbar-separator-more-format" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tooltip="${toolbar.font}" id="luckysheet-icon-font-family" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
+                        ${fontarray[0]}
                     </div>
-                </div>`;
-                break;
-            case 'freezen':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-freezen-btn-horizontal"
-                data-tips="${toolbar.freezeTopRow}" id="luckysheet-freezen-btn-horizontal" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
                     style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-dongjie1"
-                                    style="user-select: none;">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
                     </div>
                 </div>
-                <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-                data-tips="${toolbar.moreOptions}..." id="luckysheet-icon-freezen-menu" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'filter':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.sortAndFilter}"
-                id="luckysheet-icon-autofilter" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-shaixuan"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;margin-left: 0px;margin-right: 4px;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'condition-format':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.conditionalFormat}"
-                id="luckysheet-icon-conditionformat" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-geshitiaojian"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'split-column':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-                data-tips="${toolbar.splitColumn}" id="luckysheet-splitColumn-btn-title" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-wenbenfenge"
-                                    style="user-select: none;">
-                                        <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'screenshot':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-                data-tips="${toolbar.screenshot}" id="luckysheet-chart-btn-screenshot" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-jieping"
-                                    style="user-select: none;">
-                                        <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'search-more':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.findAndReplace}"
-                id="luckysheet-icon-seachmore" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-        
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-sousuo"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;margin-left: 0px;margin-right: 4px;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'protection':
-                html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-                data-tips="${toolbar.protection}" id="luckysheet-icon-protection" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                            style="user-select: none;">
-                                <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                    <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-biaogesuoding"
-                                    style="user-select: none;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case 'print':
-                html += `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.print}"
-                id="luckysheet-icon-print" role="button" style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-                    style="user-select: none;">
-                        <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                        style="user-select: none;">
-                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-dayin"
-                                style="user-select: none;">
-                                </div>
-                            </div>
-                            <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
-                            style="user-select: none;margin-left: 0px;margin-right: 4px;">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                break;
-            case '----------':
-                // html += `<div class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-                break;
-        }
+            </div>
+        </div>
 
-        if (index != 0) {
-            let prev = weConfigsetting.toolbars[index - 1],
-                cur = weConfigsetting.toolbars[index];
-            if (prev === 'paintformat' && cur === '----------') {
-                html += `<div id="toolbar-separator-paint-format" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (prev === 'fmt-other' && cur === '----------') {
-                html += `<div id="toolbar-separator-more-format" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (prev === 'font-family' && cur === '----------') {
-                html += `<div id="toolbar-separator-font-family" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (prev === 'font-size' && cur === '----------') {
-                html += `<div id="toolbar-separator-font-size" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (prev === 'text-color' && cur === '----------') {
-                html += `<div id="toolbar-separator-text-color" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (prev === 'merge' && cur === '----------') {
-                html += `<div id="toolbar-separator-merge-cell" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (prev === 'rotation' && cur === '----------') {
-                html += `<div id="toolbar-separator-text-rotate" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (prev === 'pivot' && cur === '----------') {
-                html += `<div id="toolbar-separator-pivot-table" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            } else if (cur === '----------') {
-                html += `<div class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;"></div>`;
-            }
-        }
-    }
-
-
-    if (weConfigsetting.toolbars.findIndex(x => x == 'data-verification') == -1) {
-        html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block d-none"
-            data-tips="${toolbar.dataVerification}" id="luckysheet-dataVerification-btn-title" role="button" style="user-select: none;">`;
-    } else {
-        html += `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
-        data-tips="${toolbar.dataVerification}" id="luckysheet-dataVerification-btn-title" role="button" style="user-select: none;">`;
-    }
-
-    html += `<div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block" style="user-select: none;">
+        <div id="toolbar-separator-font-family" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-zoom-combobox luckysheet-toolbar-combo-button luckysheet-inline-block"
+        data-tips="${toolbar.fontSize}" id="luckysheet-icon-font-size" style="user-select: none;">
+            <div class="luckysheet-toolbar-combo-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-combo-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div aria-posinset="4" aria-setsize="7" class="luckysheet-inline-block luckysheet-toolbar-combo-button-caption"
+                    style="user-select: none;">
+                        <input aria-label="${toolbar.fontSize}" class="luckysheet-toolbar-combo-button-input luckysheet-toolbar-textinput"
+                        role="combobox" style="user-select: none;" tabindex="-1" type="text" value="10"
+                        />
+                    </div>
+                    <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="toolbar-separator-font-size" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.bold}"
+        id="luckysheet-icon-bold" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-bold iconfont icon-jiacu"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.italic}"
+        id="luckysheet-icon-italic" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-italic iconfont icon-wenbenqingxie1"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.strikethrough}"
+        id="luckysheet-icon-strikethrough" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-strikethrough iconfont icon-wenbenshanchuxian"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-text-color"
+        data-tips="${toolbar.textColor}" id="luckysheet-icon-text-color" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-color-menu-button-indicator" style="border-bottom-color: rgb(0, 0, 0); user-select: none;">
+                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                                <div class="text-color-bar"></div>
+                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-text-color iconfont icon-wenbenyanse"
+                                style="user-select: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.chooseColor}..." id="luckysheet-icon-text-color-menu" role="button"
+        style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="toolbar-separator-text-color" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-cell-color"
+        data-tips="${toolbar.fillColor}" id="luckysheet-icon-cell-color" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-color-menu-button-indicator" style="border-bottom-color: rgb(255, 255, 255); user-select: none;">
+                            <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                                <div class="text-color-bar"></div>
+                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-cell-color iconfont icon-tianchong"
+                                style="user-select: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.chooseColor}..." id="luckysheet-icon-cell-color-menu" role="button"
+        style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-border-all"
+        data-tips="${toolbar.border}" id="luckysheet-icon-border-all" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-all iconfont icon-quanjiabiankuang"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.borderStyle}..." id="luckysheet-icon-border-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-merge-button"
+        data-tips="${toolbar.mergeCell}" id="luckysheet-icon-merge-button" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-merge iconfont icon-hebing"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.chooseMergeType}..." id="luckysheet-icon-merge-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="toolbar-separator-merge-cell" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-align"
+        data-tips="${toolbar.horizontalAlign}" id="luckysheet-icon-align" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-shujuyanzheng"
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont icon-wenbenzuoduiqi"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.alignment}..." id="luckysheet-icon-align-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-valign"
+        data-tips="${toolbar.verticalAlign}" id="luckysheet-icon-valign" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-bottom iconfont icon-dibuduiqi"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.alignment}..." id="luckysheet-icon-valign-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-textwrap"
+        data-tips="${toolbar.textWrap}" id="luckysheet-icon-textwrap" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont icon-jieduan"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.textWrapMode}..." id="luckysheet-icon-textwrap-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-rotation"
+        data-tips="${toolbar.textRotate}" id="luckysheet-icon-rotation" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-wuxuanzhuang"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.textRotateMode}..." id="luckysheet-icon-rotation-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="toolbar-separator-text-rotate" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.insertImage}" id="luckysheet-insertImg-btn-title" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-tupian"
                             style="user-select: none;">
                                 <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
                             </div>
@@ -1607,15 +1282,285 @@ function menuToolBar() {
                     </div>
                 </div>
             </div>
-        </div>`;
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.insertLink}" id="luckysheet-insertLink-btn-title" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-lianjie"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.chart}" id="luckysheet-chart-btn-title" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-tubiao"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.postil}"
+        id="luckysheet-icon-postil" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon-img-container luckysheet-toolbar-menu-button-caption luckysheet-inline-block iconfont icon-zhushi"
+                    style="user-select: none;">
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.pivotTable}" id="luckysheet-pivot-btn-title" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-shujutoushi"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>       
+        <div id="toolbar-separator-pivot-table" class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-function"
+        data-tips="${toolbar.autoSum}" id="luckysheet-icon-function" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-function iconfont icon-jisuan"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        ${toolbar.sum}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.moreFunction}..." id="luckysheet-icon-function-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-freezen-btn-horizontal"
+        data-tips="${toolbar.freezeTopRow}" id="luckysheet-freezen-btn-horizontal" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-dongjie1"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.moreOptions}..." id="luckysheet-icon-freezen-menu" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.sortAndFilter}"
+        id="luckysheet-icon-autofilter" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-shaixuan"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;margin-left: 0px;margin-right: 4px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.conditionalFormat}"
+        id="luckysheet-icon-conditionformat" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-geshitiaojian"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.dataVerification}" id="luckysheet-dataVerification-btn-title" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-shujuyanzheng"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.splitColumn}" id="luckysheet-splitColumn-btn-title" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-wenbenfenge"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.screenshot}" id="luckysheet-chart-btn-screenshot" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-jieping"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.findAndReplace}"
+        id="luckysheet-icon-seachmore" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
 
-    return html;
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-sousuo"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;margin-left: 0px;margin-right: 4px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
+        data-tips="${toolbar.protection}" id="luckysheet-icon-protection" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont icon-biaogesuoding"
+                            style="user-select: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.print}"
+        id="luckysheet-icon-print" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont icon-dayin"
+                        style="user-select: none;">
+                        </div>
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont icon-xiayige"
+                    style="user-select: none;margin-left: 0px;margin-right: 4px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
 }
 
-const luckysheetlodingHTML = function() {
+const luckysheetlodingHTML = function(isWhite = true) {
         const _locale = locale()
         const info = _locale.info;
-        return '<div id="luckysheetloadingdata" style="width:100%;text-align:center;position:absolute;top:0px;height:100%;font-size: 16px;z-index:1000000000;background:#fff;"><div style="position:relative;top:45%;width:100%;"> <div class="luckysheetLoaderGif"></div>  <span>' + info.loading + '...</span></div></div>';
+        if (isWhite)
+            return '<div id="luckysheetloadingdata" style="width:100%;text-align:center;position:absolute;top:0px;height:100%;font-size: 16px;z-index:1000000000;background:#fff;"></div>';
+        else
+            return '<div id="luckysheetloadingdata" style="width:100%;text-align:center;position:absolute;top:0px;height:100%;font-size: 16px;z-index:1000000000;background:#fff;"><div style="position:relative;top:45%;width:100%;"> <div class="luckysheetLoaderGif"></div>  <span>' + info.loading + '...</span></div></div>';
     }
     // var menusetting = {
     //     menu_selectall: '<div id="luckysheet-selectall-btn-title"><i class="fa fa-i-cursor"></i> 全选</div>',
@@ -1755,6 +1700,66 @@ const iconfontObjects = {
         'rotation-up': ' iconfont icon-wenbenxiangshang',
         'rotation-down': ' iconfont icon-xiangxia90',
     }
+}
+
+/**
+ *单元格右击菜单配置
+ *
+ */
+function customCellRightClickConfig() {
+    const config = {
+        copy: true, // copy
+        copyAs: true, // copy as
+        paste: true, // paste
+        insertRow: true, // insert row
+        insertColumn: true, // insert column
+        deleteRow: true, // delete the selected row
+        deleteColumn: true, // delete the selected column
+        deleteCell: true, // delete cell
+        hideRow: true, // hide the selected row and display the selected row
+        hideColumn: true, // hide the selected column and display the selected column
+        rowHeight: true, // row height
+        columnWidth: true, // column width
+        clear: true, // clear content
+        matrix: true, // matrix operation selection
+        sort: true, // sort selection
+        filter: true, // filter selection
+        chart: true, // chart generation
+        image: true, // insert picture
+        link: true, // insert link
+        data: true, // data verification
+        cellFormat: true // Set cell format
+    }
+
+    // cellRightClickConfig determines the final result
+    if (JSON.stringify(luckysheetConfigsetting.cellRightClickConfig) !== '{}') {
+        Object.assign(config, luckysheetConfigsetting.cellRightClickConfig);
+    }
+    // console.info('=======cellRightClickConfig======'),
+    luckysheetConfigsetting.cellRightClickConfig = config;
+    return config;
+}
+
+/**
+ *sheet页右击菜单配置
+ *
+ */
+function customSheetRightClickConfig() {
+    const config = {
+        delete: true, //Delete
+        copy: true, //Copy
+        rename: true, //Rename
+        color: true, //Change color
+        hide: true, //Hide, unhide
+        move: true, //Move to the left, move to the right
+    }
+
+    // sheetRightClickConfig determines the final result
+    if (JSON.stringify(luckysheetConfigsetting.sheetRightClickConfig) !== '{}') {
+        Object.assign(config, luckysheetConfigsetting.sheetRightClickConfig);
+    }
+    luckysheetConfigsetting.sheetRightClickConfig = config;
+    return config;
 }
 
 export {

@@ -49,6 +49,15 @@ luckysheet = common_extend(api,luckysheet);
 
 //创建luckysheet表格
 luckysheet.create = function (setting) {
+
+    // Store original parameters for api: toJson
+    Store.toJsonOptions = {}
+    for(let c in setting){
+        if(c !== 'data'){
+            Store.toJsonOptions[c] = setting[c];
+        }
+    }
+
     let extendsetting = common_extend(defaultSetting, setting);
 
     let loadurl = extendsetting.loadUrl,
@@ -64,7 +73,6 @@ luckysheet.create = function (setting) {
     Store.lang = extendsetting.lang; //language
     Store.allowEdit = extendsetting.allowEdit;
     Store.fontList = extendsetting.fontList;
-    Store.defaultFontSize = extendsetting.defaultFontSize;
     server.gridKey = extendsetting.gridKey;
     server.loadUrl = extendsetting.loadUrl;
     server.updateUrl = extendsetting.updateUrl;
@@ -79,10 +87,16 @@ luckysheet.create = function (setting) {
 
     luckysheetConfigsetting.allowCopy = extendsetting.allowCopy;
     luckysheetConfigsetting.showtoolbar = extendsetting.showtoolbar;
+    luckysheetConfigsetting.showtoolbarConfig = extendsetting.showtoolbarConfig;
     luckysheetConfigsetting.showinfobar = extendsetting.showinfobar;
     luckysheetConfigsetting.showformulabar = extendsetting.showformulabar;
     luckysheetConfigsetting.showsheetbar = extendsetting.showsheetbar;
+    luckysheetConfigsetting.showsheetbarConfig = extendsetting.showsheetbarConfig;
     luckysheetConfigsetting.showstatisticBar = extendsetting.showstatisticBar;
+    luckysheetConfigsetting.showstatisticBarConfig = extendsetting.showstatisticBarConfig;
+    luckysheetConfigsetting.sheetFormulaBar = extendsetting.sheetFormulaBar;
+    luckysheetConfigsetting.cellRightClickConfig = extendsetting.cellRightClickConfig;
+    luckysheetConfigsetting.sheetRightClickConfig = extendsetting.sheetRightClickConfig;
     luckysheetConfigsetting.pointEdit = extendsetting.pointEdit;
     luckysheetConfigsetting.pointEditUpdate = extendsetting.pointEditUpdate;
     luckysheetConfigsetting.pointEditZoom = extendsetting.pointEditZoom;
@@ -94,7 +108,7 @@ luckysheet.create = function (setting) {
 
     luckysheetConfigsetting.showConfigWindowResize = extendsetting.showConfigWindowResize;
     luckysheetConfigsetting.enableAddRow = extendsetting.enableAddRow;
-    luckysheetConfigsetting.enableAddCol = extendsetting.enableAddCol;
+    luckysheetConfigsetting.enableAddBackTop = extendsetting.enableAddBackTop;
     luckysheetConfigsetting.enablePage = extendsetting.enablePage;
     luckysheetConfigsetting.pageInfo = extendsetting.pageInfo;
 
@@ -108,15 +122,14 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.plugins = extendsetting.plugins;
 
     luckysheetConfigsetting.rowHeaderWidth = extendsetting.rowHeaderWidth;
-    Store.rowHeaderWidth = extendsetting.rowHeaderWidth;
-    luckysheetConfigsetting.columeHeaderHeight = extendsetting.columeHeaderHeight;
-    Store.columeHeaderHeight = extendsetting.columeHeaderHeight;
+    luckysheetConfigsetting.columnHeaderHeight = extendsetting.columnHeaderHeight;
 
     luckysheetConfigsetting.defaultColWidth = extendsetting.defaultColWidth;
     luckysheetConfigsetting.defaultRowHeight = extendsetting.defaultRowHeight;
 
     luckysheetConfigsetting.title = extendsetting.title;
     luckysheetConfigsetting.container = extendsetting.container;
+    luckysheetConfigsetting.hook = extendsetting.hook;
 
     // [TK] custom
     weCore.setConfig(extendsetting);

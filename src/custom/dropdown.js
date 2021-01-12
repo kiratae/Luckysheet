@@ -1,25 +1,38 @@
+import Store from '../store';
 import { getUUID, Log } from './utils';
+import { getSheetIndex, getRangetxt } from '../methods/get';
+
+let weDropdownCtrlLogger = new Log("weDropdownCtrl");
 
 const weDropdownCtrl = {
-    log: new Log("weDropdownCtrl"),
-    dropdownStorage: [],
+    dropdownDatas: [],
+    init: function() {
+        const func = 'init';
+        weDropdownCtrlLogger.info(func, 'has been called.');
+    },
     getList: function() {
-        return this.dropdownStorage.slice();
+        if (this.dropdownDatas) {
+            return this.dropdownDatas.slice();
+        } else {
+            return [];
+        }
     },
     getData: function(id) {
-        return this.dropdownStorage.find(item => item.id === id);
+        return this.dropdownDatas.find(item => item.formMDGroupId == id);
     },
     saveData: function(data) {
-        if (!data.id) {
+        if (!data.formMDGroupId) {
             // insert
-            data.id = getUUID();
-            this.dropdownStorage.push(data);
+            data.formMDGroupId = getUUID();
+            this.dropdownDatas.push(data);
+            Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdownDatas"] = this.dropdownDatas;
             return data;
         } else {
             // update
-            let index = this.dropdownStorage.findIndex(item => item === id);
+            let index = this.dropdownDatas.findIndex(item => item.formMDGroupId === data.formMDGroupId);
             if (index >= 0) {
-                delete this.dropdownStorage[index];
+                this.dropdownDatas[index] = data;
+                Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdownDatas"] = this.dropdownDatas;
                 return data;
             }
         }
@@ -27,15 +40,16 @@ const weDropdownCtrl = {
     deteleData: function(id) {
         const func = 'deteleData';
         try {
-            let index = this.dropdownStorage.findIndex(item => item === id);
+            let index = this.dropdownDatas.findIndex(item => item.formMDGroupId === id);
             if (index >= 0) {
-                delete this.dropdownStorage[index];
+                delete this.dropdownDatas[index];
+                Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdownDatas"] = this.dropdownDatas;
                 return true;
             } else {
                 return false;
             }
         } catch (error) {
-            this.log.error(func, `with id "${id}"`);
+            weDropdownCtrlLogger.error(func, `with FormMDGroupId "${id}"`);
         }
     }
 }

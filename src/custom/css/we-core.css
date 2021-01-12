@@ -1,0 +1,56 @@
+/* cellValidaiton */
+
+#luckysheet-cellValidation-dropdown-btn {
+    display: none;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 10;
+    overflow: hidden;
+}
+
+#luckysheet-cellValidation-dropdown-btn::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: url(arrow-down.png) center no-repeat;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -5px;
+    margin-top: -5px;
+}
+
+#luckysheet-cellValidation-dropdown-List {
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+#luckysheet-cellValidation-dropdown-List .dropdown-List-item {
+    padding: 5px 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+#luckysheet-cellValidation-dropdown-List .dropdown-List-item:hover {
+    background-color: #E1E1E1;
+}
+
+#luckysheet-cellError-showErrorMsg {
+    display: none;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    z-index: 1000;
+    user-select: none;
+    cursor: default;
+    white-space: nowrap;
+}

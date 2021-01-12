@@ -40,10 +40,16 @@ const uglifyOptions = {
 const babelConfig = {
     babelHelpers: 'bundled',
     exclude: 'node_modules/**', // Only compile our source code
-    plugins: [
-    ],
+    plugins: [],
     presets: [
-        '@babel/preset-env'
+        ['@babel/preset-env', {
+            useBuiltIns: 'usage',
+            corejs: 3,
+            targets: {
+                chrome: 58,
+                ie: 11
+            }
+        }]
     ]
 };
 
@@ -76,7 +82,7 @@ const paths = {
         'src/plugins/jquery-ui.min.css',
         'src/plugins/jquery-ui.theme.min.css',
     ],
-    css: ['src/css/*.css'],
+    css: ['src/css/*.css', 'src/custom/css/*.css'],
     pluginsJs: [
         'src/plugins/js/clipboard.min.js',
         'src/plugins/js/spectrum.min.js',
@@ -191,7 +197,7 @@ async function core() {
             format: 'esm',
             name: 'luckysheet',
             sourcemap: true,
-            inlineDynamicImports:true,
+            inlineDynamicImports: true,
         });
     }
 
@@ -232,26 +238,32 @@ function copyStaticHtml() {
     return src(paths.staticHtml)
         .pipe(dest(paths.destStaticHtml));
 }
+
 function copyStaticFonts() {
     return src(paths.staticFonts)
         .pipe(dest(paths.destStaticFonts));
 }
+
 function copyStaticAssets() {
     return src(paths.staticAssets)
         .pipe(dest(paths.destStaticAssets));
 }
+
 function copyStaticImages() {
     return src(paths.staticImages)
         .pipe(dest(paths.destStaticImages));
 }
+
 function copyStaticExpendPlugins() {
     return src(paths.staticExpendPlugins)
         .pipe(dest(paths.destStaticExpendPlugins));
 }
+
 function copyStaticDemoData() {
     return src(paths.staticDemoData)
         .pipe(dest(paths.destStaticDemoData));
 }
+
 function copyStaticCssImages() {
     return src(paths.staticCssImages)
         .pipe(dest(paths.destStaticCssImages));

@@ -15,10 +15,10 @@ export default {
     pointEditUpdate: null, //编辑器表格更新函数
     pointEditZoom: 1, //编辑器表格编辑时缩放比例
     // menu: "undo|redo|freezenrow|freezencolumn|download|share|chart|pivot",
-    data: [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index":0 }, { "name": "Sheet2", color: "", "status": "0", "order": "1", "data": [], "config": {}, "index":1  }, { "name": "Sheet3", color: "", "status": "0", "order": "2", "data": [], "config": {}, "index":2  }], //客户端sheet数据[shee1, sheet2, sheet3]
+    data: [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index": 0 }, { "name": "Sheet2", color: "", "status": "0", "order": "1", "data": [], "config": {}, "index": 1 }, { "name": "Sheet3", color: "", "status": "0", "order": "2", "data": [], "config": {}, "index": 2 }], //客户端sheet数据[shee1, sheet2, sheet3]
     title: "Luckysheet Demo", //表格的名称
     userInfo: '<i style="font-size:16px;color:#ff6a00;" class="fa fa-taxi" aria-hidden="true"></i> rabbit', //右上角的用户信息展示样式
-    userMenuItem: [{url:"www.baidu.com", "icon":'<i class="fa fa-folder" aria-hidden="true"></i>', "name":"我的表格"}, {url:"www.baidu.com", "icon":'<i class="fa fa-sign-out" aria-hidden="true"></i>', "name":"退出登陆"}], //点击右上角的用户信息弹出的菜单
+    userMenuItem: [{ url: "www.baidu.com", "icon": '<i class="fa fa-folder" aria-hidden="true"></i>', "name": "我的表格" }, { url: "www.baidu.com", "icon": '<i class="fa fa-sign-out" aria-hidden="true"></i>', "name": "退出登陆" }], //点击右上角的用户信息弹出的菜单
     myFolderUrl: "www.baidu.com", //左上角<返回按钮的链接
     config: {}, //表格行高、列宽、合并单元格、公式等设置
     fullscreenmode: true, //是否全屏模式，非全屏模式下，标记框不会强制选中。
@@ -32,94 +32,38 @@ export default {
     allowUpdate: false, //是否允许编辑后的后台更新
     functionButton: "", //右上角功能按钮，例如'<button id="" class="btn btn-primary" style="padding:3px 6px;font-size: 12px;margin-right: 10px;">下载</button>    <button id="" class="btn btn-primary btn-danger" style="    padding:3px 6px;    font-size: 12px;    margin-right: 10px;">分享</button>    <button id="luckysheet-share-btn-title" class="btn btn-primary btn-danger" style="    padding:3px 6px;    font-size: 12px;    margin-right: 10px;">秀数据</button>'
     showConfigWindowResize: true, //图表和数据透视表的配置会在右侧弹出，设置弹出后表格是否会自动缩进
-    enableAddRow: true,//允许增加行
-    enableAddCol: true,//允许增加列
-    enablePage: false,//允许加载下一页
-    autoFormatw: false,  //自动格式化超过4位数的数字为 亿万格式 例：true or "true" or "TRUE"
-    accuracy: undefined,  //设置传输来的数值的精确位数，小数点后n位 传参数为数字或数字字符串，例： "0" 或 0
-    pageInfo:{
-        'queryExps':'',
-        'reportId':'',
-        'fields':'',
-        'mobile':'',
-        'frezon':'',
-        'currentPage':'',
-        "totalPage":10,
-        "pageUrl":"",
+    enableAddRow: true, //允许添加行
+    enableAddBackTop: true, //允许回到顶部
+    // enablePage: false,//允许加载下一页
+    autoFormatw: false, //自动格式化超过4位数的数字为 亿万格式 例：true or "true" or "TRUE"
+    accuracy: undefined, //设置传输来的数值的精确位数，小数点后n位 传参数为数字或数字字符串，例： "0" 或 0
+    pageInfo: {
+        'queryExps': '',
+        'reportId': '',
+        'fields': '',
+        'mobile': '',
+        'frezon': '',
+        'currentPage': '',
+        "totalPage": 10,
+        "pageUrl": "",
     },
     editMode: false, //是否为编辑模式
-    beforeCreateDom: null,//表格创建之前的方法
+    beforeCreateDom: null, //表格创建之前的方法
     fireMousedown: null, //Cell data drill down
     lang: 'en', //language
     plugins: [], //plugins, e.g. ['chart']
-    forceCalculation:false,//强制刷新公式，公式较多会有性能问题，慎用
+    forceCalculation: false, //强制刷新公式，公式较多会有性能问题，慎用
     rowHeaderWidth: 46,
-    columeHeaderHeight: 20,
-    defaultColWidth:73,
-    defaultRowHeight:19,
+    columnHeaderHeight: 20,
+    defaultColWidth: 73,
+    defaultRowHeight: 19,
 
-    // [TK] custom config (prefix is "luckysheet-icon-") '----------' = seperator
-    toolbars: [
-        'undo', // icon-undo
-        'redo', // icon-redo
-        'paintformat', // icon-paintformat
-        '----------',
-        'currency', // icon-currency
-        'percent', // icon-percent
-        'fmt-decimal-decrease', // icon-fmt-decimal-decrease
-        'fmt-decimal-increase', // icon-fmt-decimal-increase
-        'fmt-other', // icon-fmt-other
-        '----------', 
-        'font-family', // icon-font-family
-        '----------', 
-        'font-size', // icon-font-size
-        '----------',
-        'bold', // icon-bold
-        'italic', // icon-italic
-        'strikethrough', // icon-strikethrough
-        'text-color', // icon-text-color && icon-text-color-menu
-        '----------',
-        'cell-color', // icon-cell-color && icon-cell-color-menu
-        'border', // icon-border-all && icon-border-menu
-        'merge', // icon-merge-button && icon-merge-menu
-        '----------',
-        'align', // icon-align && icon-align-menu
-        'valign', // icon-valign && icon-valign-menu
-        'textwrap', // icon-textwrap && icon-textwrap-menu
-        'rotation', // icon-rotation && icon-rotation-menu
-        '----------',
-        // prefix is "luckysheet-"
-        'insert-img', // insertImg-btn-title
-        'chart', // chart-btn-title
-        'postil', // icon-postil
-        'pivot',  // 'pivot-btn-title
-        '----------',
-        'function', // icon-function && icon-function-menu
-        'freezen', // freezen-btn-horizontal && icon-freezen-menu,
-        'auto-filter', // icon-autofilter
-        'condition-format', // icon-conditionformat
-        'data-verification', // dataVerification-btn-title
-        'split-column', // splitColumn-btn-title
-        'chart', // chart-btn-screenshot
-        'search-more', // icon-seachmore
-        'protection',
-        'print'
-    ],
-    contextMenus: [
-        'copy',
-        'copy-as',
-        'paste',
-        'handle=insert|delete|hide|delete-cell',
-        'insert=above&left|below&right|delete-selected|height&width',
-        'ordering=asc|desc',
-        'data=clear|matrix|sort|filter|chart|image|data-validation',
-    ],
-    formEditor: true,
-    formApi: null,
-    // [TK] custom hooks
-    onCellMouseDown: function(row, col, cell){
-        console.log('onCellMouseDown', row, col, cell);
-    },
+    defaultFontSize: 10,
 
-    defaultFontSize:10,
+    sheetFormulaBar: true, //是否显示公式栏
+    showtoolbarConfig: {}, //自定义工具栏
+    showsheetbarConfig: {}, //自定义底部sheet页
+    showstatisticBarConfig: {}, //自定义计数栏
+    cellRightClickConfig: {}, //自定义单元格右键菜单
+    sheetRightClickConfig: {}, //自定义底部sheet页右击菜单
 }

@@ -984,9 +984,9 @@
 }
 
 .luckysheet-sta-c .luckysheet-sta-content {
-    position: absolute;
-    left: 0px;
-    right: 358px;
+    /* position: absolute; */
+    /* left: 0px; */
+    /* right: 358px; */
     height: 22px;
     line-height: 22px;
     text-align: right;
@@ -1062,7 +1062,9 @@ div.luckysheet-sheets-m:hover {
     top: 0;
     width: 6px;
     height: 100%;
-    z-index: 1005;
+    /* z-index: 1005; */
+    z-index: 1;
+    /*因为会覆盖右击菜单，改为1*/
 }
 
 .docs-sheet-fade div {
@@ -4807,7 +4809,7 @@ fieldset[disabled] .btn-danger.focus {
     color: #535353;
     font-size: 12px;
     background: #fff;
-    z-index: 1003;
+    z-index: 1053;
     width: 300px;
     display: none;
 }
@@ -4948,7 +4950,8 @@ fieldset[disabled] .btn-danger.focus {
     -moz-transform: translate(-50%, -100%);
     -o-transform: translate(-50%, -100%);
     transform: translate(-50%, -100%);
-    background-image: url(loading.gif);
+    /* [TK] custom background-image: url(loading.gif); */
+    background-image: url(we-loading.gif);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
@@ -7050,6 +7053,56 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 
+/* 单元格日期选择 */
+
+.cell-date-picker {
+    position: absolute;
+    display: none;
+}
+
+
+/* 插入链接 */
+
+#luckysheet-insertLink-dialog {
+    user-select: none;
+}
+
+#luckysheet-insertLink-dialog .box {
+    font-size: 12px;
+}
+
+#luckysheet-insertLink-dialog .box-item {
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+
+#luckysheet-insertLink-dialog .box-item label {
+    display: inline-block;
+    width: 80px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+#luckysheet-insertLink-dialog .box-item input {
+    width: 200px;
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid #d4d4d4;
+    outline-style: none;
+    box-sizing: border-box;
+}
+
+#luckysheet-insertLink-dialog .box-item select {
+    width: 200px;
+    height: 30px;
+    padding: 0 5px;
+    border: 1px solid #d4d4d4;
+    outline-style: none;
+    box-sizing: border-box;
+}
+
+
 /* 数据验证 */
 
 #luckysheet-dataVerification-dialog {
@@ -7245,19 +7298,6 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 #luckysheet-dataVerification-showHintBox {
-    display: none;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    z-index: 1000;
-    user-select: none;
-    cursor: default;
-    white-space: nowrap;
-}
-
-#luckysheet-cellError-showErrorMsg {
     display: none;
     padding: 10px;
     background-color: #fff;

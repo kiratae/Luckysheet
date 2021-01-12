@@ -1273,7 +1273,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "merge-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
-                $menuButton = $("#" + menuButtonId).width(110);
+                $menuButton = $("#" + menuButtonId).width(125);
                 _this.focus($menuButton);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function() {
@@ -1481,7 +1481,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "textwrap-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
-                $menuButton = $("#" + menuButtonId).width(120);
+                $menuButton = $("#" + menuButtonId).width(205);
                 _this.focus($menuButton, "clip");
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function() {
@@ -1614,7 +1614,7 @@ const menuButton = {
                         if (row_st == -1) {
                             row_st = 0;
                         }
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -1652,7 +1652,7 @@ const menuButton = {
                         if (row_st == -1) {
                             row_st = 0;
                         }
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -1696,7 +1696,7 @@ const menuButton = {
                             row_st = 0;
                         }
 
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -1772,7 +1772,7 @@ const menuButton = {
                             row_st = 0;
                         }
 
-                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columeHeaderHeight;
+                        let top = Store.visibledatarow[row_st] - 2 - scrollTop + Store.columnHeaderHeight;
                         let freezenhorizontaldata = [Store.visibledatarow[row_st], row_st + 1, scrollTop, luckysheetFreezen.cutVolumn(Store.visibledatarow, row_st + 1), top];
                         luckysheetFreezen.saveFreezen(freezenhorizontaldata, top, null, null);
 
@@ -2025,9 +2025,11 @@ const menuButton = {
                     { "text": locale_formula.count, "value": "COUNT", "example": 'COUNT' },
                     { "text": locale_formula.max, "value": "MAX", "example": 'MAX' },
                     { "text": locale_formula.min, "value": "MIN", "example": 'MIN' },
-                    { "text": "", "value": "split", "example": "" },
-                    { "text": locale_formula.ifGenerate, "value": "if", "example": 'IF' },
-                    { "text": locale_formula.find + " ...", "value": "formula", "example": "" }
+                    // [TK] custom disable this feature for now.
+                    // { "text": "", "value": "split", "example": "" },
+                    // { "text": locale_formula.ifGenerate, "value": "if", "example": 'IF' },
+                    // { "text": locale_formula.find + " ...", "value": "formula", "example": "" }
+                    // end [TK] custom
                 ];
 
                 let itemset = _this.createButtonMenu(itemdata);
@@ -2811,7 +2813,7 @@ const menuButton = {
             if (e.type === "mouseover") {
                 let $con = $t.parent();
                 let winW = $(window).width(),
-                    winH = $(window).height();
+                    winH = $('body').height(); // [TK] custom winH = $(window).height();
                 let menuW = $con.width(),
                     attrH = $attr.height() + 25,
                     attrW = $attr.width() + 5;
@@ -2830,6 +2832,7 @@ const menuButton = {
                 $attr.css({ "top": top, "left": left }).show();
                 _this.rightclickmenu = $t;
             } else {
+                clearTimeout(_this.submenuhide);
                 _this.submenuhide = setTimeout(function() { $attr.hide(); }, 200);
             }
         }).on("mouseover mouseleave", ".luckysheet-menuButton-sub", function(e) {
@@ -3936,8 +3939,9 @@ const menuButton = {
         let _this = this;
 
         let f = '=' + formula.toUpperCase() + '(' + getRangetxt(Store.currentSheetIndex, { "row": rowh, "column": columnh }, Store.currentSheetIndex) + ')';
-        let v = luckysheetformula.execfunction(f, r, c);
-        let value = { "v": v[1], "f": v[2] };
+        let tf = weVariable.transformFormula(f); // [TK] custom
+        let v = luckysheetformula.execfunction(tf[0], r, c); // [TK] custom
+        let value = { "v": v[1], "f": v[2], "df": tf[1] };
         setcellvalue(r, c, d, value);
         luckysheetformula.execFunctionExist.push({ "r": r, "c": c, "i": Store.currentSheetIndex });
 

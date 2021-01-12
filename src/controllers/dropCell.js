@@ -13,6 +13,8 @@ import { getSheetIndex } from '../methods/get';
 import { getObjType, replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
+import weVariable from '../custom/variable';
+import weCellValidationCtrl from '../custom/cellvalidation';
 
 //选区下拉
 const luckysheetDropCell = {
@@ -337,7 +339,7 @@ const luckysheetDropCell = {
 
             let left = $(this).offset().left;
             let top = $(this).offset().top + 25;
-            let winH = $(window).height(),
+            let winH = $('body').height(), // [TK] custom $(window).height()
                 winW = $(window).width();
             let menuW = $("#luckysheet-dropCell-typeList").width(),
                 menuH = $("#luckysheet-dropCell-typeList").height();
@@ -424,7 +426,7 @@ const luckysheetDropCell = {
 
         return [hasNumber, hasExtendNumber, hasDate, hasChn, hasChnWeek1, hasChnWeek2, hasChnWeek3];
     },
-    update: function() {
+    update: function(isCopyValue = true) {
         let _this = this;
 
         if (!checkProtectionLockedRangeList([_this.applyRange], Store.currentSheetIndex)) {
@@ -482,42 +484,54 @@ const luckysheetDropCell = {
                     for (let j = apply_str_r; j <= apply_end_r; j++) {
                         let cell = applyData[j - apply_str_r];
 
-                        if (cell.f != null) {
-                            let f = "=" + formula.functionCopy(cell.f, "down", j - apply_str_r + 1);
-                            let v = formula.execfunction(f, j, i);
+                        // [TK] custom -> old; if (cell.f != null) {
+                        if (cell.df != null) {
+                            let f = "=" + formula.functionCopy(cell.df, "down", j - apply_str_r + 1); // [TK] custom
+                            try {
+                                let tf = weVariable.transformFormula(f); // [TK] custom
+                                let v = formula.execfunction(tf[1], j, i);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                                formula.execFunctionGroup(j, i, tf[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                                cell.f = tf[1]; // cell.f = v[2];
+                                cell.df = tf[2]; // [TK] custom
+                                // [TK] custom
+                                if (isCopyValue) {
+                                    cell.v = tf[0]; // cell.v = v[1];
 
-                            if (cell.spl != null) {
-                                cell.spl = v[3].data;
-                            } else {
-                                if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
-                                    if (cell.v == Infinity || cell.v == -Infinity) {
-                                        cell.m = cell.v.toString();
+                                    if (cell.spl != null) {
+                                        cell.spl = v[3].data;
                                     } else {
-                                        if (cell.v.toString().indexOf("e") > -1) {
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if (len > 5) {
-                                                len = 5;
+                                        if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
+                                            if (cell.v == Infinity || cell.v == -Infinity) {
+                                                cell.m = cell.v.toString();
+                                            } else {
+                                                if (cell.v.toString().indexOf("e") > -1) {
+                                                    let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                                                    if (len > 5) {
+                                                        len = 5;
+                                                    }
+
+                                                    cell.m = cell.v.toExponential(len).toString();
+                                                } else {
+                                                    let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                                    cell.m = mask[0].toString();
+                                                }
                                             }
 
-                                            cell.m = cell.v.toExponential(len).toString();
+                                            cell.ct = { "fa": "General", "t": "n" };
                                         } else {
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                            let mask = genarate(cell.v);
                                             cell.m = mask[0].toString();
+                                            cell.ct = mask[1];
                                         }
                                     }
 
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                } else {
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
                                 }
+                            } catch (ex) {
+                                cell.v = ex;
                             }
+                            // end [TK] custom
                         }
 
                         d[j][i] = cell;
@@ -563,7 +577,7 @@ const luckysheetDropCell = {
 
                         // [TK] custom
                         if (cellValidation[bd_r + "_" + bd_c]) {
-                            cellValidation[j + "_" + i] = cellValidation[bd_r + "_" + bd_c];
+                            cellValidation[j + "_" + i] = weCellValidationCtrl.dropCellHandler(cellValidation[bd_r + "_" + bd_c], j, i);
                         }
                     }
                 }
@@ -571,42 +585,53 @@ const luckysheetDropCell = {
                     for (let j = apply_end_r; j >= apply_str_r; j--) {
                         let cell = applyData[apply_end_r - j];
 
-                        if (cell.f != null) {
-                            let f = "=" + formula.functionCopy(cell.f, "up", apply_end_r - j + 1);
-                            let v = formula.execfunction(f, j, i);
+                        // [TK] custom -> old; if (cell.f != null) {
+                        if (cell.df != null) {
+                            let f = "=" + formula.functionCopy(cell.df, "up", apply_end_r - j + 1); // [TK] custom
+                            try {
+                                let tf = weVariable.transformFormula(f); // [TK] custom
+                                let v = formula.execfunction(tf[1], j, i);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                                formula.execFunctionGroup(j, i, tf[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                                cell.f = tf[1]; // cell.f = v[2];
+                                cell.df = tf[2]; // [TK] custom
+                                // [TK] custom
+                                if (isCopyValue) {
+                                    cell.v = tf[0]; // cell.v = v[1];
 
-                            if (cell.spl != null) {
-                                cell.spl = v[3].data;
-                            } else {
-                                if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
-                                    if (cell.v == Infinity || cell.v == -Infinity) {
-                                        cell.m = cell.v.toString();
+                                    if (cell.spl != null) {
+                                        cell.spl = v[3].data;
                                     } else {
-                                        if (cell.v.toString().indexOf("e") > -1) {
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if (len > 5) {
-                                                len = 5;
+                                        if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
+                                            if (cell.v == Infinity || cell.v == -Infinity) {
+                                                cell.m = cell.v.toString();
+                                            } else {
+                                                if (cell.v.toString().indexOf("e") > -1) {
+                                                    let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                                                    if (len > 5) {
+                                                        len = 5;
+                                                    }
+
+                                                    cell.m = cell.v.toExponential(len).toString();
+                                                } else {
+                                                    let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                                    cell.m = mask[0].toString();
+                                                }
                                             }
 
-                                            cell.m = cell.v.toExponential(len).toString();
+                                            cell.ct = { "fa": "General", "t": "n" };
                                         } else {
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                            let mask = genarate(cell.v);
                                             cell.m = mask[0].toString();
+                                            cell.ct = mask[1];
                                         }
                                     }
-
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                } else {
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
                                 }
+                            } catch (ex) {
+                                cell.v = ex;
                             }
+                            // end [TK] custom
                         }
 
                         d[j][i] = cell;
@@ -653,6 +678,7 @@ const luckysheetDropCell = {
                         // [TK] custom
                         if (cellValidation[bd_r + "_" + bd_c]) {
                             cellValidation[j + "_" + i] = cellValidation[bd_r + "_" + bd_c];
+                            weCellValidationCtrl.dropCellHandler(cellValidation[j + "_" + i], j, i);
                         }
                     }
                 }
@@ -669,42 +695,53 @@ const luckysheetDropCell = {
                     for (let j = apply_str_c; j <= apply_end_c; j++) {
                         let cell = applyData[j - apply_str_c];
 
-                        if (cell.f != null) {
-                            let f = "=" + formula.functionCopy(cell.f, "right", j - apply_str_c + 1);
-                            let v = formula.execfunction(f, i, j);
+                        // [TK] custom -> old; if (cell.f != null) {
+                        if (cell.df != null) {
+                            let f = "=" + formula.functionCopy(cell.df, "right", j - apply_str_c + 1); // [TK] custom
+                            try {
+                                let tf = weVariable.transformFormula(f); // [TK] custom
+                                let v = formula.execfunction(tf[1], i, j);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                                formula.execFunctionGroup(j, i, tf[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                                cell.f = tf[1]; // cell.f = v[2];
+                                cell.df = tf[2]; // [TK] custom
+                                // [TK] custom
+                                if (isCopyValue) {
+                                    cell.v = tf[0]; // cell.v = v[1];
 
-                            if (cell.spl != null) {
-                                cell.spl = v[3].data;
-                            } else {
-                                if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
-                                    if (cell.v == Infinity || cell.v == -Infinity) {
-                                        cell.m = cell.v.toString();
+                                    if (cell.spl != null) {
+                                        cell.spl = v[3].data;
                                     } else {
-                                        if (cell.v.toString().indexOf("e") > -1) {
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if (len > 5) {
-                                                len = 5;
+                                        if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
+                                            if (cell.v == Infinity || cell.v == -Infinity) {
+                                                cell.m = cell.v.toString();
+                                            } else {
+                                                if (cell.v.toString().indexOf("e") > -1) {
+                                                    let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                                                    if (len > 5) {
+                                                        len = 5;
+                                                    }
+
+                                                    cell.m = cell.v.toExponential(len).toString();
+                                                } else {
+                                                    let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                                    cell.m = mask[0].toString();
+                                                }
                                             }
 
-                                            cell.m = cell.v.toExponential(len).toString();
+                                            cell.ct = { "fa": "General", "t": "n" };
                                         } else {
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                            let mask = genarate(cell.v);
                                             cell.m = mask[0].toString();
+                                            cell.ct = mask[1];
                                         }
                                     }
-
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                } else {
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
                                 }
+                            } catch (ex) {
+                                cell.v = ex;
                             }
+                            // end [TK] custom
                         }
 
                         d[i][j] = cell;
@@ -751,6 +788,7 @@ const luckysheetDropCell = {
                         // [TK] custom
                         if (cellValidation[bd_r + "_" + bd_c]) {
                             cellValidation[i + "_" + j] = cellValidation[bd_r + "_" + bd_c];
+                            weCellValidationCtrl.dropCellHandler(cellValidation[i + "_" + j], i, j);
                         }
                     }
                 }
@@ -758,42 +796,53 @@ const luckysheetDropCell = {
                     for (let j = apply_end_c; j >= apply_str_c; j--) {
                         let cell = applyData[apply_end_c - j];
 
-                        if (cell.f != null) {
-                            let f = "=" + formula.functionCopy(cell.f, "left", apply_end_c - j + 1);
-                            let v = formula.execfunction(f, i, j);
+                        // [TK] custom -> old; if (cell.f != null) {
+                        if (cell.df != null) {
+                            let f = "=" + formula.functionCopy(cell.df, "right", apply_end_c - j + 1); // [TK] custom
+                            try {
+                                let tf = weVariable.transformFormula(f); // [TK] custom
+                                let v = formula.execfunction(tf[1], i, j);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                                formula.execFunctionGroup(j, i, tf[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                                cell.f = tf[1]; // cell.f = v[2];
+                                cell.df = tf[2]; // [TK] custom
+                                // [TK] custom
+                                if (isCopyValue) {
+                                    cell.v = tf[0]; // cell.v = v[1];
 
-                            if (cell.spl != null) {
-                                cell.spl = v[3].data;
-                            } else {
-                                if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
-                                    if (cell.v == Infinity || cell.v == -Infinity) {
-                                        cell.m = cell.v.toString();
+                                    if (cell.spl != null) {
+                                        cell.spl = v[3].data;
                                     } else {
-                                        if (cell.v.toString().indexOf("e") > -1) {
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if (len > 5) {
-                                                len = 5;
+                                        if (isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)) {
+                                            if (cell.v == Infinity || cell.v == -Infinity) {
+                                                cell.m = cell.v.toString();
+                                            } else {
+                                                if (cell.v.toString().indexOf("e") > -1) {
+                                                    let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                                                    if (len > 5) {
+                                                        len = 5;
+                                                    }
+
+                                                    cell.m = cell.v.toExponential(len).toString();
+                                                } else {
+                                                    let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                                    cell.m = mask[0].toString();
+                                                }
                                             }
 
-                                            cell.m = cell.v.toExponential(len).toString();
+                                            cell.ct = { "fa": "General", "t": "n" };
                                         } else {
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                                            let mask = genarate(cell.v);
                                             cell.m = mask[0].toString();
+                                            cell.ct = mask[1];
                                         }
                                     }
-
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                } else {
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
                                 }
+                            } catch (ex) {
+                                cell.v = ex;
                             }
+                            // end [TK] custom
                         }
 
                         d[i][j] = cell;
@@ -840,6 +889,7 @@ const luckysheetDropCell = {
                         // [TK] custom
                         if (cellValidation[bd_r + "_" + bd_c]) {
                             cellValidation[i + "_" + j] = cellValidation[bd_r + "_" + bd_c];
+                            weCellValidationCtrl.dropCellHandler(cellValidation[i + "_" + j], i, j);
                         }
                     }
                 }

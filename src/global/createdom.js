@@ -20,6 +20,9 @@ import { replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
 import weConfigsetting from '../custom/configsetting';
+import weCellErrorCtrl from '../custom/cellerror';
+import weCellValidationCtrl from '../custom/cellvalidation';
+import weDynamicRow from '../custom/dynamicRow';
 
 export default function luckysheetcreatedom(colwidth, rowheight, data, menu, title) {
     // //最少30行
@@ -35,6 +38,10 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     let gh = gridHTML();
     gh = replaceHtml(gh, { "logotitle": title }); //设置title
     gh = replaceHtml(gh, { "menu": menuToolBar() }); //设置需要显示的菜单
+
+    // [TK] custom
+    gh = replaceHtml(gh, { "cellValidation": weCellValidationCtrl.getDOM() });
+    gh = replaceHtml(gh, { "cellError": weCellErrorCtrl.getDOM() });
 
     // if (data.length == 0) {
     //     Store.flowdata = datagridgrowth(data, rowheight, colwidth);
@@ -86,7 +93,9 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
         }
     }
 
-    bottomControll += backControll;
+    if (luckysheetConfigsetting.enableAddBackTop) {
+        bottomControll += backControll;
+    }
 
     let flowstr = replaceHtml('<div id="luckysheetcoltable_0" class="luckysheet-cell-flow-col"> <div id ="luckysheet-sheettable_0" class="luckysheet-cell-sheettable" style="height:${height}px;width:${width}px;"></div><div id="luckysheet-bottom-controll-row" class="luckysheet-bottom-controll-row"> ' + bottomControll + ' </div> </div>', { "height": Store.rh_height, "width": Store.ch_width - 1 });
 
@@ -99,30 +108,25 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     $("#" + Store.container).append(gh);
 
     $("#luckysheet-scrollbar-x div").width(Store.ch_width);
-    $("#luckysheet-scrollbar-y div").height(Store.rh_height + Store.columeHeaderHeight - Store.cellMainSrollBarSize - 3);
+    $("#luckysheet-scrollbar-y div").height(Store.rh_height + Store.columnHeaderHeight - Store.cellMainSrollBarSize - 3);
 
     //新建行菜单
     if (!weConfigsetting.slientMode) {
-        $(weConfigsetting.bodyContainer).append(maskHTML);
+        $("body").append(maskHTML);
         $("body").append(colsmenuHTML);
         $("body").append(rightclickHTML());
-        $(weConfigsetting.bodyContainer).append(inputHTML);
+        $("body").append(inputHTML);
         $("body").append(replaceHtml(filtermenuHTML(), { "menuid": "filter" }));
         $("body").append(replaceHtml(filtersubmenuHTML(), { "menuid": "filter" }));
         $("body").append(sheetconfigHTML());
+
+        // [TK] custom
+        weDynamicRow.createDOM();
     }
 
-    // $("#" + Store.container).append(maskHTML);
-    // $("#" + Store.container).append(colsmenuHTML);
-    // $("#" + Store.container).append(rightclickHTML());
-    // $("#" + Store.container).append(inputHTML);
-    // $("#" + Store.container).append(replaceHtml(filtermenuHTML(), { "menuid": "filter" }));
-    // $("#" + Store.container).append(replaceHtml(filtersubmenuHTML(), { "menuid": "filter" }));
-    // $("#" + Store.container).append(sheetconfigHTML());
-
     $("#luckysheet-rows-h").width((Store.rowHeaderWidth - 1.5));
-    $("#luckysheet-cols-h-c").height((Store.columeHeaderHeight - 1.5));
-    $("#luckysheet-left-top").css({ width: Store.rowHeaderWidth - 1.5, height: Store.columeHeaderHeight - 1.5 });
+    $("#luckysheet-cols-h-c").height((Store.columnHeaderHeight - 1.5));
+    $("#luckysheet-left-top").css({ width: Store.rowHeaderWidth - 1.5, height: Store.columnHeaderHeight - 1.5 });
 
     // //批注
     // luckysheetPostil.buildAllPs(Store.flowdata);
