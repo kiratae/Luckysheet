@@ -312,16 +312,22 @@ const weCellValidationCtrl = {
         let historyCellValidation = $.extend(true, {}, this.cellValidation);
         let currentCellValidation = $.extend(true, {}, this.cellValidation);
 
+        let d = editor.deepCopyFlowData(Store.flowdata);
+
         let item = currentCellValidation[r + '_' + c];
         item.checked = !item.checked;
 
         let val = item.inSet.split(',');
         let value = val[1]; // false value
-        if (item.checked) {
+        if (d[r][c] && typeof d[r][c].v != 'undefined') {
+            d[r][c].v = !d[r][c].v;
+        }
+
+        if (d[r][c].v) {
             value = val[0]; // true value
         }
 
-        let d = editor.deepCopyFlowData(Store.flowdata);
+        // let d = editor.deepCopyFlowData(Store.flowdata);
         setcellvalue(r, c, d, value);
 
         this.refOfCheckbox(

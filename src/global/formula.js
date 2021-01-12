@@ -1173,6 +1173,7 @@ const luckysheetformula = {
         let inputText = $input.text(),
             inputHtml = $input.html();
 
+
         if (_this.rangetosheet != null && _this.rangetosheet != Store.currentSheetIndex) {
             sheetmanage.changeSheetExec(_this.rangetosheet);
         }
@@ -1194,8 +1195,23 @@ const luckysheetformula = {
         }
 
         let curv = Store.flowdata[r][c];
+
+        // Store old value for hook function
+        const oldValue = JSON.stringify(curv);
+
         let isPrevInline = isInlineStringCell(curv);
         let isCurInline = (inputText.slice(0, 1) != "=" && inputHtml.substr(0, 5) == "<span");
+
+        let isCopyVal = false;
+        if (!isCurInline && inputText && inputText.length > 0) {
+            let splitArr = inputText.replace(/\r\n/g, "_x000D_").replace(/&#13;&#10;/g, "_x000D_").replace(/\r/g, "_x000D_").replace(/\n/g, "_x000D_").split("_x000D_");
+            if (splitArr.length > 1) {
+                isCopyVal = true;
+                isCurInline = true;
+                inputText = splitArr.join('\r\n');
+            }
+        }
+
         if (!value && !isCurInline && isPrevInline) {
             delete curv.ct.s;
             curv.ct.t = "g";
@@ -1217,21 +1233,30 @@ const luckysheetformula = {
 
             curv.ct.t = "inlineStr";
             curv.ct.s = convertSpanToShareString($input.find("span"));
+            if (isCopyVal) {
+                curv.ct.s = [{
+                    v: inputText,
+                }];
+            }
         }
 
         // API, we get value from user
         value = value || $input.text();
 
+        // Hook function
+        if (!method.createHookFunction("cellUpdateBefore", r, c, value, isRefresh)) {
+            _this.cancelNormalSelected();
+            return;
+        }
+
         if (!isCurInline) {
             if (isRealNull(value) && !isPrevInline) {
-                // if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.f == null)) {
-                if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.df == null)) {
+                if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.f == null)) {
                     _this.cancelNormalSelected();
                     return;
                 }
             } else if (curv != null && curv.qp != 1) {
-                // if (getObjType(curv) == "object" && (value == curv.f || value == curv.v || value == curv.m)) {
-                if (getObjType(curv) == "object" && (value == curv.df || value == curv.v || value == curv.m)) {
+                if (getObjType(curv) == "object" && (value == curv.f || value == curv.v || value == curv.m)) {
                     _this.cancelNormalSelected();
                     return;
                 } else if (value == curv) {
@@ -1244,13 +1269,9 @@ const luckysheetformula = {
 
             } else if (getObjType(curv) == "object" && curv.ct != null && curv.ct.fa != null && curv.ct.fa != "@" && !isRealNull(value)) {
                 delete curv.m; //更新时间m处理 ， 会实际删除单元格数据的参数（flowdata时已删除）
-                // if (curv.f != null) { //如果原来是公式，而更新的数据不是公式，则把公式删除
-                //     delete curv.f;
-                //     delete curv.spl; //删除单元格的sparklines的配置串
-                // }
-                if (curv.df != null) { // [TK] custom
-                    delete curv.df;
-                    delete curv.spl;
+                if (curv.f != null) { //如果原来是公式，而更新的数据不是公式，则把公式删除
+                    delete curv.f;
+                    delete curv.spl; //删除单元格的sparklines的配置串
                 }
             }
         }
@@ -1267,93 +1288,105 @@ const luckysheetformula = {
             if (!isCurInline) {
 
                 if (getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1) {
-                    // [TK] custom
-                    let tf;
-                    try {
-                        tf = weVariable.transformFormula(value);
+                    let v = _this.execfunction(value, r, c, undefined, true);
+                    isRunExecFunction = false;
+                    curv = $.extend(true, {}, d[r][c]);
+                    curv.v = v[1];
+                    curv.f = v[2];
+                    curv.df = v[3]; // [TK] custom
 
-                        let v = _this.execfunction(tf[1], r, c, undefined, true);
+                    //打进单元格的sparklines的配置串， 报错需要单独处理。
+                    if (v.length == 4 && v[4].type == "sparklines") {
+                        delete curv.m;
+                        delete curv.v;
+
+                        let curCalv = v[4].data;
+
+                        if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
+                            curv.v = curCalv[0];
+                        } else {
+                            curv.spl = v[4].data;
+                        }
+                    } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                        dynamicArrayItem = v[4].data;
+                    }
+                }
+                // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
+                else if (getObjType(value) == "object") {
+                    let valueFunction = value.df; // [TK] custom
+
+                    if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
+                        let v = _this.execfunction(valueFunction, r, c, undefined, true);
                         isRunExecFunction = false;
-                        curv = d[r][c];
-                        curv.v = tf[0]; // curv.v = v[1];
-                        curv.f = tf[1]; // curv.f = v[2];
-                        curv.df = tf[2]; // [TK] custom
+                        // get v/m/ct
+
+                        curv = $.extend(true, {}, d[r][c]);
+                        curv.v = v[1];
+                        curv.f = v[2];
+                        curv.df = v[3]; // [TK] custom
 
                         //打进单元格的sparklines的配置串， 报错需要单独处理。
-                        if (v.length == 4 && v[3].type == "sparklines") {
+                        if (v.length == 4 && v[4].type == "sparklines") {
                             delete curv.m;
                             delete curv.v;
 
-                            let curCalv = v[3].data;
+                            let curCalv = v[4].data;
 
                             if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
                                 curv.v = curCalv[0];
                             } else {
-                                curv.spl = v[3].data;
+                                curv.spl = v[4].data;
                             }
-                        } else if (v.length == 4 && v[3].type == "dynamicArrayItem") {
-                            dynamicArrayItem = v[3].data;
+                        } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                            dynamicArrayItem = v[4].data;
                         }
-
-                    } catch (ex) {
-                        curv = d[r][c];
-                        curv.v = ex;
-                        curv.df = value;
                     }
-                }
-                // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
-                else if (getObjType(value) == "object") {
-                    // [TK] custom
-                    let tf;
-                    try {
-                        tf = weVariable.transformFormula(value);
-
-                        let valueFunction = tf.f;
-
-                        if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
-                            let v = _this.execfunction(valueFunction, r, c, undefined, true);
-                            isRunExecFunction = false;
-                            // get v/m/ct
-
-                            curv = d[r][c];
-                            curv.v = tf.v; // curv.v = v[1];
-                            curv.f = tf.f; // curv.f = v[2];
-                            curv.df = tf.df; // [TK] custom
-
-                            //打进单元格的sparklines的配置串， 报错需要单独处理。
-                            if (v.length == 4 && v[3].type == "sparklines") {
-                                delete curv.m;
-                                delete curv.v;
-
-                                let curCalv = v[3].data;
-
-                                if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
-                                    curv.v = curCalv[0];
-                                } else {
-                                    curv.spl = v[3].data;
-                                }
-                            } else if (v.length == 4 && v[3].type == "dynamicArrayItem") {
-                                dynamicArrayItem = v[3].data;
-                            }
+                    // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
+                    else {
+                        for (let attr in value) {
+                            curv[attr] = value[attr];
                         }
-                        // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
-                        else {
-                            for (let attr in value) {
-                                curv[attr] = value[attr];
-                            }
-                        }
+                        // let valueFunction = value.f;
 
-                    } catch (ex) {
-                        curv = d[r][c];
-                        curv.v = ex;
-                        curv.df = value.df;
+                        // if(getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1){
+                        //     let v = _this.execfunction(valueFunction, r, c, undefined, true);
+                        //     isRunExecFunction = false;
+                        //     // get v/m/ct
+                        //     curv = d[r][c];
+                        //     curv.v = v[1];
+                        //     // get f
+                        //     curv.f = v[2];
+
+                        //     // get other cell style attribute
+                        //     delete value.v;
+                        //     delete value.m;
+                        //     delete value.f;
+                        //     Object.assign(curv,value);
+
+                        //     //打进单元格的sparklines的配置串， 报错需要单独处理。
+                        //     if(v.length == 4 && v[3].type == "sparklines"){
+                        //         delete curv.m;
+                        //         delete curv.v;
+
+                        //         let curCalv = v[3].data;
+
+                        //         if(getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object"){
+                        //             curv.v = curCalv[0];
+                        //         }
+                        //         else{
+                        //             curv.spl = v[3].data;
+                        //         }
+                        //     }
+                        // }
+
                     }
+
                 } else {
                     _this.delFunctionGroup(r, c);
                     _this.execFunctionGroup(r, c, value);
                     isRunExecFunction = false;
 
-                    curv = d[r][c];
+                    curv = $.extend(true, {}, d[r][c]);
                     // let gd = _this.execFunctionGlobalData[r+"_"+c+"_"+Store.currentSheetIndex];
                     // if(gd!=null){
                     //     curv.v = gd.v;
@@ -1364,7 +1397,7 @@ const luckysheetformula = {
                     delete curv.df; // [TK] custom
                     delete curv.spl;
 
-                    if (curv.qp == 1 && ('' + value).substr(0, 1) != "'") { //if quotePrefix is 1, cell is force string, cell clear quotePrefix when it is updated 
+                    if (curv.qp == 1 && ('' + value).substr(0, 1) != "'") { //if quotePrefix is 1, cell is force string, cell clear quotePrefix when it is updated
                         curv.qp = 0;
                         if (curv.ct != null) {
                             curv.ct.fa = "General";
@@ -1376,83 +1409,62 @@ const luckysheetformula = {
             value = curv;
         } else {
             if (getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1) {
-                // [TK] custom
-                let tf;
-                try {
-                    tf = weVariable.transformFormula(value);
+                let v = _this.execfunction(value, r, c, undefined, true);
+                isRunExecFunction = false;
+                value = {
+                    "v": v[1],
+                    "f": v[2],
+                    "df": v[3] // [TK] custom
+                };
 
-                    let v = _this.execfunction(tf[1], r, c, undefined, true);
+
+                //打进单元格的sparklines的配置串， 报错需要单独处理。
+                if (v.length == 4 && v[4].type == "sparklines") {
+                    let curCalv = v[4].data;
+
+                    if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
+                        value.v = curCalv[0];
+                    } else {
+                        value.spl = v[4].data;
+                    }
+                } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                    dynamicArrayItem = v[4].data;
+                }
+            }
+            // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
+            else if (getObjType(value) == "object") {
+                let valueFunction = value.df; // [TK] custom
+
+                if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
+                    let v = _this.execfunction(valueFunction, r, c, undefined, true);
                     isRunExecFunction = false;
-                    value = {
-                        "v": tf[0], // "v": v[1],
-                        "f": tf[1], // "f": v[2],
-                        "df": tf[2] // [TK] custom
-                    };
+                    // value = {
+                    //     "v": v[1],
+                    //     "f": v[2]
+                    // };
 
+                    // update attribute v
+                    value.v = v[1];
+                    value.f = v[2];
+                    value.df = v[3]; // [TK] custom
 
                     //打进单元格的sparklines的配置串， 报错需要单独处理。
-                    if (v.length == 4 && v[3].type == "sparklines") {
-                        let curCalv = v[3].data;
+                    if (v.length == 4 && v[4].type == "sparklines") {
+                        let curCalv = v[4].data;
 
                         if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
                             value.v = curCalv[0];
                         } else {
-                            value.spl = v[3].data;
+                            value.spl = v[4].data;
                         }
-                    } else if (v.length == 4 && v[3].type == "dynamicArrayItem") {
-                        dynamicArrayItem = v[3].data;
+                    } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                        dynamicArrayItem = v[4].data;
                     }
-                } catch (ex) {
-                    // [TK] custom
-                    value = {
-                        "v": ex
-                    };
-                }
-            }
-            // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
-            else if (getObjType(value) == "object") {
-                // [TK] custom
-                let tf;
-                try {
-                    tf = weVariable.transformFormula(value);
-
-                    let valueFunction = tf.f;
-
-                    if (getObjType(valueFunction) == "string" && valueFunction.slice(0, 1) == "=" && valueFunction.length > 1) {
-                        let v = _this.execfunction(valueFunction, r, c, undefined, true);
-                        isRunExecFunction = false;
-                        // value = {
-                        //     "v": v[1],
-                        //     "f": v[2]
-                        // };
-
-                        // update attribute v
-                        value.v = tf.v; // value.v = v[1];
-                        value.f = tf.f; // value.f = v[2];
-                        value.df = tf.df; // [TK] custom
-
-                        //打进单元格的sparklines的配置串， 报错需要单独处理。
-                        if (v.length == 4 && v[3].type == "sparklines") {
-                            let curCalv = v[3].data;
-
-                            if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
-                                value.v = curCalv[0];
-                            } else {
-                                value.spl = v[3].data;
-                            }
-                        } else if (v.length == 4 && v[3].type == "dynamicArrayItem") {
-                            dynamicArrayItem = v[3].data;
-                        }
-                    } else {
-                        let v = curv;
-                        if (value.v == null) {
-                            value.v = v;
-                        }
+                } else {
+                    let v = curv;
+                    if (value.v == null) {
+                        value.v = v;
                     }
-
-                } catch (ex) { // [TK] custom
-                    console.log(ex, value);
-                    value.v = ex;
                 }
 
             } else {
@@ -1473,7 +1485,7 @@ const luckysheetformula = {
         }
 
         if ((d[r][c].tb == "2" && d[r][c].v != null) || isInlineStringCell(d[r][c])) { //自动换行
-            let defaultrowlen = Store.defaultrowlen;;
+            let defaultrowlen = Store.defaultrowlen;
 
             let canvas = $("#luckysheetTableContent").get(0).getContext("2d");
             // offlinecanvas.textBaseline = 'top'; //textBaseline以top计算
@@ -1549,6 +1561,11 @@ const luckysheetformula = {
                 "RowlChange": RowlChange
             }
         }
+
+        setTimeout(() => {
+            // Hook function
+            method.createHookFunction("cellUpdated", r, c, JSON.parse(oldValue), Store.flowdata[r][c], isRefresh);
+        }, 0);
 
         if (isRefresh) {
             jfrefreshgrid(d, [{ "row": [r, r], "column": [c, c] }], allParam, isRunExecFunction);
@@ -4878,42 +4895,7 @@ const luckysheetformula = {
         window.luckysheet_getcelldata_cache = null;
         let calc_funcStr = getcellFormula(u.r, u.c, u.index);
 
-        // [TK] custom
-        try {
-            let tf = weVariable.transformFormula(calc_funcStr);
-            _this.groupValuesRefreshData.push({
-                "r": u.r,
-                "c": u.c,
-                "v": tf[0],
-                "f": tf[1],
-                "df": tf[2],
-                "index": u.index
-            });
-
-            // _this.execFunctionGroupData[u.r][u.c] = value;
-            _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
-                v: tf[0],
-                f: tf[1],
-                df: tf[2]
-            };
-
-        } catch (ex) {
-            _this.groupValuesRefreshData.push({
-                "r": u.r,
-                "c": u.c,
-                "v": ex,
-                "df": calc_funcStr,
-                "index": u.index
-            });
-
-            // _this.execFunctionGroupData[u.r][u.c] = value;
-            _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
-                v: ex,
-                df: calc_funcStr
-            };
-        }
-
-        // let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
+        let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
 
         // let value = _this.execFunctionGroupData[u.r][u.c];
         // if(value == null){
@@ -4940,20 +4922,22 @@ const luckysheetformula = {
         // }
 
         // [TK] custom old
-        // _this.groupValuesRefreshData.push({
-        //     "r": u.r,
-        //     "c": u.c,
-        //     "v": v[1],
-        //     "f": v[2],
-        //     "spe": v[3],
-        //     "index": u.index
-        // });
+        _this.groupValuesRefreshData.push({
+            "r": u.r,
+            "c": u.c,
+            "v": v[1],
+            "f": v[2],
+            "df": v[3],
+            "spe": v[4],
+            "index": u.index
+        });
 
-        // // _this.execFunctionGroupData[u.r][u.c] = value;
-        // _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
-        //     v: v[1],
-        //     f: v[2]
-        // };
+        // _this.execFunctionGroupData[u.r][u.c] = value;
+        _this.execFunctionGlobalData[u.r + "_" + u.c + "_" + u.index] = {
+            v: v[1],
+            f: v[2],
+            df: v[3],
+        };
     },
     groupValuesRefreshData: [],
     groupValuesRefresh: function() {
@@ -4983,6 +4967,7 @@ const luckysheetformula = {
                 }
                 updateValue.v = item.v;
                 updateValue.f = item.f;
+                updateValue.df = item.df; // [TK] custom
                 setcellvalue(item.r, item.c, data, updateValue);
                 server.saveParam("v", item.index, item.v, {
                     "r": item.r,
@@ -5068,6 +5053,7 @@ const luckysheetformula = {
 
 
         let result = null;
+        let resolved = null;
         window.luckysheetCurrentRow = r;
         window.luckysheetCurrentColumn = c;
         window.luckysheetCurrentIndex = index;
@@ -5100,12 +5086,18 @@ const luckysheetformula = {
                 }
             }
 
-            result = eval(fp);
+            // [TK] custom
+            // console.log('execfunction', fp);
+            resolved = weVariable.resolveFormula(fp);
+            // console.log('resolveFormula', resolved);
+
+            result = eval(resolved);
 
             //加入sparklines的参数项目
             if (fp.indexOf("SPLINES") > -1) {
                 sparklines = result;
                 result = "";
+                resolved = "";
             }
         } catch (e) {
             let err = e;
@@ -5168,16 +5160,16 @@ const luckysheetformula = {
         }
 
         if (!!sparklines) {
-            return [true, result, txt, { type: "sparklines", data: sparklines }];
+            return [true, result, resolved, txt, { type: "sparklines", data: sparklines }];
         }
 
         if (!!dynamicArrayItem) {
-            return [true, result, txt, { type: "dynamicArrayItem", data: dynamicArrayItem }];
+            return [true, result, resolved, txt, { type: "dynamicArrayItem", data: dynamicArrayItem }];
         }
 
-        // console.log(result, txt);
+        console.log(result, txt, resolved);
 
-        return [true, result, txt];
+        return [true, result, resolved, txt];
     },
     testFunction: function(txt, fp) {
         if (txt.substr(0, 1) == "=") {

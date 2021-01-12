@@ -52,6 +52,8 @@ const weCore = {
 
         libCore.insertUpdateVariable = weAPI.insertUpdateVariable;
 
+        libCore.execFunctionGroupForce = weAPI.execFunctionGroupForce;
+
         libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
         libCore.weDropdownCtrl = weDropdownCtrl;

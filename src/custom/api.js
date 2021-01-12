@@ -123,6 +123,9 @@ const weAPI = {
     },
     insertUpdateVariable: function(r, c, index) {
         luckysheetformula.insertUpdateFunctionGroup(r, c, index);
+    },
+    execFunctionGroupForce: function() {
+        luckysheetformula.execFunctionGroupForce(true);
     }
 }
 
