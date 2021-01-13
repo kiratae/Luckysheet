@@ -668,8 +668,7 @@ const luckysheetDropCell = {
 
                         // [TK] custom
                         if (cellValidation[bd_r + "_" + bd_c]) {
-                            cellValidation[j + "_" + i] = cellValidation[bd_r + "_" + bd_c];
-                            weCellValidationCtrl.dropCellHandler(cellValidation[j + "_" + i], j, i);
+                            cellValidation[j + "_" + i] = weCellValidationCtrl.dropCellHandler(cellValidation[bd_r + "_" + bd_c], j, i);
                         }
                     }
                 }
@@ -778,8 +777,7 @@ const luckysheetDropCell = {
 
                         // [TK] custom
                         if (cellValidation[bd_r + "_" + bd_c]) {
-                            cellValidation[i + "_" + j] = cellValidation[bd_r + "_" + bd_c];
-                            weCellValidationCtrl.dropCellHandler(cellValidation[i + "_" + j], i, j);
+                            cellValidation[i + "_" + j่] = weCellValidationCtrl.dropCellHandler(cellValidation[bd_r + "_" + bd_c], i, j);
                         }
                     }
                 }
@@ -879,8 +877,7 @@ const luckysheetDropCell = {
 
                         // [TK] custom
                         if (cellValidation[bd_r + "_" + bd_c]) {
-                            cellValidation[i + "_" + j] = cellValidation[bd_r + "_" + bd_c];
-                            weCellValidationCtrl.dropCellHandler(cellValidation[i + "_" + j], i, j);
+                            cellValidation[i + "_" + j่] = weCellValidationCtrl.dropCellHandler(cellValidation[bd_r + "_" + bd_c], i, j);
                         }
                     }
                 }
