@@ -66,17 +66,21 @@ function hasChinaword(s) {
 
 //是否为非编辑模式 (Whether it is non-editing mode)
 function isEditMode() {
-    if (weConfigsetting.slientMode) {
-        return true;
-    }
-
-    let select = Store.luckysheet_select_save[0];
-    let d = Store.flowdata[select.row[0]][select.column[0]];
-    // console.log('isEditMode', luckysheetConfigsetting.editMode && (weConfigsetting.formEditor || (d && d.ro == null)));
-    if (luckysheetConfigsetting.editMode && (weConfigsetting.formEditor || (d && typeof d.ro === 'undefined'))) {
+    if (luckysheetConfigsetting.editMode) {
         return true;
     } else {
-        return false;
+        if (weConfigsetting.formEditor) {
+            return false;
+        } else {
+            let select = Store.luckysheet_select_save[0];
+            let d = Store.flowdata[select.row[0]][select.column[0]];
+            // console.log('isEditMode', luckysheetConfigsetting.editMode && (weConfigsetting.formEditor || (d && d.ro == null)));
+            if ((d && typeof d.ro != 'undefined') || (d && typeof d.df == 'undefined')) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 }
 

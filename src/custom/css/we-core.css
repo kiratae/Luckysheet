@@ -54,3 +54,19 @@
     cursor: default;
     white-space: nowrap;
 }
+
+.luckysheet-selection-copy-top {
+    background-image: url("we-EwaAntH.gif");
+}
+
+.luckysheet-selection-copy-right {
+    background-image: url("we-EwaAntV.gif");
+}
+
+.luckysheet-selection-copy-bottom {
+    background-image: url("we-EwaAntH.gif");
+}
+
+.luckysheet-selection-copy-left {
+    background-image: url("we-EwaAntV.gif");
+}

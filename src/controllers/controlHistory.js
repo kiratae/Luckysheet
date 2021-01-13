@@ -667,6 +667,10 @@ const controlHistory = {
         // [TK] custom
         else if (ctr.type == "updateCellValidation") {
             weCellValidationCtrl.ref(ctr.historyCellValidation, ctr.currentCellValidation, ctr.sheetIndex);
+        } else if (ctr.type == "updateCellValidationOfCheckbox") {
+            weCellValidationCtrl.refOfCheckbox(ctr.historyCellValidation, ctr.currentCellValidation, ctr.sheetIndex, ctr.curData, ctr.range);
+        } else if (ctr.type == "updateCellValidationOfReadonly") {
+            weCellValidationCtrl.refOfReadonly(ctr.historyCellValidation, ctr.currentCellValidation, ctr.sheetIndex, ctr.curData, ctr.range);
         } else if (ctr.type == "updateCellTag") {
             weCellTagCtrl.ref(ctr.historyCellTag, ctr.currentCellTag, ctr.sheetIndex);
         }

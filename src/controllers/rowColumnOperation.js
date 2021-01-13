@@ -1624,46 +1624,45 @@ export function rowColumnOperationInitial() {
     //取消隐藏选中行列
     $("#luckysheet-show-selected").click(function(event) {
 
-            $("#luckysheet-rightclick-menu").hide();
-            luckysheetContainerFocus();
+        $("#luckysheet-rightclick-menu").hide();
+        luckysheetContainerFocus();
 
-            const locale_drag = locale().drag;
+        const locale_drag = locale().drag;
 
-            if (Store.luckysheet_select_save.length > 1) {
-                if (Store.luckysheetRightHeadClickIs == "row") {
-                    if (isEditMode()) {
-                        alert(locale_drag.noMulti);
-                    } else {
-                        tooltip.info(locale_drag.noMulti, "");
-                    }
-                } else if (Store.luckysheetRightHeadClickIs == "column") {
-                    if (isEditMode()) {
-                        alert(locale_drag.noMulti);
-                    } else {
-                        tooltip.info(locale_drag.noMulti, "");
-                    }
+        if (Store.luckysheet_select_save.length > 1) {
+            if (Store.luckysheetRightHeadClickIs == "row") {
+                if (isEditMode()) {
+                    alert(locale_drag.noMulti);
+                } else {
+                    tooltip.info(locale_drag.noMulti, "");
                 }
+            } else if (Store.luckysheetRightHeadClickIs == "column") {
+                if (isEditMode()) {
+                    alert(locale_drag.noMulti);
+                } else {
+                    tooltip.info(locale_drag.noMulti, "");
+                }
+            }
+            return;
+        }
+
+        // 取消隐藏行
+        if (Store.luckysheetRightHeadClickIs == "row") {
+            if (!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")) {
                 return;
             }
 
-            // 取消隐藏行
-            if (Store.luckysheetRightHeadClickIs == "row") {
-                if (!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")) {
-                    return;
-                }
+            let cfg = $.extend(true, {}, Store.config);
+            if (cfg["rowhidden"] == null) {
+                return;
+            }
 
-                let cfg = $.extend(true, {}, Store.config);
-                if (cfg["rowhidden"] == null) {
-                    return;
-                }
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                let r1 = Store.luckysheet_select_save[s].row[0],
+                    r2 = Store.luckysheet_select_save[s].row[1];
 
-                for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
-                    let r1 = Store.luckysheet_select_save[s].row[0],
-                        r2 = Store.luckysheet_select_save[s].row[1];
-
-                    for (let r = r1; r <= r2; r++) {
-                        delete cfg["rowhidden"][r];
-                    }
+                for (let r = r1; r <= r2; r++) {
+                    delete cfg["rowhidden"][r];
                 }
             }
 
@@ -1675,7 +1674,7 @@ export function rowColumnOperationInitial() {
                 redo["config"] = $.extend(true, {}, Store.config);
                 redo["curconfig"] = cfg;
 
-                Store.jfundo.length = 0;
+                Store.jfundo = [];
                 Store.jfredo.push(redo);
             }
 
@@ -1704,54 +1703,6 @@ export function rowColumnOperationInitial() {
                 for (let c = c1; c <= c2; c++) {
                     delete cfg["colhidden"][c];
                 }
-
-                //config
-                Store.config = cfg;
-                Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
-
-                server.saveParam("cg", Store.currentSheetIndex, cfg["rowhidden"], { "k": "rowhidden" });
-
-                //行高、列宽 刷新  
-                jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
-            } else if (Store.luckysheetRightHeadClickIs == "column") {
-                if (!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatColumns")) {
-                    return;
-                }
-
-                let cfg = $.extend(true, {}, Store.config);
-                if (cfg["colhidden"] == null) {
-                    return;
-                }
-
-                for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
-                    let c1 = Store.luckysheet_select_save[s].column[0],
-                        c2 = Store.luckysheet_select_save[s].column[1];
-
-                    for (let c = c1; c <= c2; c++) {
-                        delete cfg["colhidden"][c];
-                    }
-                }
-
-                //保存撤销
-                if (Store.clearjfundo) {
-                    let redo = {};
-                    redo["type"] = "showHidCols";
-                    redo["sheetIndex"] = Store.currentSheetIndex;
-                    redo["config"] = $.extend(true, {}, Store.config);
-                    redo["curconfig"] = cfg;
-
-                    Store.jfundo = [];
-                    Store.jfredo.push(redo);
-                }
-
-                //config
-                Store.config = cfg;
-                Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
-
-                server.saveParam("cg", Store.currentSheetIndex, cfg["colhidden"], { "k": "colhidden" });
-
-                //行高、列宽 刷新  
-                jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
             }
 
             //保存撤销
@@ -1762,7 +1713,7 @@ export function rowColumnOperationInitial() {
                 redo["config"] = $.extend(true, {}, Store.config);
                 redo["curconfig"] = cfg;
 
-                Store.jfundo.length = 0;
+                Store.jfundo = [];
                 Store.jfredo.push(redo);
             }
 
@@ -1776,422 +1727,422 @@ export function rowColumnOperationInitial() {
             jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
         }
 
-    })
-//隐藏、显示行
-// $("#luckysheet-hidRows").click(function (event) {
-//     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")){
-//         return;
-//     }
+    });
+    //隐藏、显示行
+    // $("#luckysheet-hidRows").click(function (event) {
+    //     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")){
+    //         return;
+    //     }
 
-//     $("#luckysheet-rightclick-menu").hide();
-//     luckysheetContainerFocus();
+    //     $("#luckysheet-rightclick-menu").hide();
+    //     luckysheetContainerFocus();
 
-//     let cfg = $.extend(true, {}, Store.config);
-//     if(cfg["rowhidden"] == null){
-//         cfg["rowhidden"] = {};
-//     }
+    //     let cfg = $.extend(true, {}, Store.config);
+    //     if(cfg["rowhidden"] == null){
+    //         cfg["rowhidden"] = {};
+    //     }
 
-//     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
-//         let r1 = Store.luckysheet_select_save[s].row[0],
-//             r2 = Store.luckysheet_select_save[s].row[1];
+    //     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
+    //         let r1 = Store.luckysheet_select_save[s].row[0],
+    //             r2 = Store.luckysheet_select_save[s].row[1];
 
-//         for(let r = r1; r <= r2; r++){
-//             cfg["rowhidden"][r] = 0;
-//         }
-//     }
+    //         for(let r = r1; r <= r2; r++){
+    //             cfg["rowhidden"][r] = 0;
+    //         }
+    //     }
 
-//     //保存撤销
-//     if(Store.clearjfundo){
-//         let redo = {};
-//         redo["type"] = "showHidRows";
-//         redo["sheetIndex"] = Store.currentSheetIndex;
-//         redo["config"] = $.extend(true, {}, Store.config);
-//         redo["curconfig"] = cfg;
+    //     //保存撤销
+    //     if(Store.clearjfundo){
+    //         let redo = {};
+    //         redo["type"] = "showHidRows";
+    //         redo["sheetIndex"] = Store.currentSheetIndex;
+    //         redo["config"] = $.extend(true, {}, Store.config);
+    //         redo["curconfig"] = cfg;
 
-//         Store.jfundo.length  = 0;
-//         Store.jfredo.push(redo);
-//     }
+    //         Store.jfundo.length  = 0;
+    //         Store.jfredo.push(redo);
+    //     }
 
-//     //config
-//     Store.config = cfg;
-//     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
+    //     //config
+    //     Store.config = cfg;
+    //     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
 
-//     server.saveParam("cg", Store.currentSheetIndex, cfg["rowhidden"], { "k": "rowhidden" });
+    //     server.saveParam("cg", Store.currentSheetIndex, cfg["rowhidden"], { "k": "rowhidden" });
 
-//     //行高、列宽 刷新  
-//     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
-// })
-// $("#luckysheet-showHidRows").click(function (event) {
-//     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")){
-//         return;
-//     }
-//     $("#luckysheet-rightclick-menu").hide();
-//     luckysheetContainerFocus();
+    //     //行高、列宽 刷新  
+    //     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
+    // })
+    // $("#luckysheet-showHidRows").click(function (event) {
+    //     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")){
+    //         return;
+    //     }
+    //     $("#luckysheet-rightclick-menu").hide();
+    //     luckysheetContainerFocus();
 
-//     let cfg = $.extend(true, {}, Store.config);
-//     if(cfg["rowhidden"] == null){
-//         return;
-//     }
+    //     let cfg = $.extend(true, {}, Store.config);
+    //     if(cfg["rowhidden"] == null){
+    //         return;
+    //     }
 
-//     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
-//         let r1 = Store.luckysheet_select_save[s].row[0],
-//             r2 = Store.luckysheet_select_save[s].row[1];
+    //     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
+    //         let r1 = Store.luckysheet_select_save[s].row[0],
+    //             r2 = Store.luckysheet_select_save[s].row[1];
 
-//         for(let r = r1; r <= r2; r++){
-//             delete cfg["rowhidden"][r];
-//         }
-//     }
+    //         for(let r = r1; r <= r2; r++){
+    //             delete cfg["rowhidden"][r];
+    //         }
+    //     }
 
-//     //保存撤销
-//     if(Store.clearjfundo){
-//         let redo = {};
-//         redo["type"] = "showHidRows";
-//         redo["sheetIndex"] = Store.currentSheetIndex;
-//         redo["config"] = $.extend(true, {}, Store.config);
-//         redo["curconfig"] = cfg;
+    //     //保存撤销
+    //     if(Store.clearjfundo){
+    //         let redo = {};
+    //         redo["type"] = "showHidRows";
+    //         redo["sheetIndex"] = Store.currentSheetIndex;
+    //         redo["config"] = $.extend(true, {}, Store.config);
+    //         redo["curconfig"] = cfg;
 
-//         Store.jfundo.length  = 0;
-//         Store.jfredo.push(redo);
-//     }
+    //         Store.jfundo.length  = 0;
+    //         Store.jfredo.push(redo);
+    //     }
 
-//     //config
-//     Store.config = cfg;
-//     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
+    //     //config
+    //     Store.config = cfg;
+    //     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
 
-//     server.saveParam("cg", Store.currentSheetIndex, cfg["rowhidden"], { "k": "rowhidden" });
+    //     server.saveParam("cg", Store.currentSheetIndex, cfg["rowhidden"], { "k": "rowhidden" });
 
-//     //行高、列宽 刷新  
-//     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
-// })
+    //     //行高、列宽 刷新  
+    //     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
+    // })
 
-//隐藏、显示列
-// $("#luckysheet-hidCols").click(function (event) {
-//     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatColumns")){
-//         return;
-//     }
-//     $("#luckysheet-rightclick-menu").hide();
-//     luckysheetContainerFocus();
+    //隐藏、显示列
+    // $("#luckysheet-hidCols").click(function (event) {
+    //     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatColumns")){
+    //         return;
+    //     }
+    //     $("#luckysheet-rightclick-menu").hide();
+    //     luckysheetContainerFocus();
 
-//     let cfg = $.extend(true, {}, Store.config);
-//     if(cfg["colhidden"] == null){
-//         cfg["colhidden"] = {};
-//     }
+    //     let cfg = $.extend(true, {}, Store.config);
+    //     if(cfg["colhidden"] == null){
+    //         cfg["colhidden"] = {};
+    //     }
 
-//     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
-//         let c1 = Store.luckysheet_select_save[s].column[0],
-//             c2 = Store.luckysheet_select_save[s].column[1];
+    //     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
+    //         let c1 = Store.luckysheet_select_save[s].column[0],
+    //             c2 = Store.luckysheet_select_save[s].column[1];
 
-//         for(let c = c1; c <= c2; c++){
-//             cfg["colhidden"][c] = 0;
-//         }
-//     }
+    //         for(let c = c1; c <= c2; c++){
+    //             cfg["colhidden"][c] = 0;
+    //         }
+    //     }
 
-//     //保存撤销
-//     if(Store.clearjfundo){
-//         let redo = {};
-//         redo["type"] = "showHidCols";
-//         redo["sheetIndex"] = Store.currentSheetIndex;
-//         redo["config"] = $.extend(true, {}, Store.config);
-//         redo["curconfig"] = cfg;
+    //     //保存撤销
+    //     if(Store.clearjfundo){
+    //         let redo = {};
+    //         redo["type"] = "showHidCols";
+    //         redo["sheetIndex"] = Store.currentSheetIndex;
+    //         redo["config"] = $.extend(true, {}, Store.config);
+    //         redo["curconfig"] = cfg;
 
-//         Store.jfundo.length  = 0;
-//         Store.jfredo.push(redo);
-//     }
+    //         Store.jfundo.length  = 0;
+    //         Store.jfredo.push(redo);
+    //     }
 
-//     //config
-//     Store.config = cfg;
-//     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
+    //     //config
+    //     Store.config = cfg;
+    //     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
 
-//     server.saveParam("cg", Store.currentSheetIndex, cfg["colhidden"], { "k": "colhidden" });
+    //     server.saveParam("cg", Store.currentSheetIndex, cfg["colhidden"], { "k": "colhidden" });
 
-//     //行高、列宽 刷新  
-//     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
-// })
-// $("#luckysheet-showHidCols").click(function (event) {
-//     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatColumns")){
-//         return;
-//     }
-//     $("#luckysheet-rightclick-menu").hide();
-//     luckysheetContainerFocus();
+    //     //行高、列宽 刷新  
+    //     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
+    // })
+    // $("#luckysheet-showHidCols").click(function (event) {
+    //     if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatColumns")){
+    //         return;
+    //     }
+    //     $("#luckysheet-rightclick-menu").hide();
+    //     luckysheetContainerFocus();
 
-//     let cfg = $.extend(true, {}, Store.config);
-//     if(cfg["colhidden"] == null){
-//         return;
-//     }
+    //     let cfg = $.extend(true, {}, Store.config);
+    //     if(cfg["colhidden"] == null){
+    //         return;
+    //     }
 
-//     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
-//         let c1 = Store.luckysheet_select_save[s].column[0],
-//             c2 = Store.luckysheet_select_save[s].column[1];
+    //     for(let s = 0; s < Store.luckysheet_select_save.length; s++){
+    //         let c1 = Store.luckysheet_select_save[s].column[0],
+    //             c2 = Store.luckysheet_select_save[s].column[1];
 
-//         for(let c = c1; c <= c2; c++){
-//             delete cfg["colhidden"][c];
-//         }
-//     }
+    //         for(let c = c1; c <= c2; c++){
+    //             delete cfg["colhidden"][c];
+    //         }
+    //     }
 
-//     //保存撤销
-//     if(Store.clearjfundo){
-//         let redo = {};
-//         redo["type"] = "showHidCols";
-//         redo["sheetIndex"] = Store.currentSheetIndex;
-//         redo["config"] = $.extend(true, {}, Store.config);
-//         redo["curconfig"] = cfg;
+    //     //保存撤销
+    //     if(Store.clearjfundo){
+    //         let redo = {};
+    //         redo["type"] = "showHidCols";
+    //         redo["sheetIndex"] = Store.currentSheetIndex;
+    //         redo["config"] = $.extend(true, {}, Store.config);
+    //         redo["curconfig"] = cfg;
 
-//         Store.jfundo.length  = 0;
-//         Store.jfredo.push(redo);
-//     }
+    //         Store.jfundo.length  = 0;
+    //         Store.jfredo.push(redo);
+    //     }
 
-//     //config
-//     Store.config = cfg;
-//     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
+    //     //config
+    //     Store.config = cfg;
+    //     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
 
-//     server.saveParam("cg", Store.currentSheetIndex, cfg["colhidden"], { "k": "colhidden" });
+    //     server.saveParam("cg", Store.currentSheetIndex, cfg["colhidden"], { "k": "colhidden" });
 
-//     //行高、列宽 刷新  
-//     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
-// })
+    //     //行高、列宽 刷新  
+    //     jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length);
+    // })
 
-//删除单元格（左移、上移）
-$("#luckysheet-delCellsMoveLeft").click(function(event) {
-    $("body .luckysheet-cols-menu").hide();
-    luckysheetContainerFocus();
+    //删除单元格（左移、上移）
+    $("#luckysheet-delCellsMoveLeft").click(function(event) {
+        $("body .luckysheet-cols-menu").hide();
+        luckysheetContainerFocus();
 
-    const locale_drag = locale().drag;
+        const locale_drag = locale().drag;
 
-    if (Store.luckysheet_select_save.length > 1) {
-        if (isEditMode()) {
-            alert(locale_drag.noMulti);
-        } else {
-            tooltip.info(locale_drag.noMulti, "");
-        }
-        return;
-    }
-
-    let str = Store.luckysheet_select_save[0].row[0],
-        edr = Store.luckysheet_select_save[0].row[1],
-        stc = Store.luckysheet_select_save[0].column[0],
-        edc = Store.luckysheet_select_save[0].column[1];
-
-    luckysheetDeleteCell('moveLeft', str, edr, stc, edc);
-});
-$("#luckysheet-delCellsMoveUp").click(function(event) {
-    $("body .luckysheet-cols-menu").hide();
-    luckysheetContainerFocus();
-
-    const locale_drag = locale().drag;
-
-    if (Store.luckysheet_select_save.length > 1) {
-        if (isEditMode()) {
-            alert(locale_drag.noMulti);
-        } else {
-            tooltip.info(locale_drag.noMulti, "");
-        }
-        return;
-    }
-
-    let str = Store.luckysheet_select_save[0].row[0],
-        edr = Store.luckysheet_select_save[0].row[1],
-        stc = Store.luckysheet_select_save[0].column[0],
-        edc = Store.luckysheet_select_save[0].column[1];
-
-    luckysheetDeleteCell('moveUp', str, edr, stc, edc);
-});
-
-//清除单元格内容
-$("#luckysheet-delete-text").click(function() {
-
-    if (!checkProtectionLockedRangeList(Store.luckysheet_select_save, Store.currentSheetIndex)) {
-        return;
-    }
-
-    $("#luckysheet-rightclick-menu").hide();
-    luckysheetContainerFocus();
-
-    if (Store.allowEdit === false) {
-        return;
-    }
-
-    if (Store.luckysheet_select_save.length > 0) {
-        let d = editor.deepCopyFlowData(Store.flowdata);
-
-        let has_PartMC = false;
-
-        for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
-            let r1 = Store.luckysheet_select_save[s].row[0],
-                r2 = Store.luckysheet_select_save[s].row[1];
-            let c1 = Store.luckysheet_select_save[s].column[0],
-                c2 = Store.luckysheet_select_save[s].column[1];
-
-            if (hasPartMC(Store.config, r1, r2, c1, c2)) {
-                has_PartMC = true;
-                break;
-            }
-        }
-
-        if (has_PartMC) {
-            const locale_drag = locale().drag;
-
+        if (Store.luckysheet_select_save.length > 1) {
             if (isEditMode()) {
-                alert(locale_drag.noPartMerge);
+                alert(locale_drag.noMulti);
             } else {
-                tooltip.info(locale_drag.noPartMerge, "");
+                tooltip.info(locale_drag.noMulti, "");
             }
-
             return;
         }
 
-        for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
-            let r1 = Store.luckysheet_select_save[s].row[0],
-                r2 = Store.luckysheet_select_save[s].row[1];
-            let c1 = Store.luckysheet_select_save[s].column[0],
-                c2 = Store.luckysheet_select_save[s].column[1];
+        let str = Store.luckysheet_select_save[0].row[0],
+            edr = Store.luckysheet_select_save[0].row[1],
+            stc = Store.luckysheet_select_save[0].column[0],
+            edc = Store.luckysheet_select_save[0].column[1];
 
-            for (let r = r1; r <= r2; r++) {
+        luckysheetDeleteCell('moveLeft', str, edr, stc, edc);
+    });
+    $("#luckysheet-delCellsMoveUp").click(function(event) {
+        $("body .luckysheet-cols-menu").hide();
+        luckysheetContainerFocus();
+
+        const locale_drag = locale().drag;
+
+        if (Store.luckysheet_select_save.length > 1) {
+            if (isEditMode()) {
+                alert(locale_drag.noMulti);
+            } else {
+                tooltip.info(locale_drag.noMulti, "");
+            }
+            return;
+        }
+
+        let str = Store.luckysheet_select_save[0].row[0],
+            edr = Store.luckysheet_select_save[0].row[1],
+            stc = Store.luckysheet_select_save[0].column[0],
+            edc = Store.luckysheet_select_save[0].column[1];
+
+        luckysheetDeleteCell('moveUp', str, edr, stc, edc);
+    });
+
+    //清除单元格内容
+    $("#luckysheet-delete-text").click(function() {
+
+        if (!checkProtectionLockedRangeList(Store.luckysheet_select_save, Store.currentSheetIndex)) {
+            return;
+        }
+
+        $("#luckysheet-rightclick-menu").hide();
+        luckysheetContainerFocus();
+
+        if (Store.allowEdit === false) {
+            return;
+        }
+
+        if (Store.luckysheet_select_save.length > 0) {
+            let d = editor.deepCopyFlowData(Store.flowdata);
+
+            let has_PartMC = false;
+
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                let r1 = Store.luckysheet_select_save[s].row[0],
+                    r2 = Store.luckysheet_select_save[s].row[1];
+                let c1 = Store.luckysheet_select_save[s].column[0],
+                    c2 = Store.luckysheet_select_save[s].column[1];
+
+                if (hasPartMC(Store.config, r1, r2, c1, c2)) {
+                    has_PartMC = true;
+                    break;
+                }
+            }
+
+            if (has_PartMC) {
+                const locale_drag = locale().drag;
+
+                if (isEditMode()) {
+                    alert(locale_drag.noPartMerge);
+                } else {
+                    tooltip.info(locale_drag.noPartMerge, "");
+                }
+
+                return;
+            }
+
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                let r1 = Store.luckysheet_select_save[s].row[0],
+                    r2 = Store.luckysheet_select_save[s].row[1];
+                let c1 = Store.luckysheet_select_save[s].column[0],
+                    c2 = Store.luckysheet_select_save[s].column[1];
+
+                for (let r = r1; r <= r2; r++) {
+                    for (let c = c1; c <= c2; c++) {
+                        if (pivotTable.isPivotRange(r, c)) {
+                            continue;
+                        }
+
+                        if (getObjType(d[r][c]) == "object") {
+                            delete d[r][c]["m"];
+                            delete d[r][c]["v"];
+
+                            weAPI.clearCell(d[r][c]);
+
+                            if (d[r][c]["f"] != null) {
+                                delete d[r][c]["f"];
+                                formula.delFunctionGroup(r, c, Store.currentSheetIndex);
+
+                                delete d[r][c]["spl"];
+                            }
+
+                            if (d[r][c]["ct"] != null && d[r][c]["ct"].t == 'inlineStr') {
+                                delete d[r][c]["ct"];
+                            }
+                        } else {
+                            d[r][c] = null;
+                        }
+                    }
+                }
+            }
+
+            jfrefreshgrid(d, Store.luckysheet_select_save);
+        }
+    });
+
+    //行高列宽设置
+    // $("#luckysheet-rows-cols-changesize").click(function(){
+    $("#luckysheet-column-row-width-selected").click(function(event) {
+
+        // Click input element, don't comfirm 
+        if (event.target.nodeName === 'INPUT') {
+            return;
+        }
+
+        $("#luckysheet-rightclick-menu").hide();
+        luckysheetContainerFocus();
+
+        // let size = parseInt($(this).siblings("input[type='number']").val().trim());
+        let size = parseInt($(this).closest('.luckysheet-cols-menuitem').find("input[type='number']").val().trim());
+
+        const locale_info = locale().info;
+
+        let cfg = $.extend(true, {}, Store.config);
+        let type;
+        let images = null;
+
+        if (Store.luckysheetRightHeadClickIs == "row") {
+            if (!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")) {
+                return;
+            }
+
+            if (size < 0 || size > 545) {
+                if (isEditMode()) {
+                    alert(locale_info.tipRowHeightLimit);
+                } else {
+                    tooltip.info(locale_info.tipRowHeightLimit, "");
+                }
+                return;
+            }
+
+            type = "resizeR";
+
+            if (cfg["rowlen"] == null) {
+                cfg["rowlen"] = {};
+            }
+
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                let r1 = Store.luckysheet_select_save[s].row[0];
+                let r2 = Store.luckysheet_select_save[s].row[1];
+
+                for (let r = r1; r <= r2; r++) {
+                    cfg["rowlen"][r] = size;
+
+                    images = imageCtrl.moveChangeSize("row", r, size);
+                }
+            }
+        } else if (Store.luckysheetRightHeadClickIs == "column") {
+            if (!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatColumns")) {
+                return;
+            }
+
+            if (size < 0 || size > 2038) {
+                if (isEditMode()) {
+                    alert(locale_info.tipColumnWidthLimit);
+                } else {
+                    tooltip.info(locale_info.tipColumnWidthLimit, "");
+                }
+                return;
+            }
+
+            type = "resizeC";
+
+            if (cfg["columnlen"] == null) {
+                cfg["columnlen"] = {};
+            }
+
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                let c1 = Store.luckysheet_select_save[s].column[0];
+                let c2 = Store.luckysheet_select_save[s].column[1];
+
                 for (let c = c1; c <= c2; c++) {
-                    if (pivotTable.isPivotRange(r, c)) {
-                        continue;
-                    }
+                    cfg["columnlen"][c] = size;
 
-                    if (getObjType(d[r][c]) == "object") {
-                        delete d[r][c]["m"];
-                        delete d[r][c]["v"];
-
-                        weAPI.clearCell(d[r][c]);
-
-                        if (d[r][c]["f"] != null) {
-                            delete d[r][c]["f"];
-                            formula.delFunctionGroup(r, c, Store.currentSheetIndex);
-
-                            delete d[r][c]["spl"];
-                        }
-
-                        if (d[r][c]["ct"] != null && d[r][c]["ct"].t == 'inlineStr') {
-                            delete d[r][c]["ct"];
-                        }
-                    } else {
-                        d[r][c] = null;
-                    }
+                    images = imageCtrl.moveChangeSize("column", c, size);
                 }
             }
         }
 
-        jfrefreshgrid(d, Store.luckysheet_select_save);
-    }
-});
-
-//行高列宽设置
-// $("#luckysheet-rows-cols-changesize").click(function(){
-$("#luckysheet-column-row-width-selected").click(function(event) {
-
-    // Click input element, don't comfirm 
-    if (event.target.nodeName === 'INPUT') {
-        return;
-    }
-
-    $("#luckysheet-rightclick-menu").hide();
-    luckysheetContainerFocus();
-
-    // let size = parseInt($(this).siblings("input[type='number']").val().trim());
-    let size = parseInt($(this).closest('.luckysheet-cols-menuitem').find("input[type='number']").val().trim());
-
-    const locale_info = locale().info;
-
-    let cfg = $.extend(true, {}, Store.config);
-    let type;
-    let images = null;
-
-    if (Store.luckysheetRightHeadClickIs == "row") {
-        if (!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")) {
-            return;
+        if (Store.clearjfundo) {
+            Store.jfundo.length = 0;
+            Store.jfredo.push({
+                "type": "resize",
+                "ctrlType": type,
+                "sheetIndex": Store.currentSheetIndex,
+                "config": $.extend(true, {}, Store.config),
+                "curconfig": $.extend(true, {}, cfg),
+                "images": $.extend(true, {}, imageCtrl.images),
+                "curImages": $.extend(true, {}, images)
+            });
         }
 
-        if (size < 0 || size > 545) {
-            if (isEditMode()) {
-                alert(locale_info.tipRowHeightLimit);
-            } else {
-                tooltip.info(locale_info.tipRowHeightLimit, "");
-            }
-            return;
+        //config
+        Store.config = cfg;
+        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
+
+        //images
+        Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].images = images;
+        server.saveParam("all", Store.currentSheetIndex, images, { "k": "images" });
+        imageCtrl.images = images;
+        imageCtrl.allImagesShow();
+
+        if (Store.luckysheetRightHeadClickIs == "row") {
+            server.saveParam("cg", Store.currentSheetIndex, cfg["rowlen"], { "k": "rowlen" });
+            jfrefreshgrid_rhcw(Store.flowdata.length, null);
+        } else if (Store.luckysheetRightHeadClickIs == "column") {
+            server.saveParam("cg", Store.currentSheetIndex, cfg["columnlen"], { "k": "columnlen" });
+            jfrefreshgrid_rhcw(null, Store.flowdata[0].length);
         }
-
-        type = "resizeR";
-
-        if (cfg["rowlen"] == null) {
-            cfg["rowlen"] = {};
-        }
-
-        for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
-            let r1 = Store.luckysheet_select_save[s].row[0];
-            let r2 = Store.luckysheet_select_save[s].row[1];
-
-            for (let r = r1; r <= r2; r++) {
-                cfg["rowlen"][r] = size;
-
-                images = imageCtrl.moveChangeSize("row", r, size);
-            }
-        }
-    } else if (Store.luckysheetRightHeadClickIs == "column") {
-        if (!checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatColumns")) {
-            return;
-        }
-
-        if (size < 0 || size > 2038) {
-            if (isEditMode()) {
-                alert(locale_info.tipColumnWidthLimit);
-            } else {
-                tooltip.info(locale_info.tipColumnWidthLimit, "");
-            }
-            return;
-        }
-
-        type = "resizeC";
-
-        if (cfg["columnlen"] == null) {
-            cfg["columnlen"] = {};
-        }
-
-        for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
-            let c1 = Store.luckysheet_select_save[s].column[0];
-            let c2 = Store.luckysheet_select_save[s].column[1];
-
-            for (let c = c1; c <= c2; c++) {
-                cfg["columnlen"][c] = size;
-
-                images = imageCtrl.moveChangeSize("column", c, size);
-            }
-        }
-    }
-
-    if (Store.clearjfundo) {
-        Store.jfundo.length = 0;
-        Store.jfredo.push({
-            "type": "resize",
-            "ctrlType": type,
-            "sheetIndex": Store.currentSheetIndex,
-            "config": $.extend(true, {}, Store.config),
-            "curconfig": $.extend(true, {}, cfg),
-            "images": $.extend(true, {}, imageCtrl.images),
-            "curImages": $.extend(true, {}, images)
-        });
-    }
-
-    //config
-    Store.config = cfg;
-    Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
-
-    //images
-    Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].images = images;
-    server.saveParam("all", Store.currentSheetIndex, images, { "k": "images" });
-    imageCtrl.images = images;
-    imageCtrl.allImagesShow();
-
-    if (Store.luckysheetRightHeadClickIs == "row") {
-        server.saveParam("cg", Store.currentSheetIndex, cfg["rowlen"], { "k": "rowlen" });
-        jfrefreshgrid_rhcw(Store.flowdata.length, null);
-    } else if (Store.luckysheetRightHeadClickIs == "column") {
-        server.saveParam("cg", Store.currentSheetIndex, cfg["columnlen"], { "k": "columnlen" });
-        jfrefreshgrid_rhcw(null, Store.flowdata[0].length);
-    }
-});
+    });
 }
 
 

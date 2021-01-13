@@ -1531,7 +1531,9 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
         luckysheetTableContent.strokeStyle = "#000";
         luckysheetTableContent.strokeRect(horizonAlignPos, verticalAlignPos_checkbox, 10, 10);
 
-        if (cell.v) {
+        let val = cellValidation[r + '_' + c].inSet.split(',');
+
+        if (cell.v == val[0]) {
             luckysheetTableContent.beginPath();
             luckysheetTableContent.lineTo(
                 horizonAlignPos + 1,

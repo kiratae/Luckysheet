@@ -28,7 +28,9 @@ import Store from '../store';
 import locale from '../locale/locale';
 import json from './json';
 import weVariable from '../custom/variable';
+import { getcellDisplayFormula } from '../custom/getdata';
 import method from './method';
+import { type } from 'os';
 
 const luckysheetformula = {
     error: {
@@ -1254,12 +1256,12 @@ const luckysheetformula = {
 
         if (!isCurInline) {
             if (isRealNull(value) && !isPrevInline) {
-                if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.f == null)) {
+                if (curv == null || (isRealNull(curv.v) && curv.spl == null && curv.df == null)) {
                     _this.cancelNormalSelected();
                     return;
                 }
             } else if (curv != null && curv.qp != 1) {
-                if (getObjType(curv) == "object" && (value == curv.f || value == curv.v || value == curv.m)) {
+                if (getObjType(curv) == "object" && (value == curv.df || value == curv.v || value == curv.m)) {
                     _this.cancelNormalSelected();
                     return;
                 } else if (value == curv) {
@@ -1272,8 +1274,9 @@ const luckysheetformula = {
 
             } else if (getObjType(curv) == "object" && curv.ct != null && curv.ct.fa != null && curv.ct.fa != "@" && !isRealNull(value)) {
                 delete curv.m; //更新时间m处理 ， 会实际删除单元格数据的参数（flowdata时已删除）
-                if (curv.f != null) { //如果原来是公式，而更新的数据不是公式，则把公式删除
+                if (curv.df != null) { //如果原来是公式，而更新的数据不是公式，则把公式删除
                     delete curv.f;
+                    delete curv.df;
                     delete curv.spl; //删除单元格的sparklines的配置串
                 }
             }
@@ -1299,7 +1302,7 @@ const luckysheetformula = {
                     curv.df = v[3]; // [TK] custom
 
                     //打进单元格的sparklines的配置串， 报错需要单独处理。
-                    if (v.length == 4 && v[4].type == "sparklines") {
+                    if (v.length == 5 && v[4].type == "sparklines") {
                         delete curv.m;
                         delete curv.v;
 
@@ -1310,7 +1313,7 @@ const luckysheetformula = {
                         } else {
                             curv.spl = v[4].data;
                         }
-                    } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                    } else if (v.length == 5 && v[4].type == "dynamicArrayItem") {
                         dynamicArrayItem = v[4].data;
                     }
                 }
@@ -1329,7 +1332,7 @@ const luckysheetformula = {
                         curv.df = v[3]; // [TK] custom
 
                         //打进单元格的sparklines的配置串， 报错需要单独处理。
-                        if (v.length == 4 && v[4].type == "sparklines") {
+                        if (v.length == 5 && v[4].type == "sparklines") {
                             delete curv.m;
                             delete curv.v;
 
@@ -1340,7 +1343,7 @@ const luckysheetformula = {
                             } else {
                                 curv.spl = v[4].data;
                             }
-                        } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                        } else if (v.length == 5 && v[4].type == "dynamicArrayItem") {
                             dynamicArrayItem = v[4].data;
                         }
                     }
@@ -1422,7 +1425,7 @@ const luckysheetformula = {
 
 
                 //打进单元格的sparklines的配置串， 报错需要单独处理。
-                if (v.length == 4 && v[4].type == "sparklines") {
+                if (v.length == 5 && v[4].type == "sparklines") {
                     let curCalv = v[4].data;
 
                     if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
@@ -1430,7 +1433,7 @@ const luckysheetformula = {
                     } else {
                         value.spl = v[4].data;
                     }
-                } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                } else if (v.length == 5 && v[4].type == "dynamicArrayItem") {
                     dynamicArrayItem = v[4].data;
                 }
             }
@@ -1452,7 +1455,7 @@ const luckysheetformula = {
                     value.df = v[3]; // [TK] custom
 
                     //打进单元格的sparklines的配置串， 报错需要单独处理。
-                    if (v.length == 4 && v[4].type == "sparklines") {
+                    if (v.length == 5 && v[4].type == "sparklines") {
                         let curCalv = v[4].data;
 
                         if (getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object") {
@@ -1460,7 +1463,7 @@ const luckysheetformula = {
                         } else {
                             value.spl = v[4].data;
                         }
-                    } else if (v.length == 4 && v[4].type == "dynamicArrayItem") {
+                    } else if (v.length == 5 && v[4].type == "dynamicArrayItem") {
                         dynamicArrayItem = v[4].data;
                     }
                 } else {
@@ -4977,7 +4980,7 @@ const luckysheetformula = {
 
             let item = {
                 formulaArray: formulaArray,
-                calc_funcStr: calc_funcStr,
+                calc_funcStr: getcellDisplayFormula(formulaCell.r, formulaCell.c, formulaCell.index), // [TK] custom: old => calc_funcStr: calc_funcStr,
                 key: key,
                 r: formulaCell.r,
                 c: formulaCell.c,
@@ -5099,14 +5102,16 @@ const luckysheetformula = {
                 "c": formulaCell.c,
                 "v": v[1],
                 "f": v[2],
-                "spe": v[3],
+                "df": v[3],
+                "spe": v[4],
                 "index": formulaCell.index
             });
 
             // _this.execFunctionGroupData[u.r][u.c] = value;
             _this.execFunctionGlobalData[formulaCell.r + "_" + formulaCell.c + "_" + formulaCell.index] = {
                 v: v[1],
-                f: v[2]
+                f: v[2],
+                df: v[3]
             };
         }
         // console.log(formulaRunList);
@@ -5335,7 +5340,7 @@ const luckysheetformula = {
 
         u.color = "b";
         window.luckysheet_getcelldata_cache = null;
-        let calc_funcStr = getcellFormula(u.r, u.c, u.index);
+        let calc_funcStr = getcellDisplayFormula(u.r, u.c, u.index);
 
         let v = _this.execfunction(calc_funcStr, u.r, u.c, u.index);
 
@@ -5466,13 +5471,30 @@ const luckysheetformula = {
 
         let _locale = locale();
         let locale_formulaMore = _locale.formulaMore;
-        // console.log(txt,r,c)
-        if (txt.indexOf(_this.error.r) > -1) {
-            return [false, _this.error.r, txt];
+        let resolved = null;
+
+        console.log(txt, r, c);
+        // [TK] custom
+        try {
+            weVariable.resolvedVariables.length = 0;
+            // console.log('execfunction', txt);
+            resolved = weVariable.resolveFormula(txt);
+            // console.log('resolveFormula', resolved);
+        } catch (e) {
+            let err = e;
+            //err错误提示处理
+            console.log(e, resolved);
+            err = _this.errorInfo(err);
+            return [false, err, resolved, txt];
+        }
+        // [TK] end ustom
+
+        if (resolved.indexOf(_this.error.r) > -1) {
+            return [false, _this.error.r, resolved, txt];
         }
 
-        if (!_this.checkBracketNum(txt)) {
-            txt += ")";
+        if (!_this.checkBracketNum(resolved)) {
+            resolved += ")";
         }
 
         if (index == null) {
@@ -5481,25 +5503,22 @@ const luckysheetformula = {
 
         Store.calculateSheetIndex = index;
 
-        let fp = $.trim(_this.functionParserExe(txt));
-        //console.log(fp)
+        let fp = $.trim(_this.functionParserExe(resolved));
+        console.log(fp)
         if ((fp.substr(0, 20) == "luckysheet_function." || fp.substr(0, 22) == "luckysheet_compareWith")) {
             _this.functionHTMLIndex = 0;
         }
 
-        if (!_this.testFunction(txt, fp) || fp == "") {
+        if (!_this.testFunction(resolved, fp) || fp == "") {
             tooltip.info("", locale_formulaMore.execfunctionError);
-            return [false, _this.error.n, txt];
+            return [false, _this.error.n, resolved, txt];
         }
 
-
-
         let result = null;
-        let resolved = null;
         window.luckysheetCurrentRow = r;
         window.luckysheetCurrentColumn = c;
         window.luckysheetCurrentIndex = index;
-        window.luckysheetCurrentFunction = txt;
+        window.luckysheetCurrentFunction = resolved;
 
         let sparklines = null;
 
@@ -5512,7 +5531,7 @@ const luckysheetformula = {
                     let funcgRange = _this.getcellrange(funcgStr);
 
                     if (funcgRange.row[0] < 0 || funcgRange.column[0] < 0) {
-                        return [true, _this.error.r, txt];
+                        return [true, _this.error.r, resolved, txt];
                     }
 
                     if (funcgRange.sheetIndex == Store.calculateSheetIndex && r >= funcgRange.row[0] && r <= funcgRange.row[1] && c >= funcgRange.column[0] && c <= funcgRange.column[1]) {
@@ -5523,17 +5542,13 @@ const luckysheetformula = {
 
                         }
 
-                        return [false, 0, txt];
+                        return [false, 0, resolved, txt];
                     }
                 }
             }
 
-            // [TK] custom
-            // console.log('execfunction', fp);
-            resolved = weVariable.resolveFormula(fp);
-            // console.log('resolveFormula', resolved);
-
-            result = new Function("return " + resolved)();
+            result = new Function("return " + fp)();
+            console.log('result', result);
             if (typeof(result) == "string") { //把之前的非打印控制字符DEL替换回一个双引号。
                 result = result.replace(/\x7F/g, '"');
             }
@@ -5587,7 +5602,7 @@ const luckysheetformula = {
                 if (getObjType(result[0]) == "array" && result.length == 1 && result[0].length == 1) {
                     result = result[0][0];
                 } else {
-                    dynamicArrayItem = { "r": r, "c": c, "f": txt, "df": resolved, "index": index, "data": result };
+                    dynamicArrayItem = { "r": r, "c": c, "f": resolved, "df": txt, "index": index, "data": result };
                     result = "";
                 }
             } else {
@@ -5618,7 +5633,7 @@ const luckysheetformula = {
             return [true, result, resolved, txt, { type: "dynamicArrayItem", data: dynamicArrayItem }];
         }
 
-        console.log(result, txt, resolved);
+        console.log(result, resolved, txt);
 
         return [true, result, resolved, txt];
     },

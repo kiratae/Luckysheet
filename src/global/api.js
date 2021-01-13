@@ -171,10 +171,11 @@ export function setCellValue(row, column, value, options = {}) {
             cell = {};
         }
 
-        data = weAPI.setCellValue(row, column, data, value); // [TK] custom
-
-        if (value.f != null && value.v == null) {
-            curv.f = value.f;
+        //  [TK] custom; old => if (value.f != null && value.v == null) {
+        if (value.df != null && value.v == null) {
+            curv.df = value.df;
+            // [TK] custom
+            // curv.f = value.f;
             if (value.ct != null) {
                 curv.ct = value.ct;
             }
@@ -182,6 +183,10 @@ export function setCellValue(row, column, value, options = {}) {
         } else {
             if (value.ct != null) {
                 curv.ct = value.ct;
+            }
+            // [TK] custom
+            if (value.df != null) {
+                curv.df = value.df;
             }
             if (value.f != null) {
                 curv.f = value.f;
@@ -194,9 +199,26 @@ export function setCellValue(row, column, value, options = {}) {
             if (value.m != null) {
                 curv.m = value.m;
             }
+
+            // [TK] custom
+            if (value.ro != null) {
+                curv.ro = value.ro;
+            }
+            if (value.iv != null) {
+                curv.iv = value.iv;
+            }
+            if (value.tp != null) {
+                curv.tp = value.tp;
+            }
+            if (value.sv != null) {
+                curv.sv = value.sv;
+            }
+            // [TK] end custom
+
             formula.delFunctionGroup(row, column);
             setcellvalue(row, column, data, curv); //update text value
         }
+
         for (let attr in value) {
             let v = value[attr];
             if (attr in formatList) {
@@ -2752,7 +2774,8 @@ export function setSingleRangeFormat(attr, value, options = {}) {
             console.log('r', r);
             console.log('c', c);
             setCellValue(r, c, {
-                [attr]: value }, {
+                [attr]: value
+            }, {
                 order: order,
                 isRefresh: false,
             })

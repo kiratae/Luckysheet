@@ -8,7 +8,6 @@ import sheetmanage from '../controllers/sheetmanage';
 import { isInlineStringCT, isInlineStringCell, convertCssToStyleList } from '../controllers/inlineString';
 import locale from '../locale/locale';
 import Store from '../store';
-import weConfigsetting from '../custom/configsetting';
 
 //Get selection range value
 export function getdatabyselection(range, sheetIndex) {
@@ -255,8 +254,7 @@ export function getcellFormula(r, c, i, data) {
         return null;
     }
 
-    // [TK] custom return cell.f;
-    return cell.df;
+    return cell.f;
 }
 
 

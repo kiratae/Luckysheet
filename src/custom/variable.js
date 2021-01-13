@@ -136,7 +136,7 @@ const weVariable = {
                                 let formData = weConfigsetting.deserializeHelper(res.data.data)[0];
 
                                 formData.order = Store.luckysheetfile.length;
-                                formData.index = name;
+                                formData.index = res.data.rptFormId;
                                 formData.status = 0;
                                 formData.hide = 1;
                                 formData.allowEdit = false;

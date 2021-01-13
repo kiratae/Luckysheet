@@ -83,8 +83,9 @@ const paths = {
     //plugins src
     pluginsCss: ['src/plugins/css/*.css'],
     plugins: ['src/plugins/*.css'],
-    css: ['src/css/*.css', 'node_modules/flatpickr/dist/themes/light.css'],
+    css: ['src/css/*.css', 'node_modules/flatpickr/dist/themes/light.css', 'src/custom/css/*.css'],
     pluginsJs: [
+        'node_modules/jquery/dist/jquery.min.js',
         'src/plugins/js/clipboard.min.js',
         'src/plugins/js/spectrum.min.js',
         'src/plugins/js/jquery-ui.min.js',
@@ -113,9 +114,21 @@ const paths = {
     // Package directory
     dist: 'dist',
 };
-if (!production) {
-    paths.plugins.unshift('src/plugins/font-awesome.min.css');
-    paths.pluginsJs.unshift('src/plugins/js/jquery.min.js');
+if (production) {
+    paths.plugins = ['src/plugins/*.css', '!src/plugins/font-awesome.min.css'];
+    paths.pluginsJs = [
+        'src/plugins/js/clipboard.min.js',
+        'src/plugins/js/spectrum.min.js',
+        'src/plugins/js/jquery-ui.min.js',
+        'src/plugins/js/jquery.mousewheel.min.js',
+        // 'src/plugins/js/numeral.min.js',
+        'src/plugins/js/html2canvas.min.js',
+        'src/plugins/js/localforage.min.js',
+        'src/plugins/js/lodash.min.js',
+        'src/plugins/js/jstat.min.js',
+        'src/plugins/js/crypto-api.min.js',
+        'src/plugins/js/jquery.sPage.min.js'
+    ];
 }
 
 

@@ -61,8 +61,7 @@ const weCore = {
         libCore.execFormula = function(txt) {
             // console.log('execFormula', txt);
             if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
-                return weVariable.execFormula(txt, true);
-                // return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
+                return luckysheetformula.execfunction(txt, undefined, undefined, undefined, true);
             }
         }
 

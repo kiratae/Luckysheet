@@ -319,12 +319,8 @@ const weCellValidationCtrl = {
 
         let val = item.inSet.split(',');
         let value = val[1]; // false value
-        if (d[r][c] && typeof d[r][c].v != 'undefined') {
-            d[r][c].v = !d[r][c].v;
-        }
-
-        if (d[r][c].v) {
-            value = val[0]; // true value
+        if (item.checked) {
+            value = val[0];
         }
 
         // let d = editor.deepCopyFlowData(Store.flowdata);
@@ -431,7 +427,7 @@ const weCellValidationCtrl = {
                 dataType: 'json',
                 data: { id: id },
                 beforeSend: function() {
-                    self.log.info(func, `calling: "${weConfigsetting.masterDataApi}" with id "${id}".`);
+                    weCellValidationCtrlLogger.info(func, `calling: "${weConfigsetting.masterDataApi}" with id "${id}".`);
                     $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML(false));
                 },
                 success: function(res, textStatus, jqXHR) {
@@ -444,7 +440,7 @@ const weCellValidationCtrl = {
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    self.log.error(func, 'error', textStatus);
+                    weCellValidationCtrlLogger.error(func, 'error', textStatus);
                     removeLoading(self.error.ce);
                 }
             });

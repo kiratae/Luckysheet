@@ -48,10 +48,11 @@ function setcellvalue(r, c, d, v) {
             if (v.tp != null) {
                 cell.tp = v.tp;
             }
+
             if (v.sv != null) {
                 cell.sv = v.sv;
             }
-            // end [TK] custom
+            // [TK] end custom
         }
 
 

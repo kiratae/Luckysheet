@@ -45,6 +45,8 @@
     "scripts": {
         "build": "cross-env NODE_ENV=production gulp build",
         "dev": "cross-env NODE_ENV=development gulp dev",
+        "prod": "cross-env NODE_ENV=production gulp prod",
+        "less": "cross-env NODE_ENV=production gulp less",
         "docs:dev": "vuepress dev docs",
         "docs:build": "vuepress build docs",
         "commit": "git-cz",
@@ -58,3 +60,4 @@
             "path": "./node_modules/cz-conventional-changelog"
         }
     }
+}
