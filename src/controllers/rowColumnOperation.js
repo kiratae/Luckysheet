@@ -2006,9 +2006,8 @@ export function rowColumnOperationInitial() {
                             delete d[r][c]["m"];
                             delete d[r][c]["v"];
 
-                            weAPI.clearCell(d[r][c]);
-
-                            if (d[r][c]["f"] != null) {
+                            if (d[r][c]["df"] != null) {
+                                delete d[r][c]["df"];
                                 delete d[r][c]["f"];
                                 formula.delFunctionGroup(r, c, Store.currentSheetIndex);
 
@@ -2018,6 +2017,11 @@ export function rowColumnOperationInitial() {
                             if (d[r][c]["ct"] != null && d[r][c]["ct"].t == 'inlineStr') {
                                 delete d[r][c]["ct"];
                             }
+
+                            delete d["ro"];
+                            delete d["iv"];
+                            delete d["tp"];
+                            delete d["sv"];
                         } else {
                             d[r][c] = null;
                         }

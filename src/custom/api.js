@@ -56,11 +56,10 @@ const weAPI = {
     },
     clearCell: function(cell) {
         const func = 'clearCell';
-        weAPILogger.info(func, `at cell ${cell.toString()}`);
+        weAPILogger.info(func, `at cell ${JSON.stringify(cell)}`);
         delete cell["ro"];
         delete cell["iv"];
         delete cell["tp"];
-        delete cell["df"];
         delete cell["sv"];
     },
     getSelectedCell: function() {
@@ -124,8 +123,8 @@ const weAPI = {
     insertUpdateVariable: function(r, c, index) {
         luckysheetformula.insertUpdateFunctionGroup(r, c, index);
     },
-    execFunctionGroupForce: function() {
-        luckysheetformula.execFunctionGroupForce(true);
+    execFunctionGroupForce: function(isForce) {
+        luckysheetformula.execFunctionGroupForce(isForce);
     }
 }
 

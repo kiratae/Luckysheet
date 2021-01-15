@@ -69,7 +69,7 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     const _locale = locale();
     const locale_info = _locale.info;
 
-    let addControll = '<button id="luckysheet-bottom-add-row" class="btn btn-default">' + locale_info.add + '</button><input id="luckysheet-bottom-add-row-input" type="text" class="luckysheet-datavisual-config-input luckysheet-mousedown-cancel" placeholder="100"><span style="font-size: 14px;">' + locale_info.row + '</span><span style="font-size: 14px;color: #9c9c9c;">(' + locale_info.addLast + ')</span>';
+    let addControll = '<button id="luckysheet-bottom-add-row" class="btn btn-secondary">' + locale_info.add + '</button><input id="luckysheet-bottom-add-row-input" type="text" class="form-control luckysheet-datavisual-config-input luckysheet-mousedown-cancel" placeholder="100"><span style="font-size: 14px;">' + locale_info.row + '</span><span style="font-size: 14px;color: #9c9c9c;">(' + locale_info.addLast + ')</span>';
     let backControll = ' <button id="luckysheet-bottom-bottom-top" class="btn btn-default" style="">' + locale_info.backTop + '</button>';
     // let pageControll = ' <span id="luckysheet-bottom-page-info" style="font-size: 14px;color: #f34141;">共'+ luckysheetConfigsetting.pageInfo.totalPage +'页，当前已显示'+ (luckysheetConfigsetting.pageInfo.currentPage) +'页，每页'+ luckysheetConfigsetting.pageInfo.pageSize +'条</span> <button id="luckysheet-bottom-page-next" class="btn btn-danger" style="">下一页</button>';
     let pageInfo = replaceHtml(locale_info.pageInfo, {
@@ -125,8 +125,8 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     }
 
     $("#luckysheet-rows-h").width((Store.rowHeaderWidth - 1.5));
-    $("#luckysheet-cols-h-c").height((Store.columnHeaderHeight - 1.5));
-    $("#luckysheet-left-top").css({ width: Store.rowHeaderWidth - 1.5, height: Store.columnHeaderHeight - 1.5 });
+    $("#luckysheet-cols-h-c").height((Store.columnHeaderHeight - 1));
+    $("#luckysheet-left-top").css({ width: Store.rowHeaderWidth - 1.5, height: Store.columnHeaderHeight - 1 });
 
     // //批注
     // luckysheetPostil.buildAllPs(Store.flowdata);

@@ -90,10 +90,16 @@ const weVariable = {
         weVariableLogger.info(func, `has been call with name is "${name}", isLocal is "${isLocal}", and sheetName is "${sheetName}".`);
         try {
             let variables = null;
-            if (isLocal && sheetName == null)
-                variables = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["variable"];
-            else
-                variables = sheetmanage.getSheetByName(sheetName)["variable"];
+            if (isLocal && sheetName == null) {
+                let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
+                console.log('file', file);
+                variables = file.variable;
+            } else {
+                let file = sheetmanage.getSheetByName(sheetName);
+                console.log('file', file);
+                variables = file.variable;
+            }
+
 
             if (variables)
                 return variables.find(item => item.name == name);
@@ -106,7 +112,7 @@ const weVariable = {
     addRemoteSheet: function(name) {
         const func = 'addRemoteSheet';
         weVariableLogger.info(func, `has been call with name is "${name}".`);
-        let sheetName = name.replace('_', '-');
+
         let removeLoading = function() {
             setTimeout(function(ex) {
                 $("#luckysheetloadingdata").fadeOut().remove();
@@ -115,7 +121,7 @@ const weVariable = {
             }, 500);
         }
         const self = this;
-        let postData = { rptFormCode: sheetName };
+        let postData = { rptFormCode: name };
         if (!weConfigsetting.formEditor) {
             postData['formReportSetId'] = weConfigsetting.formReportSetId;
         }
@@ -137,6 +143,7 @@ const weVariable = {
 
                                 formData.order = Store.luckysheetfile.length;
                                 formData.index = res.data.rptFormId;
+                                formData.name = res.data.rptFormCode;
                                 formData.status = 0;
                                 formData.hide = 1;
                                 formData.allowEdit = false;
@@ -230,6 +237,7 @@ const weVariable = {
                         var matched = varContext.match(this.variableRegex);
                         if (matched && matched.length === 2) {
                             var sheetName = matched[0].replace(/'|!/g, '');
+                            sheetName = sheetName.replace('_', '-');
                             var afterSheetFx = matched[1];
 
                             // if not have sheet in current client go to get it from remote
@@ -240,16 +248,20 @@ const weVariable = {
                             if (this.isLocalVariable(afterSheetFx)) {
                                 this.checkCircular(varContext);
                                 var varName = afterSheetFx.replace(/#/g, '');
+                                console.log('varName', varName);
                                 var variable = this.getVariableByName(varName, false, sheetName);
                                 if (variable) {
                                     // tranform formula
                                     let cellRange = variable.formula.match(this.cellRefRegex);
+                                    console.log('variable.formula cellRange', cellRange);
+                                    let tempFx = variable.formula;
                                     if (cellRange && cellRange.length && typeof cellRange === 'object') {
                                         for (var i = 0; i < cellRange.length; i++) {
-                                            variable.formula = variable.formula.replace(new RegExp(cellRange[i]), `'${sheetName}'!${cellRange[i]}`);
+                                            tempFx = tempFx.replace(new RegExp(cellRange[i]), `'${sheetName}'!${cellRange[i]}`);
                                         }
                                     }
-                                    var resolved = this.resolveFormula(variable.formula);
+                                    console.log('variable.formula', tempFx);
+                                    var resolved = this.resolveFormula(tempFx);
                                     resolved = resolved.replace(/=/g, '');
                                     fx = fx.replace(new RegExp(varContext), resolved);
                                 } else {

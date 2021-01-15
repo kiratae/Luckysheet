@@ -8934,18 +8934,18 @@ export default {
         noName: "Untitled spreadsheet",
         wait: "waiting for update",
 
-        add: "Add",
-        addLast: "more rows at bottom",
-        backTop: "Back to the top",
-        pageInfo: 'Total ${total}，${totalPage} page，current ${currentPage}',
-        nextPage: "Next",
+        add: "เพิ่ม",
+        addLast: "แถวที่ด้านล่าง",
+        backTop: "กลับสู่ด้านบน",
+        pageInfo: 'รวม ${total}，${totalPage} หน้า，ปัจจุบัน ${currentPage}',
+        nextPage: "ถัดไป",
 
-        tipInputNumber: "Please enter the number",
-        tipInputNumberLimit: "The increase range is limited to 1-100",
+        tipInputNumber: "กรุณากรอกข้อมูลเป็นตัวเลข",
+        tipInputNumberLimit: "การเพิ่มแถวถูกจำกัดไว้ที่ 1-100 แถวต่อครั้ง",
 
-        tipRowHeightLimit: "Row height must be between 0 ~ 545",
-        tipColumnWidthLimit: "The column width must be between 0 ~ 2038",
-        pageInfoFull: 'Total ${total}，${totalPage} page，All data displayed',
+        tipRowHeightLimit: "ความสูงของแถวต้องอยู่ระหว่าง 0 ถึง 545",
+        tipColumnWidthLimit: "ความกว้างของคอลัมน์ต้องอยู่ระหว่าง 0 ถึง 2038",
+        pageInfoFull: 'รวม ${total}，${totalPage} หน้า，ข้อมูลทั้งหมดที่แสดง',
     },
     currencyDetail: {
         RMB: 'RMB',
@@ -9824,9 +9824,9 @@ export default {
         "helpExample": "Example",
         "helpAbstract": "Abstract",
 
-        "execfunctionError": 'Error in the formula',
-        "execfunctionSelfError": 'The formula cannot refer to its own cell',
-        "execfunctionSelfErrorResult": 'The formula cannot refer to its own cell, which will lead to inaccurate calculation results',
+        "execfunctionError": 'พบข้อผิดพลาดในสูตร',
+        "execfunctionSelfError": 'สูตรไม่สามารถอ้างอิงถึงเซลล์ของตัวเองได้',
+        "execfunctionSelfErrorResult": 'สูตรไม่สามารถอ้างอิงถึงเซลล์ของตัวเองซึ่งจะนำไปสู่ผลของการคำนวณที่ไม่ถูกต้อง',
 
         "allowRepeatText": "Repeat",
         "allowOptionText": "Option",

@@ -280,14 +280,18 @@ export function clearCell(row, column, options = {}) {
         delete cell["m"];
         delete cell["v"];
 
-        weAPI.clearCell(cell); // [TK] custom
-
-        if (cell["f"] != null) {
+        if (cell["df"] != null) {
+            delete cell["df"];
             delete cell["f"];
             formula.delFunctionGroup(row, column, order);
 
             delete cell["spl"];
         }
+
+        delete cell["ro"];
+        delete cell["iv"];
+        delete cell["tp"];
+        delete cell["sv"];
     } else {
         cell = null;
     }
