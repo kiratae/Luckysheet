@@ -13,7 +13,8 @@ const tooltip = {
         let _locale = locale();
         let locale_button = _locale.button;
 
-        $(weConfigsetting.bodyContainer).append(replaceHtml(modelHTML, {
+        // [TK] custom
+        $("body").append(replaceHtml(modelHTML, {
             "id": "luckysheet-info",
             "addclass": "",
             "title": title,
@@ -28,7 +29,8 @@ const tooltip = {
             winh = $(window).height();
         let scrollLeft = $(document).scrollLeft(),
             scrollTop = $(document).scrollTop();
-        $("#luckysheet-info").css({ "left": (winw + scrollLeft - myw) / 2, "top": (scrollTop - myh) / 2 }).show();
+        let topOffset = $(weConfigsetting.bodyContainer).offset().top
+        $("#luckysheet-info").css({ "left": (winw + scrollLeft - myw) / 2, "top": (winh - topOffset - myh) / 2 }).show();
     },
     confirm: function(title, content, func1, func2, name1, name2) {
         $("#luckysheet-modal-dialog-mask").show();

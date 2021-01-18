@@ -32,7 +32,7 @@ const weDynamicRow = {
         });
     },
     openMenu: function() {
-        if (!weConfigsetting.canDynamicRow) {
+        if (!weConfigsetting.canDynamicRow || !weConfigsetting.formEditor) {
             return;
         }
 

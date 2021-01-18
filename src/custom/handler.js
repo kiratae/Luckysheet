@@ -217,7 +217,7 @@ const weHandler = {
         $("#luckysheet-cellRange-dialog").remove();
 
         const _locale = locale();
-        const dvText = _locale.dataVerification;
+        const weText = _locale.weHandler;
         const buttonText = _locale.button;
 
         // emit hook onOpenCellRange
@@ -228,8 +228,8 @@ const weHandler = {
         $("body").append(replaceHtml(modelHTML, {
             "id": "luckysheet-cellRange-dialog",
             "addclass": "luckysheet-cellRange-dialog",
-            "title": dvText.selectCellRange,
-            "content": `<input readonly="readonly" class="form-control bg-white" placeholder="${dvText.selectCellRange2}" value="${txt}"/>`,
+            "title": weText.selectCellRange,
+            "content": `<input readonly="readonly" class="form-control bg-white" placeholder="${weText.selectCellRange2}" value="${txt}"/>`,
             "botton": `<button id="luckysheet-cellRange-dialog-confirm" class="btn btn-primary">${buttonText.confirm}</button>
                         <button id="luckysheet-cellRange-dialog-close" class="btn btn-default">${buttonText.close}</button>`,
             "style": "z-index:100003"
@@ -257,7 +257,7 @@ const weHandler = {
         $("#luckysheet-cellSingleRange-dialog").remove();
 
         const _locale = locale();
-        const dvText = _locale.dataVerification;
+        const weText = _locale.weHandler;
         const buttonText = _locale.button;
 
         // emit hook onOpenCellRange
@@ -268,8 +268,8 @@ const weHandler = {
         $("body").append(replaceHtml(modelHTML, {
             "id": "luckysheet-cellSingleRange-dialog",
             "addclass": "luckysheet-cellSingleRange-dialog",
-            "title": dvText.selectCellRange,
-            "content": `<input readonly="readonly" class="form-control bg-white" placeholder="${dvText.selectCellRange2}" value="${txt}"/>`,
+            "title": weText.selectCell,
+            "content": `<input readonly="readonly" class="form-control bg-white" placeholder="${weText.selectCell2}" value="${txt}"/>`,
             "botton": `<button id="luckysheet-cellSingleRange-dialog-confirm" class="btn btn-primary">${buttonText.confirm}</button>
                         <button id="luckysheet-cellSingleRange-dialog-close" class="btn btn-default">${buttonText.close}</button>`,
             "style": "z-index:100003"
@@ -405,21 +405,6 @@ const weHandler = {
                 last["height_move"] = height;
 
                 this.selectRange[this.selectRange.length - 1] = last;
-            } else if (event.ctrlKey) {
-                this.selectRange.push({
-                    "left": col_pre,
-                    "width": col - col_pre - 1,
-                    "top": row_pre,
-                    "height": row - row_pre - 1,
-                    "left_move": col_pre,
-                    "width_move": col - col_pre - 1,
-                    "top_move": row_pre,
-                    "height_move": row - row_pre - 1,
-                    "row": [row_index, row_index_ed],
-                    "column": [col_index, col_index_ed],
-                    "row_focus": row_index,
-                    "column_focus": col_index
-                });
             } else {
                 this.selectRange = [];
                 this.selectRange.push({

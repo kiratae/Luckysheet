@@ -112,7 +112,7 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
 
     //新建行菜单
     if (!weConfigsetting.slientMode) {
-        $("body").append(maskHTML);
+        $(weConfigsetting.bodyContainer).append(maskHTML);
         $("body").append(colsmenuHTML);
         $("body").append(rightclickHTML());
         $("body").append(inputHTML);

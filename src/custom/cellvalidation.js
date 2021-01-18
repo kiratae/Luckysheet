@@ -247,16 +247,12 @@ const weCellValidationCtrl = {
 
                 currentCellValidation[r + '_' + c] = obj;
 
-                if (obj.isReadonly != null) {
-                    if (d[r][c] != null && typeof d[r][c] == 'object') {
-                        if (obj.isReadonly) {
-                            d[r][c].ro = true;
-                            isHasReadonly = true;
-                        } else if (typeof d[r][c]['ro'] !== 'undefined') {
-                            delete d[r][c]['ro'];
-                        }
-                    } else if (typeof d[r][c] == null) {
-                        d[r][c] = { ro: true };
+                if (obj.isReadOnly != null) {
+                    if (obj.isReadOnly) {
+                        if (d[r][c] == null)
+                            d[r][c] = { ro: true };
+                        d[r][c]['ro'] = true;
+                        setcellvalue(r, c, d, d[r][c]);
                         isHasReadonly = true;
                     }
                 }
@@ -265,10 +261,12 @@ const weCellValidationCtrl = {
 
         if (isHasReadonly) {
             this.refOfReadonly(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
-        } else if (obj.cellType == 'checkbox' && obj.inSet) {
-            this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         } else {
-            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+            if (obj.cellType == 'checkbox' && obj.inSet) {
+                this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
+            } else {
+                this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+            }
         }
 
     },
@@ -289,9 +287,16 @@ const weCellValidationCtrl = {
         let d = Store.flowdata;
 
         let isHasReadonly = false;
+        let isCheckbox = false;
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {
                 if (currentCellValidation[r + '_' + c]) {
+                    if (currentCellValidation[r + '_' + c].cellType == 'checkbox' && currentCellValidation[r + '_' + c].inSet) {
+                        delete d[r][c]['m'];
+                        delete d[r][c]['v'];
+                        isCheckbox = true;
+                    }
+
                     if (currentCellValidation[r + '_' + c].isReadOnly != null && d[r][c]['ro']) {
                         delete d[r][c]['ro'];
                         isHasReadonly = true;
@@ -305,7 +310,11 @@ const weCellValidationCtrl = {
         if (isHasReadonly) {
             this.refOfReadonly(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         } else {
-            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+            if (isCheckbox) {
+                this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
+            } else {
+                this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+            }
         }
     },
     checkboxChange: function(r, c) {

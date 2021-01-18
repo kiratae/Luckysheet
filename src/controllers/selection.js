@@ -806,6 +806,7 @@ const selection = {
                             originCell.m = value;
                         }
 
+                        // [TK] custom
                         if (originCell.df != null && originCell.df.length > 0) {
                             originCell.df = "";
                             formula.delFunctionGroup(r + curR, c + curC, Store.currentSheetIndex);
@@ -1343,7 +1344,9 @@ const selection = {
         if (copyRange["copyRange"].length > 1) {
             for (let i = 0; i < copyData.length; i++) {
                 for (let j = 0; j < copyData[i].length; j++) {
-                    if (copyData[i][j] != null && copyData[i][j].f != null) {
+                    // [TK] custom old => if (copyData[i][j] != null && copyData[i][j].f != null) {
+                    if (copyData[i][j] != null && copyData[i][j].df != null && copyData[i][j].f != null) {
+                        delete copyData[i][j].df; // [TK] custom
                         delete copyData[i][j].f;
                         delete copyData[i][j].spl;
                     }
@@ -1495,8 +1498,9 @@ const selection = {
                             value = $.extend(true, {}, copyData[h - mth][c - mtc]);
                         }
 
-                        if (value != null && value.f != null) {
-                            let func = value.f;
+                        // [TK] custom old => if (value != null && value.f != null) {
+                        if (value != null && value.df != null) {
+                            let func = value.df;
 
                             if (offsetRow > 0) {
                                 func = "=" + formula.functionCopy(func, "down", offsetRow);
@@ -1517,10 +1521,12 @@ const selection = {
                             let funcV = formula.execfunction(func, h, c, undefined, true);
 
                             if (value.spl != null) {
+                                value.df = funcV[3]; // [TK] custom
                                 value.f = funcV[2];
                                 value.v = funcV[1];
-                                value.spl = funcV[3].data;
+                                value.spl = funcV[4].data;
                             } else {
+                                value.df = funcV[3]; // [TK] custom
                                 value.f = funcV[2];
                                 value.v = funcV[1];
 

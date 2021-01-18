@@ -9994,5 +9994,11 @@ export default {
         menuItemAreas: "Print areas",
         menuItemRows: "Print title rows",
         menuItemColumns: "Print title columns",
+    },
+    weHandler: {
+        selectCell: 'คลิกเพื่อเลือกเซลล์',
+        selectCell2: 'โปรดเลือกเซลล์',
+        selectCellRange: 'คลิกเพื่อเลือกช่วงของเซลล์',
+        selectCellRange2: 'โปรดเลือกช่วงของเซลล์',
     }
 };
