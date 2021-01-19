@@ -42,8 +42,6 @@ const weCellValidationCtrl = {
             let rowIndex = last.row_focus;
             let colIndex = last.column_focus;
 
-            $("#luckysheet-rich-text-editor").text(value);
-            // formula.updatecell(rowIndex, colIndex);
             setCellValue(rowIndex, colIndex, { m: text, v: text, sv: { v: value, md_v: mdValue } });
 
             e.stopPropagation();
@@ -204,7 +202,7 @@ const weCellValidationCtrl = {
         } else if (value.inSetCustom != null) {
             // inSetCustom = inSetCustom (value1) | inSetCustomLevel (value2) | inSetCustomTarget (ddlTarget)
             let inSetCustom = value.inSetCustom.split('|');
-            list = this.getSetCustom(inSetCustom[0], inSetCustom[1], inSetCustom[2]);
+            list = this.getSetCustom(inSetCustom[0], inSetCustom[1], (inSetCustom[2] && inSetCustom[2] != "" && inSetCustom[2] != "null") ? inSetCustom[2] : null);
         }
         return list;
     },
@@ -456,16 +454,16 @@ const weCellValidationCtrl = {
         }
         return list;
     },
-    getSetCustom: function(id, lvl, target = null) {
-        let mdGroup = weDropdownCtrl.getData(id);
+    getSetCustom: function(code, lvl, target = null) {
+        let mdGroup = weDropdownCtrl.getDataByCode(code);
         let list = this.getSetCustomByLevel(mdGroup.formMDs, lvl);
         list = list.map(x => { return { value: x.formMDId, text: x.name } });
         if (target != null && target != '') {
             let range = weAPI.getRangeByTxt(target);
             let cell = Store.flowdata[range[0].row[0]][range[0].column[0]];
             if (cell && cell.sv) {
-                mdGroup = weDropdownCtrl.getData(id);
-                let formMD = this.getSetCustomById(mdGroup.formMDs, cell.sv.v);
+                let mdGroup = weDropdownCtrl.getDataByCode(cell.sv.md_v);
+                let formMD = this.getFormMDById(mdGroup.formMDs, cell.sv.v);
                 list = formMD.childrens.map(x => { return { value: x.formMDId, text: x.name } });
             }
         }
@@ -482,13 +480,13 @@ const weCellValidationCtrl = {
         }
         return list;
     },
-    getSetCustomById: function(data, id) {
+    getFormMDById: function(data, id) {
         for (let i = 0; i < data.length; i++) {
             if (data[i].formMDId == id) {
                 return data[i];
             }
             if (data[i].childrens && data[i].childrens.length && typeof data[i].childrens === 'object') {
-                let res = this.getSetCustomById(data[i].childrens, id);
+                let res = this.getFormMDById(data[i].childrens, id);
                 if (res)
                     return data[i];
             }

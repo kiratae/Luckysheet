@@ -17,8 +17,11 @@ const weDropdownCtrl = {
             return [];
         }
     },
-    getData: function(id) {
+    getDataById: function(id) {
         return this.dropdownDatas.find(item => item.formMDGroupId == id);
+    },
+    getDataByCode: function(code) {
+        return this.dropdownDatas.find(item => item.code == code);
     },
     saveData: function(data) {
         if (!data.formMDGroupId) {
@@ -42,7 +45,7 @@ const weDropdownCtrl = {
         try {
             let index = this.dropdownDatas.findIndex(item => item.formMDGroupId === id);
             if (index >= 0) {
-                delete this.dropdownDatas[index];
+                this.dropdownDatas.splice(index, 1);
                 Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dropdownDatas"] = this.dropdownDatas;
                 return true;
             } else {

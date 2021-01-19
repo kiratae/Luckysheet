@@ -51,7 +51,7 @@ const weDynamicRow = {
         }
     },
     createDOM: function() {
-        if (!weConfigsetting.canDynamicRow) {
+        if (!weConfigsetting.canDynamicRow || !weConfigsetting.formEditor) {
             return;
         }
 

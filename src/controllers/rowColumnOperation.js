@@ -2018,10 +2018,11 @@ export function rowColumnOperationInitial() {
                                 delete d[r][c]["ct"];
                             }
 
-                            delete d["ro"];
-                            delete d["iv"];
-                            delete d["tp"];
-                            delete d["sv"];
+                            // [TK] custom
+                            delete d[r][c]["ro"];
+                            delete d[r][c]["iv"];
+                            delete d[r][c]["tp"];
+                            delete d[r][c]["sv"];
                         } else {
                             d[r][c] = null;
                         }
