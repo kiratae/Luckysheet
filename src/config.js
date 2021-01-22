@@ -8,7 +8,6 @@ export default {
     allowCopy: true, //是否允许拷贝
     showtoolbar: true, //是否第二列显示工具栏
     showinfobar: true, //是否显示顶部名称栏
-    showformulabar: true,
     showsheetbar: true, //是否显示底部表格名称区域
     showstatisticBar: true, //是否显示底部计数栏
     pointEdit: false, //是否是编辑器插入表格模式

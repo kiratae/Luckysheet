@@ -78,7 +78,8 @@ function isEditMode() {
         let select = Store.luckysheet_select_save[0];
         let d = Store.flowdata[select.row[0]][select.column[0]];
         // console.log('isEditMode', luckysheetConfigsetting.editMode && (weConfigsetting.formEditor || (d && d.ro == null)));
-        if ((d && typeof d.ro != 'undefined') || (d && typeof d.df != 'undefined')) {
+        // if ((d && typeof d.ro != 'undefined') || (d && typeof d.df != 'undefined')) {
+        if (d && typeof d.ro != 'undefined') {
             return true;
         } else {
             return false;

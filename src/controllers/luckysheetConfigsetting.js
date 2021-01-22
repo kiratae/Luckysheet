@@ -5,7 +5,6 @@ const luckysheetConfigsetting = {
 
     allowCopy: true,
     showtoolbar: true,
-    showformulabar: true,
     showinfobar: true,
     showsheetbar: true,
     showstatisticBar: true,
@@ -23,20 +22,20 @@ const luckysheetConfigsetting = {
     enableAddBackTop: true,
     enablePage: true,
     pageInfo: null,
-    
-    
+
+
     editMode: false,
     beforeCreateDom: null,
     workbookCreateBefore: null,
     workbookCreateAfter: null,
     fireMousedown: null,
-    plugins:[],
-    forceCalculation:false, // Forced to refresh the formula, more formulas will cause performance problems, use with caution
+    plugins: [],
+    forceCalculation: false, // Forced to refresh the formula, more formulas will cause performance problems, use with caution
 
 
 
-    defaultColWidth:73,
-    defaultRowHeight:19,
+    defaultColWidth: 73,
+    defaultRowHeight: 19,
 
     defaultTextColor: '#000',
     defaultCellColor: '#fff',

@@ -94,7 +94,6 @@ luckysheet.create = function(setting) {
     luckysheetConfigsetting.showtoolbar = extendsetting.showtoolbar;
     luckysheetConfigsetting.showtoolbarConfig = extendsetting.showtoolbarConfig;
     luckysheetConfigsetting.showinfobar = extendsetting.showinfobar;
-    luckysheetConfigsetting.showformulabar = extendsetting.showformulabar;
     luckysheetConfigsetting.showsheetbar = extendsetting.showsheetbar;
     luckysheetConfigsetting.showsheetbarConfig = extendsetting.showsheetbarConfig;
     luckysheetConfigsetting.showstatisticBar = extendsetting.showstatisticBar;
