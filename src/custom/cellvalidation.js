@@ -206,7 +206,7 @@ const weCellValidationCtrl = {
         }
         return list;
     },
-    setCellValidations: function(range, obj) {
+    setCellValidations: function(range, obj, cellCt, callback = null) {
         if (range.length == 0)
             return;
 
@@ -238,23 +238,42 @@ const weCellValidationCtrl = {
         let isHasReadonly = false;
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {
+                currentCellValidation[r + '_' + c] = obj;
+
                 if (obj.cellType == 'checkbox' && obj.inSet) {
                     obj.checked = false;
-                    setcellvalue(r, c, d, obj.inSet.split(',')[1]);
+                    var v = obj.inSet.split(',')[1];
+                    if (d[r][c] == null) {
+                        d[r][c] = { v: v, m: v };
+                    } else {
+                        d[r][c]['v'] = v;
+                        d[r][c]['m'] = v;
+                    }
                 }
-
-                currentCellValidation[r + '_' + c] = obj;
 
                 if (obj.isReadOnly != null) {
                     if (obj.isReadOnly) {
                         if (d[r][c] == null)
                             d[r][c] = { ro: true };
-                        d[r][c]['ro'] = true;
-                        setcellvalue(r, c, d, d[r][c]);
+                        else
+                            d[r][c]['ro'] = true;
                         isHasReadonly = true;
                     }
                 }
+
+                if (cellCt != null) {
+                    if (d[r][c] == null)
+                        d[r][c] = { ct: cellCt };
+                    else
+                        d[r][c]['ct'] = cellCt;
+                }
+
+                setcellvalue(r, c, d, d[r][c]);
             }
+        }
+
+        if (callback != null && typeof callback === 'function') {
+            callback();
         }
 
         if (isHasReadonly) {
@@ -266,12 +285,11 @@ const weCellValidationCtrl = {
                 this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
             }
         }
-
     },
     getCellValidation: function(r, c) {
         return this.cellValidation[r + '_' + c] || null;
     },
-    deleteCellValidations: function(range) {
+    deleteCellValidations: function(range, callback = null) {
         if (range.length == 0)
             return;
 
@@ -303,6 +321,10 @@ const weCellValidationCtrl = {
                     delete currentCellValidation[r + '_' + c];
                 }
             }
+        }
+
+        if (callback != null && typeof callback === 'function') {
+            callback();
         }
 
         if (isHasReadonly) {
