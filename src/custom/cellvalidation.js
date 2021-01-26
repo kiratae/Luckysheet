@@ -235,7 +235,6 @@ const weCellValidationCtrl = {
         let historyCellValidation = $.extend(true, {}, this.cellValidation);
         let currentCellValidation = $.extend(true, {}, this.cellValidation);
 
-        let isHasReadonly = false;
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {
                 currentCellValidation[r + '_' + c] = obj;
@@ -252,23 +251,26 @@ const weCellValidationCtrl = {
                 }
 
                 if (obj.isReadOnly != null) {
-                    if (obj.isReadOnly) {
-                        if (d[r][c] == null)
-                            d[r][c] = { ro: true };
-                        else
+                    if (d[r][c] != null && typeof d[r][c] == 'object') {
+                        if (obj.isReadOnly) {
                             d[r][c]['ro'] = true;
-                        isHasReadonly = true;
+                        } else if (typeof d[r][c]['ro'] !== 'undefined') {
+                            delete d[r][c]['ro'];
+                        }
+                    } else if (typeof cell == null) {
+                        if (obj.isReadOnly) {
+                            d[r][c] = { ro: true };
+                        }
                     }
                 }
 
                 if (cellCt != null) {
-                    if (d[r][c] == null)
-                        d[r][c] = { ct: cellCt };
-                    else
+                    if (d[r][c] != null && typeof d[r][c] == 'object') {
                         d[r][c]['ct'] = cellCt;
+                    } else if (typeof cell == null) {
+                        d[r][c]['ct'] = { ct: cellCt };
+                    }
                 }
-
-                setcellvalue(r, c, d, d[r][c]);
             }
         }
 
@@ -276,14 +278,10 @@ const weCellValidationCtrl = {
             callback();
         }
 
-        if (isHasReadonly) {
-            this.refOfReadonly(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
+        if (obj.cellType == 'checkbox' && obj.inSet) {
+            this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         } else {
-            if (obj.cellType == 'checkbox' && obj.inSet) {
-                this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
-            } else {
-                this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
-            }
+            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         }
     },
     getCellValidation: function(r, c) {
@@ -302,7 +300,6 @@ const weCellValidationCtrl = {
             edc = range[range.length - 1].column[1];
         let d = Store.flowdata;
 
-        let isHasReadonly = false;
         let isCheckbox = false;
         for (let r = str; r <= edr; r++) {
             for (let c = stc; c <= edc; c++) {
@@ -315,7 +312,10 @@ const weCellValidationCtrl = {
 
                     if (currentCellValidation[r + '_' + c].isReadOnly != null && d[r][c]['ro']) {
                         delete d[r][c]['ro'];
-                        isHasReadonly = true;
+                    }
+
+                    if (d[r][c]['ct']) {
+                        delete d[r][c]['ct'];
                     }
 
                     delete currentCellValidation[r + '_' + c];
@@ -327,14 +327,10 @@ const weCellValidationCtrl = {
             callback();
         }
 
-        if (isHasReadonly) {
-            this.refOfReadonly(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
+        if (isCheckbox) {
+            this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         } else {
-            if (isCheckbox) {
-                this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
-            } else {
-                this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
-            }
+            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
         }
     },
     checkboxChange: function(r, c) {
@@ -362,7 +358,7 @@ const weCellValidationCtrl = {
             d, { "row": [r, r], "column": [c, c] }
         );
     },
-    ref: function(historyCellValidation, currentCellValidation, sheetIndex) {
+    ref: function(historyCellValidation, currentCellValidation, sheetIndex, d, range) {
         if (Store.clearjfundo) {
             Store.jfundo = [];
 
@@ -371,36 +367,16 @@ const weCellValidationCtrl = {
             redo["sheetIndex"] = sheetIndex;
             redo["historyCellValidation"] = historyCellValidation;
             redo["currentCellValidation"] = currentCellValidation;
-            Store.jfredo.push(redo);
-        }
-
-        this.cellValidation = currentCellValidation;
-        Store.luckysheetfile[getSheetIndex(sheetIndex)].cellValidation = currentCellValidation;
-
-        setTimeout(function() {
-            luckysheetrefreshgrid();
-        }, 1);
-    },
-    refOfReadonly: function(historyCellValidation, currentCellValidation, sheetIndex, d, range) {
-        if (Store.clearjfundo) {
-            Store.jfundo = [];
-
-            let redo = {};
-            redo["type"] = "updateCellValidationOfReadonly";
-            redo["sheetIndex"] = sheetIndex;
-            redo["historyCellValidation"] = historyCellValidation;
-            redo["currentCellValidation"] = currentCellValidation;
             redo["data"] = Store.flowdata;
             redo["curData"] = d;
             redo["range"] = range;
-            Store.jfredo.push(redo);
         }
 
         this.cellValidation = currentCellValidation;
         Store.luckysheetfile[getSheetIndex(sheetIndex)].cellValidation = currentCellValidation;
 
         Store.flowdata = d;
-        // editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
+        editor.webWorkerFlowDataCache(Store.flowdata); //worker存数据
         Store.luckysheetfile[getSheetIndex(sheetIndex)].data = Store.flowdata;
 
         setTimeout(function() {

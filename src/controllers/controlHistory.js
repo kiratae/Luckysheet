@@ -351,8 +351,6 @@ const controlHistory = {
         }
         // [TK] custom
         else if (ctr.type == "updateCellValidation") {
-            weCellValidationCtrl.ref(ctr.currentCellValidation, ctr.historyCellValidation, ctr.sheetIndex);
-        } else if (ctr.type == "updateCellValidationOfReadonly") {
             weCellValidationCtrl.ref(ctr.currentCellValidation, ctr.historyCellValidation, ctr.sheetIndex, ctr.data, ctr.range);
         } else if (ctr.type == "updateCellValidationOfCheckbox") {
             weCellValidationCtrl.ref(ctr.currentCellValidation, ctr.historyCellValidation, ctr.sheetIndex, ctr.data, ctr.range);

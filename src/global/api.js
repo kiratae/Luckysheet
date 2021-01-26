@@ -72,6 +72,10 @@ export function getCellValue(row, column, options = {}) {
             return_v = formula.functionHTMLGenerate(return_v);
         } else if (type == "f") {
             return_v = cellData["v"];
+        } else if (type == "ro") {
+            return_v = cellData["ro"];
+        } else if (type == "fa") {
+            return_v = cellData["fa"];
         } else if (cellData && cellData.ct && cellData.ct.fa == 'yyyy-MM-dd') {
             return_v = cellData.m;
         }
