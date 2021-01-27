@@ -2935,10 +2935,6 @@ const menuButton = {
                     let cell = d[r][c],
                         value = null;
 
-                    // TK custom
-                    if (cell && cell.iv)
-                        continue;
-
                     if (getObjType(cell) == "object") {
                         value = d[r][c]["v"];
                     } else {

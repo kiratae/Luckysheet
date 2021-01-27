@@ -1784,7 +1784,7 @@ function fuzzydate(s) {
 }
 
 export function genarate(value) { //万 单位格式增加！！！ (Million unit format added! ! !)
-    // console.log('[TK] custom; genarate', value);
+    console.log('[TK] custom; genarate', value);
     var ret = [];
     var m = null,
         ct = {},
@@ -1823,7 +1823,7 @@ export function genarate(value) { //万 单位格式增加！！！ (Million uni
 
             ct = { "fa": "#0." + new Array(strlen + 1).join("0") + "E+00", "t": "n" };
         } else {
-            ct = { "fa": "#0.E+00", "t": "n" };
+            ct = { "fa": "#0", "t": "n" };
         }
 
         m = SSF.format(ct.fa, v);
@@ -1951,14 +1951,14 @@ export function genarate(value) { //万 单位格式增加！！！ (Million uni
 
         if (v.toString().indexOf(".") > -1) {
             if (value.toString().length > 18) {
-                ct.fa = "dd/MM/yyyy hh:mm:ss"; // yyyy-MM-dd hh:mm:ss
+                ct.fa = "dd/MM/yyyy hh:mm:ss"; // [TK] custom; yyyy-MM-dd hh:mm:ss
             } else if (value.toString().length > 11) {
-                ct.fa = "dd/MM/yyyy hh:mm"; // yyyy-MM-dd hh:mm
+                ct.fa = "dd/MM/yyyy hh:mm"; // [TK] custom; yyyy-MM-dd hh:mm
             } else {
-                ct.fa = "dd/MM/yyyy"; // yyyy-MM-dd
+                ct.fa = "dd/MM/yyyy"; // [TK] custom; yyyy-MM-dd
             }
         } else {
-            ct.fa = "dd/MM/yyyy"; // yyyy-MM-dd
+            ct.fa = "dd/MM/yyyy"; // [TK] custom; yyyy-MM-dd
         }
 
         ct.t = "d";

@@ -4,6 +4,9 @@ const weFormat = {
     parseDate(str) {
         return DateTime.fromFormat(str, "dd/MM/yyyy").toJSDate();
     },
+    financial: function(x) {
+        return Number.parseFloat(x).toFixed(2);
+    },
     isdatetime: function(s) {
         // console.log('[TK] custom begin weFormat::isdatetime "s" is', s);
         if (s == null || s.toString().length < 5) {

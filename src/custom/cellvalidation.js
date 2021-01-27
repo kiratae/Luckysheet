@@ -6,11 +6,13 @@ import formula from '../global/formula';
 import editor from '../global/editor';
 import { setcellvalue } from '../global/setdata';
 import { getcellvalue } from '../global/getdata';
-import { luckysheetrefreshgrid } from '../global/refresh';
+import { jfrefreshgrid, luckysheetrefreshgrid } from '../global/refresh';
 import luckysheetConfigsetting from '../controllers/luckysheetConfigsetting';
 import { luckysheetlodingHTML } from '../controllers/constant';
+import { genarate, update, is_date } from '../global/format';
 import weAPI from './api';
 import weDropdownCtrl from './dropdown';
+import { getObjType } from '../utils/util';
 import { setCellValue } from '../global/api';
 import { Log } from './utils';
 
@@ -239,6 +241,30 @@ const weCellValidationCtrl = {
             for (let c = stc; c <= edc; c++) {
                 currentCellValidation[r + '_' + c] = obj;
 
+                if (cellCt != null) {
+                    let cell = d[r][c],
+                        value = null;
+
+                    if (getObjType(cell) == "object") {
+                        value = d[r][c]["v"];
+                    } else {
+                        value = d[r][c];
+                    }
+
+                    let mask = update(cellCt.fa, value);
+
+                    if (getObjType(cell) == "object") {
+                        d[r][c]["m"] = mask;
+                        if (d[r][c]["ct"] == null) {
+                            d[r][c]["ct"] = {};
+                        }
+                        d[r][c]["ct"]["fa"] = cellCt.fa;
+                        d[r][c]["ct"]["t"] = cellCt.t;
+                    } else {
+                        d[r][c] = { "ct": { "fa": cellCt.fa, "t": cellCt.t }, "v": value, "m": mask };
+                    }
+                }
+
                 if (obj.cellType == 'checkbox' && obj.inSet) {
                     obj.checked = false;
                     var v = obj.inSet.split(',')[1];
@@ -261,14 +287,6 @@ const weCellValidationCtrl = {
                         if (obj.isReadOnly) {
                             d[r][c] = { ro: true };
                         }
-                    }
-                }
-
-                if (cellCt != null) {
-                    if (d[r][c] != null && typeof d[r][c] == 'object') {
-                        d[r][c]['ct'] = cellCt;
-                    } else if (typeof cell == null) {
-                        d[r][c]['ct'] = { ct: cellCt };
                     }
                 }
             }
@@ -330,7 +348,7 @@ const weCellValidationCtrl = {
         if (isCheckbox) {
             this.refOfCheckbox(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         } else {
-            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex);
+            this.ref(historyCellValidation, currentCellValidation, Store.currentSheetIndex, d, range[range.length - 1]);
         }
     },
     checkboxChange: function(r, c) {
