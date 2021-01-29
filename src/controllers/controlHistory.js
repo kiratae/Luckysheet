@@ -201,6 +201,7 @@ const controlHistory = {
                 ctr.hyperlink,
                 // [TK] custom
                 ctr.cellValidation,
+                ctr.cellTag,
             );
         } else if (ctr.type == "deleteCell") { //删除单元格撤销操作
             jfrefreshgrid_deleteCell(
@@ -214,6 +215,7 @@ const controlHistory = {
                 ctr.hyperlink,
                 // [TK] custom
                 ctr.cellValidation,
+                ctr.cellTag,
             );
         } else if (ctr.type == "showHidRows") { // 隐藏、显示行 撤销操作
             //config

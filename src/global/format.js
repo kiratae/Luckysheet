@@ -3,6 +3,7 @@ import { isdatetime } from './datecontroll';
 import { getcellvalue } from './getdata';
 import weFormat from '../custom/format';
 import numeral from 'numeral';
+import weConfigsetting from '../custom/configsetting';
 
 var SSF = ({});
 var make_ssf = function make_ssf(SSF) {
@@ -348,12 +349,13 @@ var make_ssf = function make_ssf(SSF) {
         var o = "",
             ss = 0,
             tt = 0,
-            y = val.y,
+            // y = val.y,
+            y = val.y + weConfigsetting.yearOffset, // [TK] custom date
             out, outl = 0;
         switch (type) {
             case 98:
                 /* 'b' buddhist year */
-                y = val.y + 543;
+                // y = val.y + 543;
                 /* falls through */
             case 121:
                 /* 'y' year */
@@ -1784,7 +1786,7 @@ function fuzzydate(s) {
 }
 
 export function genarate(value) { //万 单位格式增加！！！ (Million unit format added! ! !)
-    console.log('[TK] custom; genarate', value);
+    // console.log('[TK] custom; genarate', value);
     var ret = [];
     var m = null,
         ct = {},
@@ -1963,6 +1965,7 @@ export function genarate(value) { //万 单位格式增加！！！ (Million uni
 
         ct.t = "d";
         m = SSF.format(ct.fa, v);
+        // m = value.toString().replace(/-/g, "/");
     } else {
         m = value;
         ct.fa = "General";

@@ -7,7 +7,7 @@ import { Log } from './utils';
 let weCellTagCtrlLogger = new Log("weCellTagCtrl");
 
 const weCellTagCtrl = {
-    cellTag: {},
+    cellTag: null,
     init: function() {
         const func = 'init';
         weCellTagCtrlLogger.info(func, `has been called.`);

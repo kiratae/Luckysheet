@@ -908,9 +908,13 @@ const selection = {
         let c_dataVerification = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)]["dataVerification"]);
         let dataVerification = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dataVerification"]);
 
-        // [TK] custom
+        // [TK] custom cellValidation
         let c_cellValidation = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)]["cellValidation"]);
         let cellValidation = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellValidation"]);
+
+        // [TK] custom cellTag
+        let c_cellTag = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)]["cellTag"]);
+        let cellTag = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellTag"]);
 
         //剪切粘贴在当前表操作，删除剪切范围内数据、合并单元格和数据验证
         if (Store.currentSheetIndex == copySheetIndex) {
@@ -929,7 +933,11 @@ const selection = {
 
                     delete dataVerification[i + "_" + j];
 
-                    delete cellValidation[i + "_" + j]; // [TK] custom
+                    // [TK] custom cellValidation
+                    delete cellValidation[i + "_" + j];
+
+                    // [TK] custom cellTag
+                    delete cellTag[i + "_" + j];
                 }
             }
 
@@ -1016,9 +1024,14 @@ const selection = {
                     dataVerification[h + "_" + c] = c_dataVerification[(c_r1 + h - minh) + "_" + (c_c1 + c - minc)];
                 }
 
-                // [TK] custom
+                // [TK] custom cellValidation
                 if (c_cellValidation[(c_r1 + h - minh) + "_" + (c_c1 + c - minc)]) {
                     cellValidation[h + "_" + c] = c_cellValidation[(c_r1 + h - minh) + "_" + (c_c1 + c - minc)];
+                }
+
+                // [TK] custom cellTag
+                if (c_cellTag[(c_r1 + h - minh) + "_" + (c_c1 + c - minc)]) {
+                    cellTag[h + "_" + c] = c_cellTag[(c_r1 + h - minh) + "_" + (c_c1 + c - minc)];
                 }
 
                 if (getObjType(x[c]) == "object" && ("mc" in x[c])) {
@@ -1177,7 +1190,10 @@ const selection = {
             for (let i = c_r1; i <= c_r2; i++) {
                 for (let j = c_c1; j <= c_c2; j++) {
                     delete c_dataVerification[i + "_" + j];
-                    delete c_cellValidation[i + "_" + j]; // [TK] custom
+                    // [TK] custom cellValidation
+                    delete c_cellValidation[i + "_" + j];
+                    // [TK] custom cellTag
+                    delete c_cellTag[i + "_" + j];
                 }
             }
 
@@ -1194,6 +1210,8 @@ const selection = {
                 // [TK] custom
                 "cellValidation": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)]["cellValidation"]),
                 "curCellValidation": c_cellValidation,
+                "cellTag": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)]["cellTag"]),
+                "curCellTag": c_cellTag,
                 // [TK] custom
                 "range": {
                     "row": [c_r1, c_r2],
@@ -1213,6 +1231,8 @@ const selection = {
                 // [TK] custom
                 "cellValidation": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellValidation"]),
                 "curCellValidation": cellValidation,
+                "cellTag": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellTag"]),
+                "curCellTag": cellTag,
                 // [TK] custom
                 "range": {
                     "row": [minh, maxh],
@@ -1255,6 +1275,8 @@ const selection = {
                 // [TK] custom
                 "cellValidation": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellValidation"]),
                 "curCellValidation": cellValidation,
+                "cellTag": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellTag"]),
+                "curCellTag": cellTag,
                 // [TK] custom
                 "range": {
                     "row": [c_r1, c_r2],
@@ -1274,6 +1296,8 @@ const selection = {
                 // [TK] custom
                 "cellValidation": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellValidation"]),
                 "curCellValidation": cellValidation,
+                "cellTag": $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellTag"]),
+                "curCellTag": cellTag,
                 // [TK] custom
                 "range": {
                     "row": [minh, maxh],
@@ -1405,9 +1429,13 @@ const selection = {
         let c_dataVerification = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)].dataVerification);
         let dataVerification = null;
 
-        // [TK] custom
+        // [TK] custom cellValidation
         let c_cellValidation = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)].cellValidation);
         let cellValidation = null;
+
+        // [TK] custom cellTag
+        let c_cellTag = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)].cellTag);
+        let cellTag = null;
 
         let mth = 0,
             mtc = 0,
@@ -1476,7 +1504,7 @@ const selection = {
                             dataVerification[h + "_" + c] = c_dataVerification[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)];
                         }
 
-                        // [TK] custom
+                        // [TK] custom cellValidation
                         if (c_cellValidation[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)]) {
                             if (cellValidation == null) {
                                 cellValidation = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation)
@@ -1484,7 +1512,15 @@ const selection = {
 
                             cellValidation[h + "_" + c] = c_cellValidation[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)];
                         }
-                        // [TK] custom
+
+                        // [TK] custom cellTag
+                        if (c_cellTag[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)]) {
+                            if (cellTag == null) {
+                                cellTag = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellTag)
+                            }
+
+                            cellTag[h + "_" + c] = c_cellTag[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)];
+                        }
 
                         if (getObjType(x[c]) == "object" && "mc" in x[c]) {
                             if ("rs" in x[c].mc) {
@@ -1612,7 +1648,9 @@ const selection = {
                 "RowlChange": true,
                 "cdformat": cdformat,
                 "dataVerification": dataVerification,
+                // [TK] custom
                 "cellValidation": cellValidation,
+                "cellTag": cellTag,
             }
             jfrefreshgrid(d, Store.luckysheet_select_save, allParam);
         } else {
@@ -1621,6 +1659,9 @@ const selection = {
                 "cdformat": cdformat,
                 "dataVerification": dataVerification,
                 "cellValidation": cellValidation,
+                // [TK] custom
+                "cellValidation": cellValidation,
+                "cellTag": cellTag,
             }
             jfrefreshgrid(d, Store.luckysheet_select_save, allParam);
 
@@ -1689,9 +1730,13 @@ const selection = {
         let c_dataVerification = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)].dataVerification);
         let dataVerification = null;
 
-        // [TK] custom
+        // [TK] custom cellValidation
         let c_cellValidation = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)].cellValidation);
         let cellValidation = null;
+
+        // [TK] custom cellTag
+        let c_cellTag = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(copySheetIndex)].cellTag);
+        let cellTag = null;
 
         let mth = 0,
             mtc = 0,
@@ -1764,7 +1809,7 @@ const selection = {
                             dataVerification[h + "_" + c] = c_dataVerification[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)];
                         }
 
-                        // [TK] custom
+                        // [TK] custom cellValidation
                         if (c_cellValidation[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)]) {
                             if (cellValidation == null) {
                                 cellValidation = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellValidation)
@@ -1772,7 +1817,15 @@ const selection = {
 
                             cellValidation[h + "_" + c] = c_cellValidation[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)];
                         }
-                        // [TK] custom
+
+                        // [TK] custom cellTag
+                        if (c_cellTag[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)]) {
+                            if (cellTag == null) {
+                                cellTag = $.extend(true, {}, Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].cellTag)
+                            }
+
+                            cellTag[h + "_" + c] = c_cellTag[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)];
+                        }
 
                         if (getObjType(x[c]) == "object" && ("mc" in x[c])) {
                             if ("rs" in x[c].mc) {
@@ -1878,7 +1931,9 @@ const selection = {
                 "RowlChange": true,
                 "cdformat": cdformat,
                 "dataVerification": dataVerification,
-                "cellValidation": cellValidation
+                // [TK] custom
+                "cellValidation": cellValidation,
+                "cellTag": cellTag
             }
             jfrefreshgrid(d, Store.luckysheet_select_save, allParam);
         } else {
@@ -1886,7 +1941,9 @@ const selection = {
                 "cfg": cfg,
                 "cdformat": cdformat,
                 "dataVerification": dataVerification,
-                "cellValidation": cellValidation
+                // [TK] custom
+                "cellValidation": cellValidation,
+                "cellTag": cellTag
             }
             jfrefreshgrid(d, Store.luckysheet_select_save, allParam);
 

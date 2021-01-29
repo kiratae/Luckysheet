@@ -88,6 +88,11 @@ const weHandler = {
             weConfigsetting.onSelectHightlightShow();
         }
     },
+    registerSelectSingleHightlightShow: function(r, c) {
+        if (weConfigsetting.onSelectSingleHightlightShow != null && getObjType(weConfigsetting.onSelectSingleHightlightShow) == "function") {
+            weConfigsetting.onSelectSingleHightlightShow(r, c);
+        }
+    },
     initCellRangeEvent: function() {
         let self = this;
         // cellRange

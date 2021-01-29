@@ -19,12 +19,14 @@ const weCore = {
         weConfigsetting.formEditor = config.formEditor;
         weConfigsetting.bodyContainer = config.bodyContainer;
         weConfigsetting.canDynamicRow = config.canDynamicRow;
+        weConfigsetting.yearOffset = config.yearOffset;
         // hooks
         weConfigsetting.onCellClick = config.onCellClick;
         weConfigsetting.onCellMouseOver = config.onCellMouseOver;
         weConfigsetting.onCellMouseOut = config.onCellMouseOut;
         weConfigsetting.onSheetMouseOut = config.onSheetMouseOut;
         weConfigsetting.onSelectHightlightShow = config.onSelectHightlightShow;
+        weConfigsetting.onSelectSingleHightlightShow = config.onSelectSingleHightlightShow;
 
         // cell range dialog
         weConfigsetting.onOpenCellRange = config.onOpenCellRange;

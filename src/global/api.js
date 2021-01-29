@@ -72,6 +72,8 @@ export function getCellValue(row, column, options = {}) {
             return_v = formula.functionHTMLGenerate(return_v);
         } else if (type == "f") {
             return_v = cellData["v"];
+        } else if (type == "df") {
+            return_v = cellData["df"];
         } else if (type == "ro") {
             return_v = cellData["ro"];
         } else if (type == "fa") {

@@ -65,7 +65,6 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
     // [TK] custom
     let cellValidation = allParam["cellValidation"];
     let cellTag = allParam["cellTag"];
-    // console.log('jfrefreshgrid', allParam, cellValidation);
     // [TK] end custom
 
     let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
@@ -101,7 +100,7 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
             curDynamicArray = dynamicArray;
         }
 
-        // [TK] custom
+        // [TK] custom cellValidation
         let curCellValidation;
         if (cellValidation == null) {
             curCellValidation = $.extend(true, {}, file["cellValidation"]);
@@ -109,13 +108,13 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
             curCellValidation = cellValidation;
         }
 
+        // [TK] custom cellTag
         let curCellTag;
         if (cellTag == null) {
             curCellTag = $.extend(true, {}, file["cellTag"]);
         } else {
             curCellTag = cellTag;
         }
-        // [TK] end custom
 
         Store.jfredo.push({
             "type": "datachange",
@@ -180,17 +179,17 @@ function jfrefreshgrid(data, range, allParam, isRunExecFunction = true, isRefres
         server.saveParam("all", Store.currentSheetIndex, dynamicArray, { "k": "dynamicArray" });
     }
 
-    // [TK] custom
+    // [TK] custom cellValidation
     if (cellValidation != null) {
         weCellValidationCtrl.cellValidation = cellValidation;
         file["cellValidation"] = cellValidation;
     }
 
+    // [TK] custom cellTag
     if (cellTag != null) {
         weCellTagCtrl.cellTag = cellTag;
         file["cellTag"] = cellTag;
     }
-    // [TK] end custom
 
     //更新数据的范围 (Update the scope of the data)
     for (let s = 0; s < range.length; s++) {
@@ -636,13 +635,14 @@ function jfrefreshgrid_adRC(data, cfg, ctrlType, ctrlValue, calc, filterObj, cf,
     file.dataVerification = dataVerification;
     server.saveParam("all", Store.currentSheetIndex, file.dataVerification, { "k": "dataVerification" });
 
-    // [TK] custom
+    // [TK] custom cellValidation
     weCellValidationCtrl.cellValidation = cellValidation;
     file.cellValidation = cellValidation;
 
+    // [TK] custom cellTag
     weCellTagCtrl.cellTag = cellTag;
     file.cellTag = cellTag;
-    // [TK] custom
+
     //超链接
     hyperlinkCtrl.hyperlink = hyperlink;
     file.hyperlink = hyperlink;
@@ -842,6 +842,14 @@ function jfrefreshgrid_deleteCell(data, cfg, ctrl, calc, filterObj, cf, dataVeri
     file.hyperlink = hyperlink;
     server.saveParam("all", Store.currentSheetIndex, file.hyperlink, { "k": "hyperlink" });
 
+    // [TK] custom cellValidation
+    weCellValidationCtrl.cellValidation = cellValidation;
+    file.cellValidation = cellValidation;
+
+    // [TK] custom cellValidation
+    weCellTagCtrl.cellTag = cellTag;
+    file.cellTag = cellTag;
+
     refreshCanvasTimeOut = setTimeout(function() {
         luckysheetrefreshgrid();
     }, 1);
@@ -968,7 +976,7 @@ function jfrefreshgrid_pastcut(source, target, RowlChange) {
     Store.luckysheetfile[getSheetIndex(source["sheetIndex"])].dataVerification = source["curDataVerification"];
     Store.luckysheetfile[getSheetIndex(target["sheetIndex"])].dataVerification = target["curDataVerification"];
 
-    // [TK] custom
+    // [TK] custom cellValidation
     if (Store.currentSheetIndex == source["sheetIndex"]) {
         weCellValidationCtrl.cellValidation = source["curCellValidation"];
     } else if (Store.currentSheetIndex == target["sheetIndex"]) {
@@ -976,7 +984,15 @@ function jfrefreshgrid_pastcut(source, target, RowlChange) {
     }
     Store.luckysheetfile[getSheetIndex(source["sheetIndex"])].cellValidation = source["curCellValidation"];
     Store.luckysheetfile[getSheetIndex(target["sheetIndex"])].cellValidation = target["curCellValidation"];
-    // [TK] custom
+
+    // [TK] custom cellTqg
+    if (Store.currentSheetIndex == source["sheetIndex"]) {
+        weCellTagCtrl.cellTag = source["curCellTag"];
+    } else if (Store.currentSheetIndex == target["sheetIndex"]) {
+        weCellTagCtrl.cellTag = target["curCellTag"]
+    }
+    Store.luckysheetfile[getSheetIndex(source["sheetIndex"])].cellTag = source["curCellTag"];
+    Store.luckysheetfile[getSheetIndex(target["sheetIndex"])].cellTag = target["curCellTag"];
 
     formula.execFunctionExist.reverse();
     formula.execFunctionGroup(null, null, null, null, target["curData"]);

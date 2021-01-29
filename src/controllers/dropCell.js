@@ -1703,7 +1703,7 @@ const luckysheetDropCell = {
                         continue;
                     }
 
-                    let date = dayjs(d["m"]).add(step * i, "days").format("YYYY-MM-DD");
+                    let date = dayjs(d["m"]).add(step * i, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                     d["m"] = date;
                     d["v"] = genarate(date)[2];
                     applyData.push(d);
@@ -1728,11 +1728,11 @@ const luckysheetDropCell = {
                         let day = dayjs(data[data.length - 1]).add(step * i, "months").day(),
                             date;
                         if (day == 0) {
-                            date = dayjs(data[data.length - 1]).add(step * i, "months").subtract(2, "days").format("YYYY-MM-DD");
+                            date = dayjs(data[data.length - 1]).add(step * i, "months").subtract(2, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         } else if (day == 6) {
-                            date = dayjs(data[data.length - 1]).add(step * i, "months").subtract(1, "days").format("YYYY-MM-DD");
+                            date = dayjs(data[data.length - 1]).add(step * i, "months").subtract(1, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         } else {
-                            date = dayjs(data[data.length - 1]).add(step * i, "months").format("YYYY-MM-DD");
+                            date = dayjs(data[data.length - 1]).add(step * i, "months").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         }
 
                         d["m"] = date;
@@ -1764,11 +1764,11 @@ const luckysheetDropCell = {
                             let day = dayjs(d["m"]).add(step, "days").day(),
                                 date;
                             if (day == 0) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else if (day == 6) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else {
-                                date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             }
 
                             d["m"] = date;
@@ -1798,11 +1798,11 @@ const luckysheetDropCell = {
                             let day = dayjs(d["m"]).add(step, "days").day(),
                                 date;
                             if (day == 0) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else if (day == 6) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else {
-                                date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             }
 
                             d["m"] = date;
@@ -1828,11 +1828,11 @@ const luckysheetDropCell = {
                         let day = dayjs(data[data.length - 1]["m"]).add(step * i, "months").day(),
                             date;
                         if (day == 0) {
-                            date = dayjs(data[data.length - 1]["m"]).add(step * i, "months").subtract(2, "days").format("YYYY-MM-DD");
+                            date = dayjs(data[data.length - 1]["m"]).add(step * i, "months").subtract(2, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         } else if (day == 6) {
-                            date = dayjs(data[data.length - 1]["m"]).add(step * i, "months").subtract(1, "days").format("YYYY-MM-DD");
+                            date = dayjs(data[data.length - 1]["m"]).add(step * i, "months").subtract(1, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         } else {
-                            date = dayjs(data[data.length - 1]["m"]).add(step * i, "months").format("YYYY-MM-DD");
+                            date = dayjs(data[data.length - 1]["m"]).add(step * i, "months").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         }
 
                         d["m"] = date;
@@ -1864,11 +1864,11 @@ const luckysheetDropCell = {
                             let day = dayjs(d["m"]).add(step, "days").day(),
                                 date;
                             if (day == 0) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else if (day == 6) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else {
-                                date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             }
 
                             d["m"] = date;
@@ -1898,11 +1898,11 @@ const luckysheetDropCell = {
                             let day = dayjs(d["m"]).add(step, "days").day(),
                                 date;
                             if (day == 0) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(2, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else if (day == 6) {
-                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").subtract(1, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             } else {
-                                date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                                date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                             }
 
                             d["m"] = date;
@@ -1959,7 +1959,7 @@ const luckysheetDropCell = {
                             step = dayjs(d["m"]).add(step_month * num, "months").diff(dayjs(d["m"]), "days");
                         }
 
-                        let date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                        let date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         d["m"] = date;
                         d["v"] = genarate(date)[2];
                         applyData.push(d);
@@ -1995,7 +1995,7 @@ const luckysheetDropCell = {
                             step = dayjs(d["m"]).add(step_month * num, "months").diff(dayjs(d["m"]), "days");
                         }
 
-                        let date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                        let date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         d["m"] = date;
                         d["v"] = genarate(date)[2];
                         applyData.push(d);
@@ -2049,7 +2049,7 @@ const luckysheetDropCell = {
                             step = dayjs(d["m"]).add(step_year * num, "years").diff(dayjs(d["m"]), "days");
                         }
 
-                        let date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                        let date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         d["m"] = date;
                         d["v"] = genarate(date)[2];
                         applyData.push(d);
@@ -2085,7 +2085,7 @@ const luckysheetDropCell = {
                             step = dayjs(d["m"]).add(step_year * num, "years").diff(dayjs(d["m"]), "days");
                         }
 
-                        let date = dayjs(d["m"]).add(step, "days").format("YYYY-MM-DD");
+                        let date = dayjs(d["m"]).add(step, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
                         d["m"] = date;
                         d["v"] = genarate(date)[2];
                         applyData.push(d);
@@ -2260,8 +2260,8 @@ const luckysheetDropCell = {
             let index = (i - 1) % data.length;
             let d = $.extend(true, {}, data[index]);
 
-            let date = update("yyyy-MM-dd", d["v"]);
-            date = dayjs(date).add(step * i, "days").format("YYYY-MM-DD");
+            let date = update("dd/MM/yyyy", d["v"]); // [TK] custom update("yyyy-MM-dd", d["v"]);
+            date = dayjs(date).add(step * i, "days").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
 
             d["v"] = genarate(date)[2];
             d["m"] = update(d["ct"]["fa"], d["v"]);
@@ -2278,8 +2278,8 @@ const luckysheetDropCell = {
             let index = (i - 1) % data.length;
             let d = $.extend(true, {}, data[index]);
 
-            let date = update("yyyy-MM-dd", d["v"]);
-            date = dayjs(date).add(step * i, "months").format("YYYY-MM-DD");
+            let date = update("dd/MM/yyyy", d["v"]); // [TK] custom update("yyyy-MM-dd", d["v"]);
+            date = dayjs(date).add(step * i, "months").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
 
             d["v"] = genarate(date)[2];
             d["m"] = update(d["ct"]["fa"], d["v"]);
@@ -2296,8 +2296,8 @@ const luckysheetDropCell = {
             let index = (i - 1) % data.length;
             let d = $.extend(true, {}, data[index]);
 
-            let date = update("yyyy-MM-dd", d["v"]);
-            date = dayjs(date).add(step * i, "years").format("YYYY-MM-DD");
+            let date = update("dd/MM/yyyy", d["v"]); // [TK] custom update("yyyy-MM-dd", d["v"]);
+            date = dayjs(date).add(step * i, "years").format("DD/MM/YYYY"); // [TK] custom format("YYYY-MM-DD")
 
             d["v"] = genarate(date)[2];
             d["m"] = update(d["ct"]["fa"], d["v"]);

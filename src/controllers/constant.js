@@ -4,12 +4,12 @@ import luckysheetConfigsetting from './luckysheetConfigsetting';
 import { getObjType } from '../utils/util';
 //dom variable
 const gridHTML = function() {
-    const _locale = locale();
-    const locale_info = _locale.info;
-    const locale_print = _locale.print;
-    const userInfo = luckysheetConfigsetting.userInfo === true ? '<i style="font-size:16px;color:#ff6a00;" class="fa fa-taxi" aria-hidden="true"></i> Lucky' : luckysheetConfigsetting.userInfo; // When true, use the default HTML string. The rendering of userInfo below uses nested template strings. Otherwise, when display is used and the image path is not passed in, there will be an undefined request
+        const _locale = locale();
+        const locale_info = _locale.info;
+        const locale_print = _locale.print;
+        const userInfo = luckysheetConfigsetting.userInfo === true ? '<i style="font-size:16px;color:#ff6a00;" class="fa fa-taxi" aria-hidden="true"></i> Lucky' : luckysheetConfigsetting.userInfo; // When true, use the default HTML string. The rendering of userInfo below uses nested template strings. Otherwise, when display is used and the image path is not passed in, there will be an undefined request
 
-    return `<div class="luckysheet">
+        return `<div class="luckysheet">
                     <canvas id="luckysheetTableContentF" style="display:none;" class="luckysheetTableContent"></canvas> 
                     <div class="luckysheet-work-area luckysheet-noselected-text"> 
                         <div id ="luckysheet_info_detail" class="luckysheet_info_detail"> 
@@ -361,9 +361,8 @@ function rightclickHTML() {
                     </div>
                     <div id="luckysheet-del-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${  /* [TK] custom */
-                                Store.lang == 'th' ? 
-                                rightclick.deleteSelectedColumn : 
+                            ${ Store.lang == 'th' ? 
+                                `${rightclick.delete}<span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>${rightclick.selected}` : 
                                 `${rightclick.deleteSelected}<span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>` 
                             }
                         </div>

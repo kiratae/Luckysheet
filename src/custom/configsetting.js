@@ -12,11 +12,13 @@ const weConfigsetting = {
     onCellMouseOut: null, // hooker function fire when cursor move out from cell.
     onSheetMouseOut: null, // hooker function fire when cursor move out from sheet area.
     onSelectHightlightShow: null, // hooker function fire when click on highlight cell.
+    onSelectSingleHightlightShow: null, // hooker function fire when click on highlight single cell.
     onOpenCellRange: null, // hooker function fire when dialog select cell range is open.
     onCloseCellRange: null, // hooker function fire when dialog select cell range is close.
     onConfirmCellRange: null, // hooker function fire when click cofirm buuton in dialog select cell range.
     isLog: false, // is show console log with Log util.
     deserializeHelper: null, // helper from outer to deserialize form or sheet data from api response.
+    yearOffset: 543
 }
 
 export default weConfigsetting;

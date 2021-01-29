@@ -38,6 +38,7 @@ import * as api from './global/api';
 
 import flatpickr from 'flatpickr'
 import Mandarin from 'flatpickr/dist/l10n/zh.js'
+import Thai from 'flatpickr/dist/l10n/th'
 import { initListener } from './controllers/listener';
 
 let luckysheet = {};
@@ -143,6 +144,7 @@ luckysheet.create = function(setting) {
     luckysheetConfigsetting.initShowsheetbarConfig = false;
 
     if (Store.lang === 'zh') flatpickr.localize(Mandarin.zh);
+    if (Store.lang === 'th') flatpickr.localize(Thai.th);
 
     // Store the currently used plugins for monitoring asynchronous loading
     Store.asyncLoad.push(...luckysheetConfigsetting.plugins);

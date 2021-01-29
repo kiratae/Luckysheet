@@ -1165,7 +1165,7 @@ export default function luckysheetHandler() {
 
                 // [TK] custom
                 let _locale = locale();
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(Store.lang == 'th' ? `${_locale.rightclick.column}${_locale.rightclick.to}` : `${_locale.rightclick.column}`);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(_locale.rightclick.column);
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(_locale.rightclick.width);
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(_locale.rightclick.left);
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(_locale.rightclick.right);
@@ -1241,7 +1241,7 @@ export default function luckysheetHandler() {
 
                 // [TK] custom
                 let _locale = locale();
-                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(Store.lang == 'th' ? `${_locale.rightclick.row}${_locale.rightclick.to}` : `${_locale.rightclick.row}`);
+                $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(_locale.rightclick.row);
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(_locale.rightclick.height);
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(_locale.rightclick.top);
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(_locale.rightclick.bottom);

@@ -1,11 +1,12 @@
-import { DateTime } from 'luxon';
+import weConfigsetting from './configsetting';
 
 const weFormat = {
-    parseDate(str) {
-        return DateTime.fromFormat(str, "dd/MM/yyyy").toJSDate();
-    },
-    financial: function(x) {
-        return Number.parseFloat(x).toFixed(2);
+    parseDate: function(str) {
+        const parts = str.split('/');
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10) - weConfigsetting.yearOffset;
+        return new Date(year, month, day);
     },
     isdatetime: function(s) {
         // console.log('[TK] custom begin weFormat::isdatetime "s" is', s);

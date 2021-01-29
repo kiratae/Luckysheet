@@ -176,6 +176,11 @@ function selectHightlightShow(isRestore = false) {
         // [TK] custom
         weHandler.registerSelectHightlightShow();
 
+        // [TK] custom
+        if (Store.luckysheet_select_save.length == 1) {
+            weHandler.registerSelectSingleHightlightShow(Store.luckysheet_select_save[0].row_focus, Store.luckysheet_select_save[0].column_focus);
+        }
+
         //动态数组显示
         if (Store.luckysheet_select_save.length == 1 && Store.luckysheet_select_save[0].row[0] == Store.luckysheet_select_save[0].row[1] && Store.luckysheet_select_save[0].column[0] == Store.luckysheet_select_save[0].column[1]) {
             dynamicArrayHightShow(Store.luckysheet_select_save[0].row[0], Store.luckysheet_select_save[0].column[0]);

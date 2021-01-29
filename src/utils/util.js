@@ -5,6 +5,7 @@ import { hasChinaword, isRealNum } from '../global/validate';
 import Store from '../store';
 import locale from '../locale/locale';
 import numeral from 'numeral';
+import weConfigsetting from '../custom/configsetting';
 // import method from '../global/method';
 
 /**
@@ -487,7 +488,11 @@ function luckysheetContainerFocus() {
 
     // fix jquery error: Uncaught TypeError: ((n.event.special[g.origType] || {}).handle || g.handler).apply is not a function
     // console.log('[TK] luckysheetContainerFocus');
-    $("#" + Store.container).attr("tabindex", 0).focus();
+    // $("#" + Store.container).attr("tabindex", 0).focus();
+    $("#" + Store.container).attr("tabindex", 0);
+    $('html, body').animate({
+        scrollTop: $("#" + Store.container).offset().top - 200
+    }, 300);
 }
 
 //数字格式

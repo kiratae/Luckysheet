@@ -51,6 +51,7 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         }
     }
 
+    // [TK] custom CellValidation
     if (weCellValidationCtrl.cellValidation != null && weCellValidationCtrl.cellValidation[row_index1 + '_' + col_index1] != null) {
         let cellValidationItem = weCellValidationCtrl.cellValidation[row_index1 + '_' + col_index1];
         if (cellValidationItem.cellType == 'dropdown') {
@@ -114,6 +115,9 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     Store.luckysheetCellUpdate = [row_index, col_index];
     if (!isnotfocus) {
         $("#luckysheet-rich-text-editor").focus().select();
+        // setTimeout(function() {
+        //     $("#luckysheet-rich-text-editor").focus();
+        // }, 350);
     }
 
     $("#luckysheet-input-box").removeAttr("style").css({

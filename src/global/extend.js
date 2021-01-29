@@ -1530,6 +1530,56 @@ function luckysheetdeletetable(type, st, ed, sheetIndex) {
         }
     }
 
+    // [TK] custom cellValidation
+    let cellValidation = file.cellValidation;
+    let newCellValidation = {};
+    if (cellValidation != null) {
+        for (let key in cellValidation) {
+            let r = Number(key.split('_')[0]),
+                c = Number(key.split('_')[1]);
+            let item = cellValidation[key];
+
+            if (type == "row") {
+                if (r < st) {
+                    newCellValidation[r + "_" + c] = item;
+                } else if (r > ed) {
+                    newCellValidation[(r - slen) + "_" + c] = item;
+                }
+            } else if (type == "column") {
+                if (c < st) {
+                    newCellValidation[r + "_" + c] = item;
+                } else if (c > ed) {
+                    newCellValidation[r + "_" + (c - slen)] = item;
+                }
+            }
+        }
+    }
+
+    // [TK] custom cellTag
+    let cellTag = file.cellTag;
+    let newCellTag = {};
+    if (cellTag != null) {
+        for (let key in cellTag) {
+            let r = Number(key.split('_')[0]),
+                c = Number(key.split('_')[1]);
+            let item = cellTag[key];
+
+            if (type == "row") {
+                if (r < st) {
+                    newCellTag[r + "_" + c] = item;
+                } else if (r > ed) {
+                    newCellTag[(r - slen) + "_" + c] = item;
+                }
+            } else if (type == "column") {
+                if (c < st) {
+                    newCellTag[r + "_" + c] = item;
+                } else if (c > ed) {
+                    newCellTag[r + "_" + (c - slen)] = item;
+                }
+            }
+        }
+    }
+
     //主逻辑
     let type1;
     if (type == "row") {
@@ -1769,7 +1819,9 @@ function luckysheetdeletetable(type, st, ed, sheetIndex) {
             newAFarr,
             newFreezen,
             newDataVerification,
-            newHyperlink
+            newHyperlink,
+            newCellValidation,
+            newCellTag
         );
     } else {
         file.data = d;
@@ -1781,6 +1833,9 @@ function luckysheetdeletetable(type, st, ed, sheetIndex) {
         file.luckysheet_alternateformat_save = newAFarr;
         file.dataVerification = newDataVerification;
         file.hyperlink = newHyperlink;
+        // [TK] custom
+        file.cellValidation = newCellValidation;
+        file.cellTag = newCellTag;
     }
 }
 
@@ -2180,6 +2235,60 @@ function luckysheetDeleteCell(type, str, edr, stc, edc, sheetIndex) {
         }
     }
 
+    // [TK] custom cellValidation
+    let cellValidation = file.cellValidation;
+    let newCellValidation = {};
+    if (cellValidation != null) {
+        for (let key in cellValidation) {
+            let r = Number(key.split('_')[0]),
+                c = Number(key.split('_')[1]);
+            let item = cellValidation[key];
+
+            if (r < str || r > edr || c < stc || c > edc) {
+                if (type == "moveLeft") {
+                    if (c > edc && r >= str && r <= edr) {
+                        newCellValidation[r + "_" + (c - clen)] = item;
+                    } else {
+                        newCellValidation[r + "_" + c] = item;
+                    }
+                } else if (type == "moveUp") {
+                    if (r > edr && c >= stc && c <= edc) {
+                        newCellValidation[(r - rlen) + "_" + c] = item;
+                    } else {
+                        newCellValidation[r + "_" + c] = item;
+                    }
+                }
+            }
+        }
+    }
+
+    // [TK] custom cellTag
+    let cellTag = file.cellTag;
+    let newCellTag = {};
+    if (cellTag != null) {
+        for (let key in cellTag) {
+            let r = Number(key.split('_')[0]),
+                c = Number(key.split('_')[1]);
+            let item = cellTag[key];
+
+            if (r < str || r > edr || c < stc || c > edc) {
+                if (type == "moveLeft") {
+                    if (c > edc && r >= str && r <= edr) {
+                        newCellTag[r + "_" + (c - clen)] = item;
+                    } else {
+                        newCellTag[r + "_" + c] = item;
+                    }
+                } else if (type == "moveUp") {
+                    if (r > edr && c >= stc && c <= edc) {
+                        newCellTag[(r - rlen) + "_" + c] = item;
+                    } else {
+                        newCellTag[r + "_" + c] = item;
+                    }
+                }
+            }
+        }
+    }
+
     //边框配置变动
     if (cfg["borderInfo"] && cfg["borderInfo"].length > 0) {
         let borderInfo = [];
@@ -2288,7 +2397,10 @@ function luckysheetDeleteCell(type, str, edr, stc, edc, sheetIndex) {
             newFilterObj,
             newCFarr,
             newDataVerification,
-            newHyperlink
+            newHyperlink,
+            // [TK] custom
+            newCellValidation,
+            newCellTag
         );
     } else {
         file.data = d;
@@ -2299,6 +2411,9 @@ function luckysheetDeleteCell(type, str, edr, stc, edc, sheetIndex) {
         file.luckysheet_conditionformat_save = newCFarr;
         file.dataVerification = newDataVerification;
         file.hyperlink = newHyperlink;
+        // [TK] custom
+        file.cellValidation = newCellValidation;
+        file.cellTag = newCellTag;
     }
 }
 
