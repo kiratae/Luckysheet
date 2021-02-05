@@ -298,7 +298,10 @@ const weVariable = {
         if (this.resolvedVariables.includes(varContext))
             throw this.error.c; // circular error string
         this.resolvedVariables.push(varContext);
-    }
+    },
+    isVariable: function(txt) { //判断是否为单元格格式
+        console.log('isVariable', txt);
+    },
 }
 
 export default weVariable;

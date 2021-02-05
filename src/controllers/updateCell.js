@@ -56,6 +56,7 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         let cellValidationItem = weCellValidationCtrl.cellValidation[row_index1 + '_' + col_index1];
         if (cellValidationItem.cellType == 'dropdown') {
             weCellValidationCtrl.dropdownListShow();
+            return;
         } else if (cellValidationItem.cellType == 'checkbox') {
             return;
         }
@@ -73,10 +74,10 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         $("#luckysheet-dropCell-icon").remove();
     }
 
-    // let winH = $(window).height(),
-    //     winW = $(window).width();
-    let winH = $(weConfigsetting.bodyContainer).height(),
-        winW = $(weConfigsetting.bodyContainer).width();
+    let winH = $(window).height(),
+        winW = $(window).width();
+    // let winH = $(weConfigsetting.bodyContainer).height(),
+    //     winW = $(weConfigsetting.bodyContainer).width();
     let container_offset = $("#" + Store.container).offset();
     let scrollLeft = $("#luckysheet-cell-main").scrollLeft();
     let scrollTop = $("#luckysheet-cell-main").scrollTop();

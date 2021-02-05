@@ -7,6 +7,7 @@ import weAPI from './api';
 import weCellValidationCtrl from './cellvalidation';
 import weCellTagCtrl from './celltag';
 import weDropdownCtrl from './dropdown';
+import weHandler from './handler';
 
 const weCore = {
     setConfig: function(config) {
@@ -67,9 +68,12 @@ const weCore = {
             }
         }
 
-        libCore.formulaInputHanddler = function($to, $input, kcode) {
-            console.log('formulaInputHanddler', $to, $input, kcode);
-            luckysheetformula.functionInputHanddler($to, $input, kcode);
+        libCore.fuunctionInputControl = function(selector, event) {
+            return weHandler.fuunctionInputControl(selector, event);
+        }
+
+        libCore.functionHTMLGenerate = function(txt) {
+            return luckysheetformula.functionHTMLGenerate(txt);
         }
     }
 }

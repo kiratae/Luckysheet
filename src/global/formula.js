@@ -3359,7 +3359,13 @@ const luckysheetformula = {
                 if (_this.iscelldata($.trim(str))) {
                     function_str += '<span class="luckysheet-formula-functionrange-cell" rangeindex="' + _this.functionHTMLIndex + '" dir="auto" style="color:' + luckyColor[_this.functionHTMLIndex] + ';">' + str + '</span>';
                     _this.functionHTMLIndex++;
-                } else if (matchConfig.dquote > 0) {
+                }
+                // [TK] custom variable heightlight
+                else if (weVariable.isVariable($.trim(str))) {
+                    // TODO: display #name to color
+                }
+                // end [TK] custom variable heightlight
+                else if (matchConfig.dquote > 0) {
                     function_str += str + '</span>';
                 } else if (str.indexOf("</span>") == -1 && str.length > 0) {
                     let regx = /{.*?}/;
