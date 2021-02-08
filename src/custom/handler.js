@@ -15,11 +15,14 @@ import { replaceHtml } from '../utils/util';
 import { modelHTML, keycode } from '../controllers/constant';
 import menuButton from '../controllers/menuButton';
 import formula from '../global/formula';
+import weVariable from './variable';
 
 const weHandler = {
     selectRange: [],
     selectStatus: false,
     selectKey: '',
+    searchVariableCell: null,
+    searchHTML: '<div id="luckysheet-variable-search-c" class="luckysheet-formula-search-c"></div>',
     registerMouseOverAndOut: function() {
         let tempRow = -1,
             tempCol = -1;
@@ -439,59 +442,86 @@ const weHandler = {
             this.selectRange = [];
         }
     },
-    fuunctionInputControl: function(selector, event) {
-        let ctrlKey = event.ctrlKey;
-        let altKey = event.altKey;
-        let shiftKey = event.shiftKey;
-        let kcode = event.keyCode;
+    fuunctionInputControl: function(selector) {
 
-        if (kcode == keycode.ENTER) {
-            if ($("#luckysheet-formula-search-c").is(":visible") && formula.searchFunctionCell != null) {
-                formula.searchFunctionEnter($("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active"));
-            } else {
-                formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                Store.luckysheet_select_save = [{ "row": [Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[0]], "column": [Store.luckysheetCellUpdate[1], Store.luckysheetCellUpdate[1]], "row_focus": Store.luckysheetCellUpdate[0], "column_focus": Store.luckysheetCellUpdate[1] }];
-                luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
+        const self = this;
+
+        $(selector).focus(function() {
+            if (Store.luckysheet_select_save.length > 0) {
+                formula.rangeResizeTo = $(selector);
             }
-            event.preventDefault();
-        } else if (kcode == keycode.ESC) {
-            formula.dontupdate();
-            luckysheetMoveHighlightCell("down", 0, "rangeOfSelect");
-            event.preventDefault();
-        } else if (kcode == keycode.F4) {
-            formula.setfreezonFuc(event);
-            event.preventDefault();
-        } else if (kcode == keycode.UP) {
-            if ($("#luckysheet-formula-search-c").is(":visible")) {
-                let $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active").prev();
-                if ($up.length == 0) {
-                    $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").last();
+        }).keydown(function(event) {
+            let ctrlKey = event.ctrlKey;
+            let altKey = event.altKey;
+            let shiftKey = event.shiftKey;
+            let kcode = event.keyCode;
+
+            if (kcode == keycode.ENTER) {
+                if ($("#luckysheet-variable-search-c").is(":visible") && self.searchVariableCell != null) {
+                    self.searchVariableEnter($("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item-active"));
+                } else if ($("#luckysheet-formula-search-c").is(":visible") && formula.searchFunctionCell != null) {
+                    formula.searchFunctionEnter($("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active"));
+                } else {
+                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+                    Store.luckysheet_select_save = [{ "row": [Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[0]], "column": [Store.luckysheetCellUpdate[1], Store.luckysheetCellUpdate[1]], "row_focus": Store.luckysheetCellUpdate[0], "column_focus": Store.luckysheetCellUpdate[1] }];
+                    luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
                 }
-                $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
-                $up.addClass("luckysheet-formula-search-item-active");
                 event.preventDefault();
-            }
-        } else if (kcode == keycode.DOWN) {
-            if ($("#luckysheet-formula-search-c").is(":visible")) {
-                let $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active").next();
-                if ($up.length == 0) {
-                    $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").first();
+            } else if (kcode == keycode.ESC) {
+                formula.dontupdate();
+                luckysheetMoveHighlightCell("down", 0, "rangeOfSelect");
+                event.preventDefault();
+            } else if (kcode == keycode.F4) {
+                formula.setfreezonFuc(event);
+                event.preventDefault();
+            } else if (kcode == keycode.UP) {
+                if ($("#luckysheet-formula-search-c").is(":visible")) {
+                    let $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active").prev();
+                    if ($up.length == 0) {
+                        $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").last();
+                    }
+                    $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+                    $up.addClass("luckysheet-formula-search-item-active");
+                    event.preventDefault();
                 }
-                $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
-                $up.addClass("luckysheet-formula-search-item-active");
-                event.preventDefault();
+                if ($("#luckysheet-variable-search-c").is(":visible")) {
+                    let $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item-active").prev();
+                    if ($up.length == 0) {
+                        $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").last();
+                    }
+                    $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+                    $up.addClass("luckysheet-formula-search-item-active");
+                    event.preventDefault();
+                }
+            } else if (kcode == keycode.DOWN) {
+                if ($("#luckysheet-formula-search-c").is(":visible")) {
+                    let $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active").next();
+                    if ($up.length == 0) {
+                        $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").first();
+                    }
+                    $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+                    $up.addClass("luckysheet-formula-search-item-active");
+                    event.preventDefault();
+                }
+                if ($("#luckysheet-variable-search-c").is(":visible")) {
+                    let $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item-active").next();
+                    if ($up.length == 0) {
+                        $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").first();
+                    }
+                    $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+                    $up.addClass("luckysheet-formula-search-item-active");
+                    event.preventDefault();
+                }
+            } else if (kcode == keycode.LEFT) {
+                formula.rangeHightlightselected($(selector));
+            } else if (kcode == keycode.RIGHT) {
+                formula.rangeHightlightselected($(selector));
+            } else if (!((kcode >= 112 && kcode <= 123) || kcode <= 46 || kcode == 144 || kcode == 108 || event.ctrlKey || event.altKey || (event.shiftKey && (kcode == 37 || kcode == 38 || kcode == 39 || kcode == 40))) || kcode == 8 || kcode == 32 || kcode == 46 || (event.ctrlKey && kcode == 86)) {
+                self.functionInputHandler(selector, kcode);
             }
-        } else if (kcode == keycode.LEFT) {
-            formula.rangeHightlightselected($(selector));
-        } else if (kcode == keycode.RIGHT) {
-            formula.rangeHightlightselected($(selector));
-        } else if (!((kcode >= 112 && kcode <= 123) || kcode <= 46 || kcode == 144 || kcode == 108 || event.ctrlKey || event.altKey || (event.shiftKey && (kcode == 37 || kcode == 38 || kcode == 39 || kcode == 40))) || kcode == 8 || kcode == 32 || kcode == 46 || (event.ctrlKey && kcode == 86)) {
-            this.functionInputHandler(selector, kcode);
-        }
+        });
     },
     functionInputHandler: function(selector, kcode) {
-        let _this = this;
-
         let $editer = $(selector);
         let value1 = $editer.html(),
             value1txt = $editer.text();
@@ -531,11 +561,129 @@ const weHandler = {
                 formula.rangedrag_row_start = false;
 
                 formula.rangeHightlightselected($editer, kcode);
-
             }
         }, 1);
 
-    }
+    },
+    searchVariable: function($editer) {
+        let _this = this;
+
+        let $cell = formula.getrangeseleciton();
+        this.searchVariableCell = $cell;
+
+        if ($cell == null || $editer == null) {
+            return;
+        }
+        let inputContent = $editer.text();
+        let searchtxt = $cell.text().toUpperCase();
+        let reg = /#/;
+
+        if (!reg.test(searchtxt) || inputContent.substr(0, 1) != "=") {
+            return;
+        }
+
+        searchtxt = searchtxt.substr(1, searchtxt.length);
+
+        let variables = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].variable;
+
+        let result = {
+                "f": [],
+                "s": [],
+                "t": []
+            },
+            result_i = 0;
+
+        for (let i = 0; i < variables.length; i++) {
+            let item = variables[i],
+                n = item.name;
+
+            if (n == searchtxt) {
+                result.f.unshift(item);
+                result_i++;
+            } else if (n.substr(0, searchtxt.length) == searchtxt) {
+                result.s.unshift(item);
+                result_i++;
+            } else if (n.indexOf(searchtxt) > -1) {
+                result.t.unshift(item);
+                result_i++;
+            }
+
+            if (result_i >= 10) {
+                break;
+            }
+        }
+
+        let list = result.t.concat(result.s.concat(result.f));
+        if (list.length <= 0) {
+            return;
+        }
+
+        let listHTML = _this.searchVariableHTML(list);
+        $("#luckysheet-variable-search-c").html(listHTML).show();
+        $("#luckysheet-formula-search-c").hide();
+        $("#luckysheet-formula-help-c").hide();
+
+        let $c = $editer.parent(),
+            offset = $c.offset();
+        formula.searchFunctionPosition($("#luckysheet-variable-search-c"), $c, offset.left, offset.top);
+    },
+    searchVariableHTML: function(list) {
+        let _this = this;
+
+        if ($("#luckysheet-variable-search-c").length == 0) {
+            $("body").append(this.searchHTML);
+            $("#luckysheet-variable-search-c").on("mouseover", ".luckysheet-formula-search-item", function() {
+                $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+                $(this).addClass("luckysheet-formula-search-item-active");
+            }).on("mouseout", ".luckysheet-formula-search-item", function() {
+
+            }).on("click", ".luckysheet-formula-search-item", function() {
+                if (_this.searchVariableCell == null) {
+                    return;
+                }
+                _this.searchVariableEnter($(this));
+            });
+        }
+
+        let itemHTML = '<div data-var="${v}" class="luckysheet-formula-search-item ${class}"><div class="luckysheet-formula-search-func">${n}</div><div class="luckysheet-formula-search-detail">${a}</div></div>';
+        let retHTML = "";
+
+        for (let i = 0; i < list.length; i++) {
+            let item = list[i];
+
+            if (i == list.length - 1) {
+                retHTML += replaceHtml(itemHTML, {
+                    "class": "luckysheet-formula-search-item-active",
+                    "n": item.name,
+                    "a": item.rptFormName || 'แบบรายงานนี้',
+                    "v": `#${item.name}`,
+                });
+            } else {
+                retHTML += replaceHtml(itemHTML, {
+                    "class": "",
+                    "n": item.name,
+                    "a": item.rptFormName || 'แบบรายงานนี้',
+                    "v": `#${item.name}`,
+                });
+            }
+        }
+
+        return retHTML;
+    },
+    searchVariableEnter: function($obj) {
+        let vartxt = $obj.data("var");
+        this.searchVariableCell.text(vartxt).after('');
+        formula.setCaretPosition(this.searchVariableCell.next().get(0), 0, 1);
+        $("#luckysheet-variable-search-c").hide();
+        formula.helpFunctionExe(this.searchVariableCell.closest("div"), this.searchVariableCell.next());
+
+        // console.log('searchVariableEnter', this.searchVariableCell);
+        if (this.searchVariableCell.closest("div").attr("id") == "luckysheet-rich-text-editor") {
+            $('#luckysheet-functionbox-cell').html($('#luckysheet-rich-text-editor').html());
+        } else {
+            $('#luckysheet-rich-text-editor').html($('#luckysheet-functionbox-cell').html());
+        }
+    },
 }
 
 export default weHandler;

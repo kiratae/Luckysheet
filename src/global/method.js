@@ -14,6 +14,7 @@ import luckysheetcreatesheet from './createsheet';
 import Store from '../store';
 import weCellValidationCtrl from '../custom/cellvalidation';
 import weCellTagCtrl from '../custom/celltag';
+import weVariable from '../custom/variable';
 
 const defaultConfig = {
     defaultStore: {
@@ -290,6 +291,11 @@ const defaultConfig = {
         selectStatus: false,
     },
     // [TK] custom method defaultConfig
+    defaultVariable: {
+        resolvedVariables: [],
+        variableHTMLIndex: 0,
+        primarySheet: null,
+    },
     defaultCellValidation: {
         cellValidation: null,
         cache: {},
@@ -497,6 +503,14 @@ const method = {
         for (let key in defaultDataVerification) {
             if (key in dataVerificationCtrl) {
                 dataVerificationCtrl[key] = defaultDataVerification[key];
+            }
+        }
+
+        // [TK] custom variable
+        let defaultVariable = $.extend(true, {}, defaultConfig.defaultVariable);
+        for (let key in defaultVariable) {
+            if (key in weVariable) {
+                weVariable[key] = defaultVariable[key];
             }
         }
 

@@ -60,6 +60,7 @@ const weCore = {
         libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
         libCore.weDropdownCtrl = weDropdownCtrl;
+        libCore.weVariable = weVariable;
 
         libCore.execFormula = function(txt) {
             // console.log('execFormula', txt);
@@ -68,8 +69,8 @@ const weCore = {
             }
         }
 
-        libCore.fuunctionInputControl = function(selector, event) {
-            return weHandler.fuunctionInputControl(selector, event);
+        libCore.functionInputControl = function(selector) {
+            return weHandler.fuunctionInputControl(selector);
         }
 
         libCore.functionHTMLGenerate = function(txt) {

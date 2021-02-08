@@ -601,9 +601,12 @@ const selection = {
             if (isEditMode()) {
                 alert("不能对多重选择区域执行此操作，请选择单个区域，然后再试");
             } else {
+                // Can't perform this operation on multiple selection areas, please select a single area and try again 
                 tooltip.info('<i class="fa fa-exclamation-triangle"></i>提示', "不能对多重选择区域执行此操作，请选择单个区域，然后再试");
             }
         }
+
+        console.log("pasteHandler");
 
         if (typeof data == "object") {
             if (data.length == 0) { return; };
@@ -635,6 +638,7 @@ const selection = {
                 if (isEditMode()) {
                     alert("不能对合并单元格做部分更改");
                 } else {
+                    // Partial changes cannot be made to merged cells 
                     tooltip.info('<i class="fa fa-exclamation-triangle"></i>提示', "不能对合并单元格做部分更改");
                 }
 
@@ -774,6 +778,7 @@ const selection = {
                 if (isEditMode()) {
                     alert("不能对合并单元格做部分更改");
                 } else {
+                    // Partial changes cannot be made to merged cells
                     tooltip.info('<i class="fa fa-exclamation-triangle"></i>提示', "不能对合并单元格做部分更改");
                 }
                 return;
@@ -889,6 +894,7 @@ const selection = {
             if (isEditMode()) {
                 alert("不能对合并单元格做部分更改");
             } else {
+                // Partial changes cannot be made to merged cells
                 tooltip.info('<i class="fa fa-exclamation-triangle"></i>提示', "不能对合并单元格做部分更改");
             }
             return;

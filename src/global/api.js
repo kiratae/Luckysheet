@@ -42,6 +42,7 @@ import imageCtrl from '../controllers/imageCtrl';
 import dayjs from "dayjs";
 import { getRangetxt } from '../methods/get';
 import { luckysheetupdateCell } from '../controllers/updateCell';
+import weHandler from "../custom/handler";
 const IDCardReg = /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i;
 
 /**
@@ -575,7 +576,10 @@ export function exitEditMode(options = {}) {
     if (parseInt($("#luckysheet-input-box").css("top")) > 0) {
 
 
-        if ($("#luckysheet-formula-search-c").is(":visible") && formula.searchFunctionCell != null) {
+        // [TK] custom
+        if ($("#luckysheet-variable-search-c").is(":visible") && formula.searchFunctionCell != null) {
+            weHandler.searchVariableEnter($("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item-active"));
+        } else if ($("#luckysheet-formula-search-c").is(":visible") && formula.searchFunctionCell != null) {
             formula.searchFunctionEnter($("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active"));
         } else {
             formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);

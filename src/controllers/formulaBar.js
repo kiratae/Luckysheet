@@ -16,6 +16,7 @@ import formula from '../global/formula';
 import tooltip from '../global/tooltip';
 import locale from '../locale/locale';
 import Store from '../store';
+import weHandler from '../custom/handler';
 
 export function formulaBarInitial() {
     //公式栏处理
@@ -55,7 +56,10 @@ export function formulaBarInitial() {
         let $inputbox = $("#luckysheet-input-box");
 
         if (kcode == keycode.ENTER && parseInt($inputbox.css("top")) > 0) {
-            if ($("#luckysheet-formula-search-c").is(":visible") && formula.searchFunctionCell != null) {
+            // [TK] custom
+            if ($("#luckysheet-variable-search-c").is(":visible") && weHandler.searchVariableCell != null) {
+                weHandler.searchVariableEnter($("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item-active"));
+            } else if ($("#luckysheet-formula-search-c").is(":visible") && formula.searchFunctionCell != null) {
                 formula.searchFunctionEnter($("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active"));
             } else {
                 formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
@@ -84,6 +88,16 @@ export function formulaBarInitial() {
                 $up.addClass("luckysheet-formula-search-item-active");
                 event.preventDefault();
             }
+            // [TK] custom
+            if ($("#luckysheet-variable-search-c").is(":visible")) {
+                let $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item-active").prev();
+                if ($up.length == 0) {
+                    $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").last();
+                }
+                $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+                $up.addClass("luckysheet-formula-search-item-active");
+                event.preventDefault();
+            }
         } else if (kcode == keycode.DOWN && parseInt($inputbox.css("top")) > 0) {
             if ($("#luckysheet-formula-search-c").is(":visible")) {
                 let $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active").next();
@@ -91,6 +105,16 @@ export function formulaBarInitial() {
                     $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").first();
                 }
                 $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+                $up.addClass("luckysheet-formula-search-item-active");
+                event.preventDefault();
+            }
+            // [TK] custom
+            if ($("#luckysheet-variable-search-c").is(":visible")) {
+                let $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item-active").next();
+                if ($up.length == 0) {
+                    $up = $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").first();
+                }
+                $("#luckysheet-variable-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
                 $up.addClass("luckysheet-formula-search-item-active");
                 event.preventDefault();
             }

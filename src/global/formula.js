@@ -31,6 +31,7 @@ import weVariable from '../custom/variable';
 import { getcellDisplayFormula } from '../custom/getdata';
 import method from './method';
 import { type } from 'os';
+import weHandler from '../custom/handler';
 
 const luckysheetformula = {
     error: {
@@ -1150,14 +1151,15 @@ const luckysheetformula = {
         let _this = this;
 
         let currSelection = _this.getrangeseleciton();
-        $("#luckysheet-formula-search-c, #luckysheet-formula-help-c").hide();
+        $("#luckysheet-formula-search-c, #luckysheet-formula-help-c, #luckysheet-variable-help-c").hide();
         $("#luckysheet-formula-functionrange .luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-hc").css("opacity", "0.03");
-        $("#luckysheet-formula-search-c, #luckysheet-formula-help-c").hide();
+        $("#luckysheet-formula-search-c, #luckysheet-formula-help-c, #luckysheet-variable-help-c").hide();
         _this.helpFunctionExe($editer, currSelection);
 
         // console.log(currSelection, $(currSelection).closest(".luckysheet-formula-functionrange-cell").length);
         if ($(currSelection).closest(".luckysheet-formula-functionrange-cell").length == 0) {
             _this.searchFunction($editer);
+            weHandler.searchVariable($editer); // [TK] custom
             return;
         }
 
@@ -1603,6 +1605,7 @@ const luckysheetformula = {
         $("#luckysheet-row-count-show, #luckysheet-column-count-show").hide();
         // $("#luckysheet-cols-h-selected, #luckysheet-rows-h-selected").hide();
         $("#luckysheet-formula-search-c, #luckysheet-formula-help-c").hide();
+        $("#luckysheet-variable-search-c").hide(); // [TK] custom
     },
     iscellformat: function(txt) {
         let re_abc = /[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][123456789]/;
@@ -3222,6 +3225,7 @@ const luckysheetformula = {
         }
 
         _this.functionHTMLIndex = 0;
+        weVariable.variableHTMLIndex = 0;
 
         return '<span dir="auto" class="luckysheet-formula-text-color">=</span>' + _this.functionHTML(txt);
     },
@@ -3363,6 +3367,8 @@ const luckysheetformula = {
                 // [TK] custom variable heightlight
                 else if (weVariable.isVariable($.trim(str))) {
                     // TODO: display #name to color
+                    function_str += '<span class="luckysheet-formula-variable-cell" varindex="' + weVariable.variableHTMLIndex + '" dir="auto" style="color: #23BE8F;">' + str + '</span>';
+                    weVariable.variableHTMLIndex++;
                 }
                 // end [TK] custom variable heightlight
                 else if (matchConfig.dquote > 0) {
@@ -5513,6 +5519,7 @@ const luckysheetformula = {
         console.log(fp)
         if ((fp.substr(0, 20) == "luckysheet_function." || fp.substr(0, 22) == "luckysheet_compareWith")) {
             _this.functionHTMLIndex = 0;
+            weVariable.variableHTMLIndex = 0;
         }
 
         if (!_this.testFunction(resolved, fp) || fp == "") {

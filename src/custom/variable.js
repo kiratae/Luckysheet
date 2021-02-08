@@ -33,6 +33,7 @@ const weVariable = {
         arg: "#ARG!",
         d: "#DATA!",
     },
+    variableHTMLIndex: 0,
     primarySheet: null,
     init: function(vPrefix) {
         let func = 'init';
@@ -299,8 +300,13 @@ const weVariable = {
             throw this.error.c; // circular error string
         this.resolvedVariables.push(varContext);
     },
-    isVariable: function(txt) { //判断是否为单元格格式
-        console.log('isVariable', txt);
+    isVariable: function(txt) {
+        // console.log('isVariable', txt);
+        if (txt.toString().match(this.variableRegex)) {
+            return true;
+        } else {
+            return false;
+        }
     },
 }
 
