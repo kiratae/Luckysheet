@@ -20,9 +20,9 @@ const weVariable = {
     // regex: /(?:([a-zA-Z0-9ก-๙_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|[A-Za-z\$]+[0-9\$]+)|(\#[a-zA-Z0-9ก-๙_.]+))/g,
     // regexIsVar: /[^!](\#[a-zA-Z0-9ก-๙_.]+)/,
     // regexTest: /\#([a-zA-Z0-9ก-๙_.]+)/,
-    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/,
-    globalRegex: /(?:(\'?[a-zA-Z0-9ก-๙_.]+\'?\!\#[a-zA-Z0-9ก-๙_.]+)|(\'?[a-zA-Z0-9ก-๙_.']+\'?\!(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))|(\#[a-zA-Z0-9ก-๙_.]+))/g,
-    variableRegex: /\'?([a-zA-Z0-9ก-๙_.]+)\'?\!|(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/g,
+    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.'*]+)\!(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/,
+    globalRegex: /(?:(\'?[a-zA-Z0-9ก-๙_.*]+\'?\!\#[a-zA-Z0-9ก-๙_.]+)|(\'?[a-zA-Z0-9ก-๙_.'*]+\'?\!(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))|(\#[a-zA-Z0-9ก-๙_.]+))/g,
+    variableRegex: /\'?([a-zA-Z0-9ก-๙_.*]+)\'?\!|(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/g,
     localVariableRegex: /(?<!\!)(\#[a-zA-Z0-9ก-๙_.]+)/,
     cellRefRegex: /(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+))/g,
     error: {
@@ -110,9 +110,9 @@ const weVariable = {
             throw this.error.v;
         }
     },
-    addRemoteSheet: function(name) {
+    addRemoteSheet: function(name, previousAmt = 0) {
         const func = 'addRemoteSheet';
-        weVariableLogger.info(func, `has been call with name is "${name}".`);
+        weVariableLogger.info(func, `has been call with name is "${name}" and previousAmt is "${previousAmt}".`);
 
         let removeLoading = function() {
             setTimeout(function(ex) {
@@ -123,6 +123,10 @@ const weVariable = {
         }
         const self = this;
         let postData = { rptFormCode: name };
+        if (previousAmt > 0) {
+            postData['rptFormCode'] = name.replace(/\*/g, '');
+            postData['previousAmt'] = previousAmt;
+        }
         if (!weConfigsetting.formEditor) {
             postData['formReportSetId'] = weConfigsetting.formReportSetId;
         }
@@ -143,14 +147,14 @@ const weVariable = {
                                 let formData = weConfigsetting.deserializeHelper(res.data.data)[0];
 
                                 formData.order = Store.luckysheetfile.length;
-                                formData.index = res.data.rptFormId;
-                                formData.name = res.data.rptFormCode;
+                                formData.index = (previousAmt > 0) ? parseInt(res.data.rptFormId) * -1 : res.data.rptFormId;
+                                formData.name = name;
                                 formData.status = 0;
                                 formData.hide = 1;
                                 formData.allowEdit = false;
                                 formData.isTemp = true; //custom
                                 formData.variable = res.data.formVariables;
-                                formData.data = sheetmanage.buildGridData(formData);
+                                formData.data = sheetmanage.buildGridData(formData.celldata);
                                 Store.luckysheetfile.push(formData);
                                 // sheetmanage.createSheetbydata(formData);
                                 // sheetmanage.loadOtherFile(formData);
@@ -241,9 +245,18 @@ const weVariable = {
                             sheetName = sheetName.replace('_', '-');
                             var afterSheetFx = matched[1];
 
+                            let matchStar = sheetName.match(/\*/g);
+                            let prvAmt = matchStar != null ? matchStar.length : 0;
+
+                            console.log('sheetName', sheetName, 'prvAmt', prvAmt);
+
                             // if not have sheet in current client go to get it from remote
                             if (!sheetmanage.getSheetByName(sheetName)) {
                                 this.addRemoteSheet(sheetName);
+                            }
+
+                            if (prvAmt > 0) {
+                                this.addRemoteSheet(sheetName, prvAmt);
                             }
 
                             if (this.isLocalVariable(afterSheetFx)) {
