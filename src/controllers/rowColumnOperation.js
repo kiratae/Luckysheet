@@ -379,6 +379,11 @@ export function rowColumnOperationInitial() {
                 return;
             }
 
+            // [TK] custom
+            if (weDynamicRow.isCurrentDynamicRow()) {
+                return;
+            }
+
             $("#luckysheet-cols-rows-shift").hide();
             Store.luckysheetRightHeadClickIs = "row";
 
@@ -433,6 +438,9 @@ export function rowColumnOperationInitial() {
             if (!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat) {
                 $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
             }
+
+            // [TK] custom
+            weDynamicRow.deleteRow(cellRightClickConfig.deleteRow);
 
             // console.log($(this).offset().left, event.pageY);
             showrightclickmenu($("#luckysheet-rightclick-menu"), $(this).offset().left + 46, event.pageY - 20);
@@ -1450,6 +1458,7 @@ export function rowColumnOperationInitial() {
 
         let st_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][0],
             ed_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][1];
+        weDynamicRow.doDeleteRow(st_index, ed_index);
         luckysheetdeletetable(Store.luckysheetRightHeadClickIs, st_index, ed_index);
     });
     $("#luckysheet-delRows").click(function(event) {

@@ -13,7 +13,7 @@ import { getSheetIndex } from '../methods/get';
 import { getObjType, replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
-import weVariable from '../custom/variable';
+import weDynamicRow from '../custom/dynamicRow';
 import weCellValidationCtrl from '../custom/cellvalidation';
 import dayjs from 'dayjs'
 
@@ -417,6 +417,7 @@ const luckysheetDropCell = {
 
         return [hasNumber, hasExtendNumber, hasDate, hasChn, hasChnWeek1, hasChnWeek2, hasChnWeek3];
     },
+    isDynamicCreation: false, // [TK] custom
     update: function() {
         let _this = this;
 
@@ -435,9 +436,10 @@ const luckysheetDropCell = {
         let borderInfoCompute = getBorderInfoCompute();
         let dataVerification = $.extend(true, {}, file["dataVerification"]);
 
-        // [Tk] custom
+        // [TK] custom
         let cellValidation = $.extend(true, {}, file["cellValidation"]);
 
+        let isDynamicCreation = _this.isDynamicCreation; // [TK] custom
         let direction = _this.direction;
         let type = _this.applyType;
 
@@ -514,6 +516,10 @@ const luckysheetDropCell = {
                                     cell.ct = mask[1];
                                 }
                             }
+                        }
+
+                        if (isDynamicCreation) {
+                            cell.rf = weDynamicRow.dynamicRow.og_row;
                         }
 
                         d[j][i] = cell;
@@ -880,6 +886,8 @@ const luckysheetDropCell = {
             "cellValidation": cellValidation // [TK] custom
         }
         jfrefreshgrid(d, Store.luckysheet_select_save, allParam);
+
+        _this.isDynamicCreation = false;
 
         selectHightlightShow();
     },

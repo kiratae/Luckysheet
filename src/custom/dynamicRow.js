@@ -5,6 +5,7 @@ import { luckysheetrefreshgrid } from '../global/refresh';
 import luckysheetDropCell from "../controllers/dropCell";
 import { insertRow } from '../global/api';
 import locale from "../locale/locale";
+import { $$ } from '../utils/util';
 
 const weDynamicRow = {
     dynamicRow: null,
@@ -18,6 +19,7 @@ const weDynamicRow = {
 
             if (self.dynamicRow == null) {
                 self.setData({
+                    og_row: Store.luckysheet_select_save[0].row[0],
                     row: Store.luckysheet_select_save[0].row[0],
                     start_col: Store.luckysheet_select_save[0].column[0],
                     end_col: Store.luckysheet_select_save[0].column[1]
@@ -48,6 +50,29 @@ const weDynamicRow = {
             } else {
                 $("#luckysheet-dynamic-row").hide();
             }
+        }
+    },
+    isCurrentDynamicRow: function() {
+        if (this.dynamicRow && this.dynamicRow.row == Store.luckysheet_select_save[0].row[0]) {
+            return true;
+        }
+        return false;
+    },
+    deleteRow: function() {
+        if (!this.dynamicRow) return;
+
+        let st_index = Store.luckysheet_select_save[0].row[0],
+            ed_index = Store.luckysheet_select_save[0].row[1];
+        if (this.dynamicRow.og_row <= st_index && ed_index < this.dynamicRow.row) {
+            $$('#luckysheet-del-selected').style.display = 'block';
+        }
+    },
+    doDeleteRow: function(st_index, ed_index) {
+        if (!this.dynamicRow) return;
+
+        if (this.dynamicRow.og_row <= st_index && ed_index < this.dynamicRow.row) {
+            this.dynamicRow.row--;
+            this.setData(this.dynamicRow);
         }
     },
     createDOM: function() {
@@ -131,6 +156,8 @@ const weDynamicRow = {
                     "row": [this.dynamicRow.row, this.dynamicRow.row + 1],
                     "column": [this.dynamicRow.start_col, this.dynamicRow.end_col]
                 }];
+
+                luckysheetDropCell.isDynamicCreation = true;
 
                 luckysheetDropCell.update(false);
 

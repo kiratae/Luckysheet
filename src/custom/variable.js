@@ -20,9 +20,9 @@ const weVariable = {
     // regex: /(?:([a-zA-Z0-9ก-๙_.']+)\!(\#[a-zA-Z0-9ก-๙_.]+|[A-Za-z\$]+[0-9\$]+)|(\#[a-zA-Z0-9ก-๙_.]+))/g,
     // regexIsVar: /[^!](\#[a-zA-Z0-9ก-๙_.]+)/,
     // regexTest: /\#([a-zA-Z0-9ก-๙_.]+)/,
-    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.'*]+)\!(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/,
-    globalRegex: /(?:(\'?[a-zA-Z0-9ก-๙_.*]+\'?\!\#[a-zA-Z0-9ก-๙_.]+)|(\'?[a-zA-Z0-9ก-๙_.'*]+\'?\!(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))|(\#[a-zA-Z0-9ก-๙_.]+))/g,
-    variableRegex: /\'?([a-zA-Z0-9ก-๙_.*]+)\'?\!|(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/g,
+    regexTestIsGlobal: /([a-zA-Zก-ฮ0-9_.'*-]+)\!(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/,
+    globalRegex: /(?:(\'?[a-zA-Z0-9ก-๙_.*-]+\'?\!\#[a-zA-Z0-9ก-๙_.]+)|(\'?[a-zA-Z0-9ก-๙_.'*-]+\'?\!(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))|(\#[a-zA-Z0-9ก-๙_.]+))/g,
+    variableRegex: /\'?([a-zA-Z0-9ก-๙_.*-]+)\'?\!|(\#[a-zA-Z0-9ก-๙_.]+|(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+)))/g,
     localVariableRegex: /(?<!\!)(\#[a-zA-Z0-9ก-๙_.]+)/,
     cellRefRegex: /(([A-Za-z\$]+[0-9\$]+\:[A-Za-z\$]+[0-9\$]+)|([A-Za-z\$]+[0-9\$]+))/g,
     error: {
@@ -147,17 +147,15 @@ const weVariable = {
                                 let formData = weConfigsetting.deserializeHelper(res.data.data)[0];
 
                                 formData.order = Store.luckysheetfile.length;
-                                formData.index = (previousAmt > 0) ? parseInt(res.data.rptFormId) * -1 : res.data.rptFormId;
+                                formData.index = res.data.rptFormId + (previousAmt > 0 ? Array(previousAmt + 1).join('*') : "")
                                 formData.name = name;
                                 formData.status = 0;
                                 formData.hide = 1;
                                 formData.allowEdit = false;
                                 formData.isTemp = true; //custom
                                 formData.variable = res.data.formVariables;
-                                formData.data = sheetmanage.buildGridData(formData.celldata);
+                                formData.data = sheetmanage.buildGridData(formData);
                                 Store.luckysheetfile.push(formData);
-                                // sheetmanage.createSheetbydata(formData);
-                                // sheetmanage.loadOtherFile(formData);
 
                                 jfrefreshgrid();
                                 removeLoading();
@@ -234,7 +232,7 @@ const weVariable = {
                         if (variable) {
                             var resolved = this.resolveFormula(variable.formula);
                             resolved = resolved.replace(/=/g, '');
-                            fx = fx.replace(new RegExp(varContext), resolved);
+                            fx = fx.replace(new RegExp(this.escapeRegExp(varContext)), resolved);
                         } else {
                             throw this.error.v;
                         }
@@ -252,11 +250,14 @@ const weVariable = {
 
                             // if not have sheet in current client go to get it from remote
                             if (!sheetmanage.getSheetByName(sheetName)) {
-                                this.addRemoteSheet(sheetName);
-                            }
-
-                            if (prvAmt > 0) {
-                                this.addRemoteSheet(sheetName, prvAmt);
+                                if (prvAmt > 0) {
+                                    if (weConfigsetting.formEditor) {
+                                        throw this.error.v;
+                                    }
+                                    this.addRemoteSheet(sheetName, prvAmt);
+                                } else {
+                                    this.addRemoteSheet(sheetName);
+                                }
                             }
 
                             if (this.isLocalVariable(afterSheetFx)) {
@@ -275,9 +276,9 @@ const weVariable = {
                                         }
                                     }
                                     console.log('variable.formula', tempFx);
-                                    var resolved = this.resolveFormula(tempFx);
+                                    let resolved = this.resolveFormula(tempFx);
                                     resolved = resolved.replace(/=/g, '');
-                                    fx = fx.replace(new RegExp(varContext), resolved);
+                                    fx = fx.replace(new RegExp(this.escapeRegExp(varContext)), resolved);
                                 } else {
                                     throw this.error.v;
                                 }
@@ -321,6 +322,9 @@ const weVariable = {
             return false;
         }
     },
+    escapeRegExp: function(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
 }
 
 export default weVariable;
