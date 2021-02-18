@@ -93,11 +93,9 @@ const weVariable = {
             let variables = null;
             if (isLocal && sheetName == null) {
                 let file = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)];
-                console.log('file', file);
                 variables = file.variable;
             } else {
                 let file = sheetmanage.getSheetByName(sheetName);
-                console.log('file', file);
                 variables = file.variable;
             }
 
@@ -178,31 +176,6 @@ const weVariable = {
             }
         });
     },
-    variableHTML: function(text) {
-        // console.log('variableHTML', text);
-        // TODO: custom variable html display in formula bar here!
-
-        // let self = this;
-        // let varstack = text.split("");
-        // let i = 0,
-        //     str = "",
-        //     var_str = "";
-        // while (i < varstack.length) {
-        //     let s = varstack[i];
-        //     if(s == self.variablePrefix){
-        //         let s_next = "";
-        //         if ((i + 1) < varstack.length) {
-        //             s_next = varstack[i + 1];
-        //         }
-        //         str += s;
-        //     }else if(){
-
-        //     }
-        //     i++;
-        // }
-        // console.log(var_str);
-        return text;
-    },
     execFormula: function(txt, outsider = false) {
         if (typeof txt == "string" && txt.slice(0, 1) == "=" && txt.length > 1) {
             if (outsider) {
@@ -246,8 +219,6 @@ const weVariable = {
                             let matchStar = sheetName.match(/\*/g);
                             let prvAmt = matchStar != null ? matchStar.length : 0;
 
-                            console.log('sheetName', sheetName, 'prvAmt', prvAmt);
-
                             // if not have sheet in current client go to get it from remote
                             if (!sheetmanage.getSheetByName(sheetName)) {
                                 if (prvAmt > 0) {
@@ -263,19 +234,16 @@ const weVariable = {
                             if (this.isLocalVariable(afterSheetFx)) {
                                 this.checkCircular(varContext);
                                 var varName = afterSheetFx.replace(/#/g, '');
-                                console.log('varName', varName);
                                 var variable = this.getVariableByName(varName, false, sheetName);
                                 if (variable) {
                                     // tranform formula
                                     let cellRange = variable.formula.match(this.cellRefRegex);
-                                    console.log('variable.formula cellRange', cellRange);
                                     let tempFx = variable.formula;
                                     if (cellRange && cellRange.length && typeof cellRange === 'object') {
                                         for (var i = 0; i < cellRange.length; i++) {
                                             tempFx = tempFx.replace(new RegExp(cellRange[i]), `'${sheetName}'!${cellRange[i]}`);
                                         }
                                     }
-                                    console.log('variable.formula', tempFx);
                                     let resolved = this.resolveFormula(tempFx);
                                     resolved = resolved.replace(/=/g, '');
                                     fx = fx.replace(new RegExp(this.escapeRegExp(varContext)), resolved);
@@ -315,7 +283,6 @@ const weVariable = {
         this.resolvedVariables.push(varContext);
     },
     isVariable: function(txt) {
-        // console.log('isVariable', txt);
         if (txt.toString().match(this.variableRegex)) {
             return true;
         } else {

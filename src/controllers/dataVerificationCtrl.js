@@ -1383,7 +1383,7 @@ const dataVerificationCtrl = {
     dropdownListShow: function() {
         $("#luckysheet-dataVerification-showHintBox").hide();
 
-        console.log('[TK] dropdownListShow');
+        // console.log('[TK] dropdownListShow');
 
         let _this = this;
 

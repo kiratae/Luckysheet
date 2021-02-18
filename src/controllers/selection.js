@@ -606,7 +606,7 @@ const selection = {
             }
         }
 
-        console.log("pasteHandler");
+        // console.log("pasteHandler");
 
         if (typeof data == "object") {
             if (data.length == 0) { return; };

@@ -432,7 +432,6 @@ const menuButton = {
                     let d = editor.deepCopyFlowData(Store.flowdata); //取数据
                     _this.focus($menuButton, itemvalue);
 
-                    console.log('[TK] custom => itemvalue', itemvalue);
                     _this.updateFormat(d, "ct", itemvalue);
                 });
 

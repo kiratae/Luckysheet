@@ -5485,7 +5485,6 @@ const luckysheetformula = {
         let locale_formulaMore = _locale.formulaMore;
         let resolved = null;
 
-        console.log(txt, r, c);
         // [TK] custom
         try {
             weVariable.resolvedVariables.length = 0;
@@ -5516,7 +5515,6 @@ const luckysheetformula = {
         Store.calculateSheetIndex = index;
 
         let fp = $.trim(_this.functionParserExe(resolved));
-        console.log(fp)
         if ((fp.substr(0, 20) == "luckysheet_function." || fp.substr(0, 22) == "luckysheet_compareWith")) {
             _this.functionHTMLIndex = 0;
             weVariable.variableHTMLIndex = 0;
@@ -5561,7 +5559,7 @@ const luckysheetformula = {
             }
 
             result = new Function("return " + fp)();
-            console.log('result', result);
+            // console.log('result', result);
             if (typeof(result) == "string") { //把之前的非打印控制字符DEL替换回一个双引号。
                 result = result.replace(/\x7F/g, '"');
             }
@@ -5646,7 +5644,7 @@ const luckysheetformula = {
             return [true, result, resolved, txt, { type: "dynamicArrayItem", data: dynamicArrayItem }];
         }
 
-        console.log(result, resolved, txt);
+        // console.log(result, resolved, txt);
 
         return [true, result, resolved, txt];
     },

@@ -1731,7 +1731,7 @@ var good_pd = good_pd_date.getFullYear() == 2017;
 function parseDate(str, fixdate) {
     // var d = new Date(str);
     var d = weFormat.parseDate(str);
-    console.log('parseDate', d);
+    // console.log('parseDate', d);
     if (good_pd) {
         if (fixdate > 0) d.setTime(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
         else if (fixdate < 0) d.setTime(d.getTime() - d.getTimezoneOffset() * 60 * 1000);
