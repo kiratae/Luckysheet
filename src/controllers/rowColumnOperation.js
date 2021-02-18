@@ -355,6 +355,8 @@ export function rowColumnOperationInitial() {
             return;
         }
 
+        console.log('#luckysheet-rows-h on mousemove');
+
         let mouse = mouseposition(event.pageX, event.pageY);
         let y = mouse[1] + $("#luckysheet-rows-h").scrollTop();
 
@@ -393,6 +395,9 @@ export function rowColumnOperationInitial() {
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(_locale.rightclick.height);
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(_locale.rightclick.top);
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(_locale.rightclick.bottom);
+
+            // [TK] custom
+            $("#luckysheet-rightclick-menu #luckysheet-del-selected .luckysheet-cols-rows-shift-word").text(_locale.rightclick.row);
 
             $("#luckysheet-cols-rows-add").show();
             $("#luckysheet-cols-rows-data").show();
@@ -829,6 +834,9 @@ export function rowColumnOperationInitial() {
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(_locale.rightclick.width);
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-left").text(_locale.rightclick.left);
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(_locale.rightclick.right);
+
+            // [TK] custom
+            $("#luckysheet-rightclick-menu #luckysheet-del-selected .luckysheet-cols-rows-shift-word").text(_locale.rightclick.column);
 
             $("#luckysheet-cols-rows-add").show();
             $("#luckysheet-cols-rows-data").show();
