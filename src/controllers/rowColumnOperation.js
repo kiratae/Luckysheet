@@ -40,6 +40,7 @@ import Store from '../store';
 import luckysheetConfigsetting from './luckysheetConfigsetting';
 import weDynamicRow from '../custom/dynamicRow';
 import weAPI from '../custom/api';
+import weConfigsetting from '../custom/configsetting';
 
 export function rowColumnOperationInitial() {
 
@@ -355,7 +356,9 @@ export function rowColumnOperationInitial() {
             return;
         }
 
-        console.log('#luckysheet-rows-h on mousemove');
+        if (!Store.allowEdit) {
+            return;
+        }
 
         let mouse = mouseposition(event.pageX, event.pageY);
         let y = mouse[1] + $("#luckysheet-rows-h").scrollTop();
@@ -381,8 +384,12 @@ export function rowColumnOperationInitial() {
                 return;
             }
 
+            if (!Store.allowEdit) {
+                return;
+            }
+
             // [TK] custom
-            if (weDynamicRow.isCurrentDynamicRow()) {
+            if (!weConfigsetting.formEditor && weDynamicRow.isCurrentDynamicRow()) {
                 return;
             }
 
@@ -789,6 +796,10 @@ export function rowColumnOperationInitial() {
             return;
         }
 
+        if (!Store.allowEdit) {
+            return;
+        }
+
         if (Store.luckysheet_cols_menu_status || Store.luckysheet_cols_change_size) {
             return;
         }
@@ -845,6 +856,7 @@ export function rowColumnOperationInitial() {
 
             // [TK] custom
             $("#luckysheet-dynamic-row").hide();
+
 
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
             $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'block';
@@ -928,6 +940,10 @@ export function rowColumnOperationInitial() {
             imageCtrl.cancelActiveImgItem();
         }
 
+        if (!weConfigsetting.formEditor) {
+            return;
+        }
+
         $("#luckysheet-input-box").hide();
         $("#luckysheet-rows-change-size").css({ "opacity": 1 });
 
@@ -969,6 +985,10 @@ export function rowColumnOperationInitial() {
         //图片 active/cropping
         if ($("#luckysheet-modal-dialog-activeImage").is(":visible") || $("#luckysheet-modal-dialog-cropping").is(":visible")) {
             imageCtrl.cancelActiveImgItem();
+        }
+
+        if (!weConfigsetting.formEditor) {
+            return;
         }
 
         $("#luckysheet-input-box").hide();

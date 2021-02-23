@@ -9390,6 +9390,7 @@ export default {
         generateNewMatrix: 'Generate new matrix',
         addDynamicRow: 'Create dynamic row',
         removeDynamicRow: 'Remove dynamic row',
+        addDynamicRowWithSummary: 'Create dynamic row with summary row',
     },
     comment: {
         "insert": "Insert",

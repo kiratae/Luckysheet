@@ -490,9 +490,11 @@ function luckysheetContainerFocus() {
     // console.log('[TK] luckysheetContainerFocus');
     // $("#" + Store.container).attr("tabindex", 0).focus();
     // [TK] custom
-    $("#" + Store.container).attr("tabindex", 0);
     $('html, body').animate({
-        scrollTop: $("#" + Store.container).offset().top - 60
+        scrollTop: $("#" + Store.container).offset().top - 60,
+        complete: function() {
+            $("#" + Store.container).attr("tabindex", 0).focus();
+        }
     }, 300);
 }
 

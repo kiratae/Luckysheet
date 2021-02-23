@@ -46,7 +46,7 @@ export default {
         "totalPage": 10,
         "pageUrl": "",
     },
-    editMode: false, //是否为编辑模式
+    editMode: false, //是否为编辑模式 // อยู่ในโหมดแก้ไขหรือไม่ 
     beforeCreateDom: null, //表格创建之前的方法
     fireMousedown: null, //Cell data drill down
     lang: 'en', //language
@@ -74,6 +74,7 @@ export default {
     bodyContainer: null, // container of luckysheet or parent of luckysheet.
     formEditor: true, // form mode if is true is template create mode, false is answer mode.
     canDynamicRow: true, // if is true will hasve option to setting one row to be dynamic row and can dynamic. it's depend on "formEditor" setting.
+    canSummaryRow: true,
     onCellClick: null, // hooker function fire when click cell.
     onCellMouseOver: null, // hooker function fire when cursor move in over cell.
     onCellMouseOut: null, // hooker function fire when cursor move out from cell.

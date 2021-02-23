@@ -480,6 +480,9 @@ const luckysheetDropCell = {
                         // [TK] custom -> old; if (cell.f != null) {
                         if (cell.df != null) {
                             let f = "=" + formula.functionCopy(cell.df, "down", j - apply_str_r + 1); // [TK] custom
+                            // [TK] custom sumary row formula
+                            // let cell = applyData[j - apply_str_r];
+                            // let sumf = "=" + formula.functionCopy(cell.df, "down", j - apply_str_r + 1);
 
                             let v = formula.execfunction(f, j, i);
 

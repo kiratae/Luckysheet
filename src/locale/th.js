@@ -9370,8 +9370,9 @@ export default {
         byRow: 'By row',
         byCol: 'By column',
         generateNewMatrix: 'Generate new matrix',
-        addDynamicRow: 'สร้างเป็นแถวแบบ Dynamic',
-        removeDynamicRow: 'นำแถวแบบ Dynamic ออก',
+        addDynamicRow: 'สร้างเป็นแถวไดนามิก',
+        removeDynamicRow: 'นำแถวไดนามิกออก',
+        addDynamicRowWithSummary: 'สร้างเป็นแถวไดนามิกแบบมีแถวผลรวม',
     },
     comment: {
         "insert": "Insert",

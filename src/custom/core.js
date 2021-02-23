@@ -20,6 +20,7 @@ const weCore = {
         weConfigsetting.formEditor = config.formEditor;
         weConfigsetting.bodyContainer = config.bodyContainer;
         weConfigsetting.canDynamicRow = config.canDynamicRow;
+        weConfigsetting.canSummaryRow = config.canSummaryRow;
         weConfigsetting.yearOffset = config.yearOffset;
         // hooks
         weConfigsetting.onCellClick = config.onCellClick;

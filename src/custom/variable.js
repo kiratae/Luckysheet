@@ -265,6 +265,7 @@ const weVariable = {
                 return fx;
             }
         } else {
+            weVariableLogger.info(func, `"${fx}" doesn't has variable in it.`);
             return fx;
         }
     },
