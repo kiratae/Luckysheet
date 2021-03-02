@@ -42,6 +42,7 @@
     background-color: #E1E1E1;
 }
 
+#luckysheet-cellHint-showHintMsg,
 #luckysheet-cellError-showErrorMsg {
     display: none;
     padding: 10px;

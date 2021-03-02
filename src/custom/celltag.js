@@ -21,8 +21,8 @@ const weCellTagCtrl = {
             let dv_w = 5 * Store.zoomRatio,
                 dv_h = 5 * Store.zoomRatio; //Red small triangle width and height
 
-            offsetLeft -= 2;
-            offsetTop += 1;
+            offsetLeft -= 3;
+            // offsetTop += 2;
 
             luckysheetTableContent.beginPath();
             luckysheetTableContent.moveTo(
@@ -37,7 +37,7 @@ const weCellTagCtrl = {
                 (end_c + offsetLeft),
                 (start_r + offsetTop + dv_h)
             );
-            luckysheetTableContent.fillStyle = "#1ea67d";
+            luckysheetTableContent.fillStyle = weConfigsetting.cellFlagColor.cellTag;
             luckysheetTableContent.fill();
             luckysheetTableContent.closePath();
         }
@@ -74,7 +74,7 @@ const weCellTagCtrl = {
         setTimeout(function() {
             luckysheetrefreshgrid();
         }, 1);
-    },
+    }
 }
 
 export default weCellTagCtrl;

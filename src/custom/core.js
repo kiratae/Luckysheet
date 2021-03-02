@@ -8,6 +8,7 @@ import weCellValidationCtrl from './cellvalidation';
 import weCellTagCtrl from './celltag';
 import weDropdownCtrl from './dropdown';
 import weHandler from './handler';
+import weCellMetaCtrl from './cellmeta';
 
 const weCore = {
     setConfig: function(config) {
@@ -37,6 +38,9 @@ const weCore = {
 
         weConfigsetting.isLog = config.isLog;
 
+        // cell flag color
+        weConfigsetting.cellFlagColor = config.cellFlagColor;
+
         // helper
         weConfigsetting.deserializeHelper = config.deserializeHelper;
 
@@ -61,6 +65,7 @@ const weCore = {
         libCore.weCellValidationCtrl = weCellValidationCtrl;
         libCore.weCellTagCtrl = weCellTagCtrl;
         libCore.weDropdownCtrl = weDropdownCtrl;
+        libCore.weCellMetaCtrl = weCellMetaCtrl;
         libCore.weVariable = weVariable;
 
         libCore.execFormula = function(txt) {
@@ -71,7 +76,7 @@ const weCore = {
         }
 
         libCore.functionInputControl = function(selector) {
-            return weHandler.fuunctionInputControl(selector);
+            return weHandler.functionInputControl(selector);
         }
 
         libCore.functionHTMLGenerate = function(txt) {

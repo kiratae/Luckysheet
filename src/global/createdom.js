@@ -23,6 +23,7 @@ import weConfigsetting from '../custom/configsetting';
 import weCellErrorCtrl from '../custom/cellerror';
 import weCellValidationCtrl from '../custom/cellvalidation';
 import weDynamicRow from '../custom/dynamicRow';
+import weHandler from '../custom/handler';
 
 export default function luckysheetcreatedom(colwidth, rowheight, data, menu, title) {
     // //最少30行
@@ -42,6 +43,7 @@ export default function luckysheetcreatedom(colwidth, rowheight, data, menu, tit
     // [TK] custom
     gh = replaceHtml(gh, { "cellValidation": weCellValidationCtrl.getDOM() });
     gh = replaceHtml(gh, { "cellError": weCellErrorCtrl.getDOM() });
+    gh = replaceHtml(gh, { "cellHandler": weHandler.getDOM() });
 
     // if (data.length == 0) {
     //     Store.flowdata = datagridgrowth(data, rowheight, colwidth);

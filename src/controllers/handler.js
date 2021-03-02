@@ -358,6 +358,7 @@ export default function luckysheetHandler() {
         weHandler.registerCellClick(row_index, col_index, row_index_ed, col_index_ed);
         weCellValidationCtrl.cellFocus(row_index, col_index, true);
         weCellErrorCtrl.cellFocus(row_index, col_index, true);
+        weHandler.cellFocus(row_index, col_index, true);
 
         //单元格单击之前
         if (!method.createHookFunction("cellMousedownBefore", Store.flowdata[row_index][col_index], {

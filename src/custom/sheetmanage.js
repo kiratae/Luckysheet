@@ -3,6 +3,7 @@ import weCellTagCtrl from './celltag';
 import weDynamicRow from './dynamicRow';
 import weHandler from './handler';
 import weDropdownCtrl from './dropdown';
+import weCellMetaCtrl from './cellmeta';
 
 const weSheetManage = {
     setSheetParam: function(file) {
@@ -11,6 +12,9 @@ const weSheetManage = {
 
         weCellTagCtrl.cellTag = file.cellTag || {};
         weCellTagCtrl.init();
+
+        weCellMetaCtrl.cellMeta = file.cellMeta || {};
+        weCellMetaCtrl.init();
 
         weDynamicRow.dynamicRow = file.dynamicRow;
         weDynamicRow.init();

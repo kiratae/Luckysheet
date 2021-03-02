@@ -86,5 +86,10 @@ export default {
     onConfirmCellRange: null, // hooker function fire when click cofirm buuton in dialog select cell range.
     isLog: false, // is show console log with Log util.
     deserializeHelper: null, // helper from outer to deserialize form or sheet data from api response.
-    yearOffset: 543
+    yearOffset: 543,
+    cellFlagColor: {
+        cellValidation: "#FC6666",
+        cellTag: "#23BE8F",
+        cellMeta: "#FF0000"
+    }
 }

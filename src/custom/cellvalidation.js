@@ -75,7 +75,7 @@ const weCellValidationCtrl = {
                 (start_c + offsetLeft),
                 (start_r + offsetTop + dv_h)
             );
-            luckysheetTableContent.fillStyle = "#FC6666";
+            luckysheetTableContent.fillStyle = weConfigsetting.cellFlagColor.cellValidation;
             luckysheetTableContent.fill();
             luckysheetTableContent.closePath();
         }

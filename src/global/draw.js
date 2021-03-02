@@ -25,6 +25,7 @@ import weCellErrorCtrl from '../custom/cellerror';
 import weCellValidationCtrl from '../custom/cellvalidation';
 import weCellTagCtrl from '../custom/celltag';
 import weDynamicRow from '../custom/dynamicRow';
+import weCellMetaCtrl from '../custom/cellmeta';
 
 function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
     if (scrollHeight == null) {
@@ -1248,6 +1249,7 @@ let nullCellRender = function(r, c, start_r, start_c, end_r, end_c, luckysheetTa
     weCellErrorCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellTagCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellMetaCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
 
     // 单元格渲染后
     method.createHookFunction("cellRenderAfter", Store.flowdata[r][c], {
@@ -1320,6 +1322,7 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
     weCellErrorCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellValidationCtrl.renderCell(r, c, start_r, start_c, offsetLeft, offsetTop, luckysheetTableContent);
     weCellTagCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
+    weCellMetaCtrl.renderCell(r, c, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
 
     let cellValidation = weCellValidationCtrl.cellValidation;
 

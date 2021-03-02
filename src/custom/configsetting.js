@@ -19,7 +19,13 @@ const weConfigsetting = {
     onConfirmCellRange: null, // hooker function fire when click cofirm buuton in dialog select cell range.
     isLog: false, // is show console log with Log util.
     deserializeHelper: null, // helper from outer to deserialize form or sheet data from api response.
-    yearOffset: 543
+    yearOffset: 543,
+    cellFlagColor: {
+        cellError: "#FF6961",
+        cellMeta: "#FF0000",
+        cellTag: "#23BE8F",
+        cellValidation: "#FC6666",
+    }
 }
 
 export default weConfigsetting;

@@ -16,6 +16,8 @@ import { modelHTML, keycode } from '../controllers/constant';
 import menuButton from '../controllers/menuButton';
 import formula from '../global/formula';
 import weVariable from './variable';
+import weCellTagCtrl from './celltag';
+import weCellMetaCtrl from './cellmeta';
 
 const weHandler = {
     selectRange: [],
@@ -442,7 +444,7 @@ const weHandler = {
             this.selectRange = [];
         }
     },
-    fuunctionInputControl: function(selector) {
+    functionInputControl: function(selector) {
 
         const self = this;
 
@@ -682,6 +684,53 @@ const weHandler = {
             $('#luckysheet-functionbox-cell').html($('#luckysheet-rich-text-editor').html());
         } else {
             $('#luckysheet-rich-text-editor').html($('#luckysheet-functionbox-cell').html());
+        }
+    },
+    getDOM: function() {
+        return `<div id="luckysheet-cellHint-showHintMsg" class="luckysheet-mousedown-cancel"></div>`;
+    },
+    cellFocus: function(r, c, clickMode) {
+        if (!weConfigsetting.formEditor)
+            return;
+
+        $("#luckysheet-cellHint-showHintMsg").hide();
+
+        let row = Store.visibledatarow[r],
+            row_pre = r == 0 ? 0 : Store.visibledatarow[r - 1];
+        let col = Store.visibledatacolumn[c],
+            col_pre = c == 0 ? 0 : Store.visibledatacolumn[c - 1];
+
+        let margeset = menuButton.mergeborer(Store.flowdata, r, c);
+        if (!!margeset) {
+            row = margeset.row[1];
+            row_pre = margeset.row[0];
+
+            col = margeset.column[1];
+            col_pre = margeset.column[0];
+        }
+
+        let cellTag = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellTag"];
+        let cellMeta = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["cellMeta"];
+
+        let html = null;
+        if (cellMeta && cellMeta[r + '_' + c]) {
+            var item = cellMeta[r + '_' + c];
+            html = `<span style="color:${weConfigsetting.cellFlagColor.cellMeta};">${item.icon}</span>&ensp;${item.text}`;
+        }
+        if (cellTag && cellTag[r + '_' + c]) {
+            var item = cellTag[r + '_' + c];
+            if (html != null) {
+                html += `<br/><span style="color:${weConfigsetting.cellFlagColor.cellTag};">${item.accountIcon}</span>&ensp;${item.accountText}`;
+            } else {
+                html = `<span style="color:${weConfigsetting.cellFlagColor.cellTag};">${item.accountIcon}</span>&ensp;${item.accountText}`;
+            }
+        }
+
+        if (html != null) {
+            $("#luckysheet-cellHint-showHintMsg").html(html).show().css({
+                'left': col_pre,
+                'top': row
+            });
         }
     },
 }

@@ -60,7 +60,7 @@ const weCellErrorCtrl = {
                     (start_c + offsetLeft),
                     (end_r + offsetTop)
                 );
-                luckysheetTableContent.fillStyle = "#FF6961";
+                luckysheetTableContent.fillStyle = weConfigsetting.cellFlagColor.cellError;
             } else {
                 luckysheetTableContent.moveTo(
                     (start_c + offsetLeft),
@@ -74,7 +74,7 @@ const weCellErrorCtrl = {
                     (start_c + offsetLeft),
                     (start_r + offsetTop + dv_h)
                 );
-                luckysheetTableContent.fillStyle = "#FC6666";
+                luckysheetTableContent.fillStyle = weConfigsetting.cellFlagColor.cellError;
             }
             luckysheetTableContent.fill();
             luckysheetTableContent.closePath();
@@ -90,7 +90,7 @@ const weCellErrorCtrl = {
             let item = cellError[r + '_' + c];
             let errorMsg;
 
-            errorMsg = '<span style="color:#FC6666;">';
+            errorMsg = `<span style="color:${weConfigsetting.cellFlagColor.cellError};">`;
 
             if (typeof item === 'string') {
                 errorMsg += item;
