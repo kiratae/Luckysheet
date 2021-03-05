@@ -144,7 +144,7 @@ luckysheet.create = function(setting) {
     luckysheetConfigsetting.initShowsheetbarConfig = false;
 
     if (Store.lang === 'zh') flatpickr.localize(Mandarin.zh);
-    if (Store.lang === 'th') flatpickr.localize(Thai.th);
+    if (Store.lang === 'th') flatpickr.localize(Thai.th); // [TK] custom lang
 
     // Store the currently used plugins for monitoring asynchronous loading
     Store.asyncLoad.push(...luckysheetConfigsetting.plugins);

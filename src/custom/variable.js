@@ -108,13 +108,14 @@ const weVariable = {
             throw this.error.v;
         }
     },
-    addRemoteSheet: function(name, previousAmt = 0) {
+    addRemoteSheet: function(name, previousAmt = 0, callback = null) {
         const func = 'addRemoteSheet';
         weVariableLogger.info(func, `has been call with name is "${name}" and previousAmt is "${previousAmt}".`);
 
         let removeLoading = function() {
             setTimeout(function(ex) {
                 $("#luckysheetloadingdata").fadeOut().remove();
+                if (callback && typeof callback === 'function') callback();
                 if (ex)
                     throw ex;
             }, 500);
@@ -197,11 +198,11 @@ const weVariable = {
             let varContexts = this.getVariableContexts(fx);
             if (varContexts && varContexts.length && typeof varContexts === 'object') {
                 for (var i = 0; i < varContexts.length; i++) {
-                    var varContext = varContexts[i];
+                    let varContext = varContexts[i];
                     if (this.isLocalVariable(varContext)) {
                         this.checkCircular(varContext);
-                        var varName = varContext.replace(/#/g, '');
-                        var variable = this.getVariableByName(varName);
+                        let varName = varContext.replace(/#/g, '');
+                        let variable = this.getVariableByName(varName);
                         if (variable) {
                             var resolved = this.resolveFormula(variable.formula);
                             resolved = resolved.replace(/=/g, '');
@@ -210,56 +211,40 @@ const weVariable = {
                             throw this.error.v;
                         }
                     } else {
-                        var matched = varContext.match(this.variableRegex);
+                        let matched = varContext.match(this.variableRegex);
                         if (matched && matched.length === 2) {
-                            var sheetName = matched[0].replace(/'|!/g, '');
+                            let sheetName = matched[0].replace(/'|!/g, '');
                             sheetName = sheetName.replace('_', '-');
-                            var afterSheetFx = matched[1];
+                            let afterSheetFx = matched[1];
 
                             let matchStar = sheetName.match(/\*/g);
                             let prvAmt = matchStar != null ? matchStar.length : 0;
 
+                            const self = this;
                             // if not have sheet in current client go to get it from remote
                             if (!sheetmanage.getSheetByName(sheetName)) {
                                 if (prvAmt > 0) {
                                     if (weConfigsetting.formEditor) {
                                         throw this.error.v;
                                     }
-                                    this.addRemoteSheet(sheetName, prvAmt);
-                                } else {
-                                    this.addRemoteSheet(sheetName);
                                 }
-                            }
-
-                            if (this.isLocalVariable(afterSheetFx)) {
-                                this.checkCircular(varContext);
-                                var varName = afterSheetFx.replace(/#/g, '');
-                                var variable = this.getVariableByName(varName, false, sheetName);
-                                if (variable) {
-                                    // tranform formula
-                                    let cellRange = variable.formula.match(this.cellRefRegex);
-                                    let tempFx = variable.formula;
-                                    if (cellRange && cellRange.length && typeof cellRange === 'object') {
-                                        for (var i = 0; i < cellRange.length; i++) {
-                                            tempFx = tempFx.replace(new RegExp(cellRange[i]), `'${sheetName}'!${cellRange[i]}`);
-                                        }
-                                    }
-                                    let resolved = this.resolveFormula(tempFx);
-                                    resolved = resolved.replace(/=/g, '');
-                                    fx = fx.replace(new RegExp(this.escapeRegExp(varContext)), resolved);
-                                } else {
-                                    throw this.error.v;
-                                }
+                                this.addRemoteSheet(sheetName, prvAmt, function() {
+                                    // let result = self.resolveAfterSheetFx(fx, varContext, sheetName, afterSheetFx);
+                                    // weVariableLogger.info(func, `resolveAfterSheetFx in addRemoteSheet callback result is "${result}".`);
+                                    // if (result) fx = result;
+                                    luckysheetformula.execFunctionGroupForce(true);
+                                    luckysheetrefreshgrid();
+                                });
                             } else {
-                                continue;
+                                let result = self.resolveAfterSheetFx(fx, varContext, sheetName, afterSheetFx);
+                                weVariableLogger.info(func, `resolveAfterSheetFx result is "${result}".`);
+                                if (result) fx = result;
                             }
                         } else {
                             continue;
-                            // console.error('Global variable has some error.');
-                            // throw this.error.ce;
                         }
                     }
-                }
+                } // endfor
                 return fx;
             } else {
                 return fx;
@@ -267,6 +252,33 @@ const weVariable = {
         } else {
             weVariableLogger.info(func, `"${fx}" doesn't has variable in it.`);
             return fx;
+        }
+    },
+    resolveAfterSheetFx: function(fx, varContext, sheetName, afterSheetFx) {
+        const func = "resolveAfterSheetFx";
+        weVariableLogger.info(func, `has been call with fx is "${fx}", varContext is "${varContext}", sheetName is "${sheetName}", and afterSheetFx is "${afterSheetFx}".`);
+        if (this.isLocalVariable(afterSheetFx)) {
+            this.checkCircular(varContext);
+            let varName = afterSheetFx.replace(/#/g, '');
+            let variable = this.getVariableByName(varName, false, sheetName);
+            if (variable) {
+                // tranform formula
+                let cellRange = variable.formula.match(this.cellRefRegex);
+                let tempFx = variable.formula;
+                if (cellRange && cellRange.length && typeof cellRange === 'object') {
+                    for (var i = 0; i < cellRange.length; i++) {
+                        tempFx = tempFx.replace(new RegExp(cellRange[i]), `'${sheetName}'!${cellRange[i]}`);
+                    }
+                }
+                let resolved = this.resolveFormula(tempFx);
+                resolved = resolved.replace(/=/g, '');
+                fx = fx.replace(new RegExp(this.escapeRegExp(varContext)), resolved);
+                return fx;
+            } else {
+                throw this.error.v;
+            }
+        } else {
+            return null;
         }
     },
     hasVariable: function(fx) {

@@ -88,8 +88,9 @@ export default {
     deserializeHelper: null, // helper from outer to deserialize form or sheet data from api response.
     yearOffset: 543,
     cellFlagColor: {
-        cellValidation: "#FC6666",
+        cellError: "#FF6961",
+        cellMeta: "#FF0000",
         cellTag: "#23BE8F",
-        cellMeta: "#FF0000"
+        cellValidation: "#FC6666",
     }
 }

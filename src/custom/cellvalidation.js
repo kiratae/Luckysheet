@@ -328,11 +328,11 @@ const weCellValidationCtrl = {
                         isCheckbox = true;
                     }
 
-                    if (currentCellValidation[r + '_' + c].isReadOnly != null && d[r][c]['ro']) {
+                    if (currentCellValidation[r + '_' + c].isReadOnly != null && d[r][c] && d[r][c]['ro']) {
                         delete d[r][c]['ro'];
                     }
 
-                    if (d[r][c]['ct']) {
+                    if (d[r][c] && d[r][c]['ct']) {
                         delete d[r][c]['ct'];
                     }
 

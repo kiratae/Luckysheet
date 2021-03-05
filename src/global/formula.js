@@ -5106,6 +5106,7 @@ const luckysheetformula = {
 
             window.luckysheet_getcelldata_cache = null;
             let calc_funcStr = formulaCell.calc_funcStr;
+            // console.log('execFunctionGroup', calc_funcStr);
 
             let v = _this.execfunction(calc_funcStr, formulaCell.r, formulaCell.c, formulaCell.index);
 
