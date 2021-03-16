@@ -32,6 +32,9 @@ import { getcellDisplayFormula } from '../custom/getdata';
 import method from './method';
 import { type } from 'os';
 import weHandler from '../custom/handler';
+import { Log } from '../custom/utils';
+
+const luckysheetformulaLogger = new Log("luckysheetformula");
 
 const luckysheetformula = {
     error: {
@@ -5481,6 +5484,8 @@ const luckysheetformula = {
     },
     execfunction: function(txt, r, c, index, isrefresh, notInsertFunc) {
         let _this = this;
+        let func = 'execfunction';
+        luckysheetformulaLogger.info(func, 'has been called.');
 
         let _locale = locale();
         let locale_formulaMore = _locale.formulaMore;
@@ -5489,12 +5494,13 @@ const luckysheetformula = {
         // [TK] custom
         try {
             weVariable.resolvedVariables.length = 0;
-            // console.log('execfunction', txt);
+            luckysheetformulaLogger.info(func, `txt "${txt}"`);
             resolved = weVariable.resolveFormula(txt);
-            // console.log('resolveFormula', resolved);
+            luckysheetformulaLogger.info(func, `resolved "${resolved}"`);
         } catch (e) {
             let err = e;
             //err错误提示处理
+            luckysheetformulaLogger.error(func, `has caught e "${e}", and resolved "${resolved}"`);
             console.log(e, resolved);
             err = _this.errorInfo(err);
             return [false, err, resolved, txt];

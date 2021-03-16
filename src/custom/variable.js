@@ -108,14 +108,13 @@ const weVariable = {
             throw this.error.v;
         }
     },
-    addRemoteSheet: function(name, previousAmt = 0, callback = null) {
+    addRemoteSheet: function(name, previousAmt = 0, callback = null, errorCallback = null) {
         const func = 'addRemoteSheet';
         weVariableLogger.info(func, `has been call with name is "${name}" and previousAmt is "${previousAmt}".`);
 
         let removeLoading = function() {
             setTimeout(function(ex) {
                 $("#luckysheetloadingdata").fadeOut().remove();
-                if (callback && typeof callback === 'function') callback();
                 if (ex)
                     throw ex;
             }, 500);
@@ -139,8 +138,8 @@ const weVariable = {
                 $("#" + luckysheetConfigsetting.container).append(luckysheetlodingHTML(false));
             },
             success: function(res, textStatus, jqXHR) {
-                if (res.data) {
-                    if (res.statusCode == "0") {
+                if (res.statusCode == "0") {
+                    if (res.data) {
                         if (weConfigsetting.deserializeHelper != null && getObjType(weConfigsetting.deserializeHelper) == "function") {
                             try {
                                 let formData = weConfigsetting.deserializeHelper(res.data.data)[0];
@@ -158,6 +157,7 @@ const weVariable = {
 
                                 jfrefreshgrid();
                                 removeLoading();
+                                if (callback && typeof callback === 'function') callback();
                             } catch (ex) {
                                 removeLoading(self.error.d);
                             }
@@ -165,7 +165,8 @@ const weVariable = {
                             removeLoading(self.error.arg);
                         }
                     } else {
-                        removeLoading(self.error.se);
+                        removeLoading();
+                        if (errorCallback && typeof errorCallback === 'function') errorCallback();
                     }
                 } else {
                     removeLoading(self.error.se);
@@ -228,13 +229,16 @@ const weVariable = {
                                         throw this.error.v;
                                     }
                                 }
-                                this.addRemoteSheet(sheetName, prvAmt, function() {
-                                    // let result = self.resolveAfterSheetFx(fx, varContext, sheetName, afterSheetFx);
-                                    // weVariableLogger.info(func, `resolveAfterSheetFx in addRemoteSheet callback result is "${result}".`);
-                                    // if (result) fx = result;
-                                    luckysheetformula.execFunctionGroupForce(true);
-                                    luckysheetrefreshgrid();
-                                });
+                                try {
+                                    this.addRemoteSheet(sheetName, prvAmt, function() {
+                                        luckysheetformula.execFunctionGroupForce(true);
+                                        luckysheetrefreshgrid();
+                                    }, function() {
+                                        throw self.error.v;
+                                    });
+                                } catch (error) {
+                                    throw error;
+                                }
                             } else {
                                 let result = self.resolveAfterSheetFx(fx, varContext, sheetName, afterSheetFx);
                                 weVariableLogger.info(func, `resolveAfterSheetFx result is "${result}".`);
